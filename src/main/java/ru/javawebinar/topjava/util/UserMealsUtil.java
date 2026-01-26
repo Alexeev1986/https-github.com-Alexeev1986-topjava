@@ -53,6 +53,15 @@ public class UserMealsUtil {
         return filteredItems;
     }
 
+    private static Map<LocalDate, Integer> getDailyCaloriesByCycles(List<UserMeal> meals) {
+        Map<LocalDate, Integer> result = new HashMap<>();
+        for (UserMeal meal : meals) {
+            LocalDate date = meal.getDateTime().toLocalDate();
+            result.put(date, result.getOrDefault(date, 0) + meal.getCalories());
+        }
+        return result;
+    }
+
     public static List<UserMealWithExcess> filteredByStreams(List<UserMeal> meals, LocalTime startTime,
                                                              LocalTime endTime, int caloriesPerDay) {
         Map<LocalDate, Integer> dailyCalories = getDailyCaloriesByStream(meals);
@@ -62,18 +71,9 @@ public class UserMealsUtil {
                         meal.getDateTime(),
                         meal.getDescription(),
                         meal.getCalories(),
-            dailyCalories.get(meal.getDateTime().toLocalDate()) > caloriesPerDay)
+                dailyCalories.get(meal.getDateTime().toLocalDate()) > caloriesPerDay)
                 )
                 .collect(Collectors.toList());
-    }
-
-    private static Map<LocalDate, Integer> getDailyCaloriesByCycles(List<UserMeal> meals) {
-        Map<LocalDate, Integer> result = new HashMap<>();
-        for (UserMeal meal : meals) {
-            LocalDate date = meal.getDateTime().toLocalDate();
-            result.put(date, result.getOrDefault(date, 0) + meal.getCalories());
-        }
-        return result;
     }
 
     private static Map<LocalDate, Integer> getDailyCaloriesByStream(List<UserMeal> meals) {
