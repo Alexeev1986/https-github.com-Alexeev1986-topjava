@@ -128,13 +128,13 @@ public class UserMealsUtil {
                         ),
                         (dailyCalories, filteredMeals) ->
                             filteredMeals.stream()
-                                    .map(meal -> new UserMealWithExcess(
-                                        meal.getDateTime(),
-                                        meal.getDescription(),
-                                        meal.getCalories(),
-                                        dailyCalories.get(meal.getDateTime().toLocalDate()) > caloriesPerDay
-                                    ))
-                                    .collect(Collectors.toList())
+                                .map(meal -> new UserMealWithExcess(
+                                    meal.getDateTime(),
+                                    meal.getDescription(),
+                                    meal.getCalories(),
+                                    dailyCalories.get(meal.getDateTime().toLocalDate()) > caloriesPerDay
+                                ))
+                                .collect(Collectors.toList())
                 )
         );
     }
