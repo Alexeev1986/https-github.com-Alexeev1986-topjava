@@ -1,21 +1,28 @@
 package ru.javawebinar.topjava.model;
 
+import ru.javawebinar.topjava.util.ExcessFlag;
+
 import java.time.LocalDateTime;
 
 public class UserMealWithExcess {
     private final LocalDateTime dateTime;
-
     private final String description;
-
     private final int calories;
-
     private boolean excess;
+    private ExcessFlag excessFlag;
 
     public UserMealWithExcess(LocalDateTime dateTime, String description, int calories, boolean excess) {
         this.dateTime = dateTime;
         this.description = description;
         this.calories = calories;
         this.excess = excess;
+    }
+
+    public UserMealWithExcess(LocalDateTime dateTime, String description, int calories, ExcessFlag excessFlag) {
+        this.dateTime = dateTime;
+        this.description = description;
+        this.calories = calories;
+        this.excessFlag = excessFlag;
     }
 
     public void setExcess(boolean excess) {
@@ -26,13 +33,20 @@ public class UserMealWithExcess {
         return dateTime;
     }
 
+    public boolean isExcess() {
+        if (excessFlag != null) {
+            return excessFlag.isValue();
+        }
+        return excess;
+    }
+
     @Override
     public String toString() {
         return "UserMealWithExcess{" +
                 "dateTime=" + dateTime +
                 ", description='" + description + '\'' +
                 ", calories=" + calories +
-                ", excess=" + excess +
+                ", excess=" + isExcess() +
                 '}';
     }
 }
