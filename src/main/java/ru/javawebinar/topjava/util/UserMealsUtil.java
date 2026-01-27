@@ -134,11 +134,11 @@ public class UserMealsUtil {
                         Collectors.collectingAndThen(
                                 Collectors.toList(),
                                 dayMeals -> {
-                                    int totalCalories = dayMeals.stream()
+                                    int dailyCalories = dayMeals.stream()
                                             .mapToInt(UserMeal::getCalories)
                                             .sum();
                                     ExcessFlag excessFlag = new ExcessFlag();
-                                    excessFlag.setValue(totalCalories > caloriesPerDay);
+                                    excessFlag.setValue(dailyCalories > caloriesPerDay);
                                     return dayMeals.stream()
                                             .filter(meal -> isBetweenHalfOpen(
                                                     meal.getDateTime().toLocalTime(), startTime,endTime))
