@@ -9,14 +9,15 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Edit meal</title>
+    <title>Create meal</title>
 </head>
 <body>
 <h1>Edit meal:</h1>
 
 <form method="post" action="/topjava/meals?action=create" enctype="application/x-www-form-urlencoded">
     <label for="dateTime">Enter date: </label>
-    <input type="text" name="dateTime" size="50" value="${dateTime}">
+    <input type="datetime-local" id="dateTime" name="dateTime"
+           value="${dateTime}" required>
     <br/>
 
     <label for="description">Enter description: </label>

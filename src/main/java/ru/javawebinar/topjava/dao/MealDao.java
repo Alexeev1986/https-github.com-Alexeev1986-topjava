@@ -36,6 +36,7 @@ public class MealDao {
 
     public void update(int id, Meal updateMeal) {
         Meal mealToBeUpdated = getMealById(id);
+        mealToBeUpdated.setDateTime(updateMeal.getDateTime());
         mealToBeUpdated.setDescription(updateMeal.getDescription());
         mealToBeUpdated.setCalories(updateMeal.getCalories());
     }

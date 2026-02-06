@@ -17,7 +17,8 @@
 <form method="post" action="/topjava/meals?action=update" enctype="application/x-www-form-urlencoded">
     <jsp:useBean id="meal" scope="request" type="ru.javawebinar.topjava.model.Meal"/>
     <label for="dateTime">Enter date: </label>
-    <input type="text" name="dateTime" size="50" value="${meal.dateTime}">
+    <input type="datetime-local" id="dateTime" name="dateTime"
+           value="${meal.formattedDateTimeForInput}" required>
     <br/>
 
     <label for="description">Enter description: </label>

@@ -7,7 +7,7 @@
 </head>
 <body>
 <h3><a href="/topjava">Home</a></h3>
-<table>
+<table border="2">
     <caption>Meals</caption>
     <tr>
         <th>Date</th>
