@@ -5,8 +5,6 @@ import static org.slf4j.LoggerFactory.getLogger;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.stream.Collectors;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -14,21 +12,21 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import ru.javawebinar.topjava.dao.MealDao;
+import ru.javawebinar.topjava.dao.MealStorage;
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.model.MealTo;
-import ru.javawebinar.topjava.model.MealToView;
+import ru.javawebinar.topjava.util.MealsUtil;
 
 public class MealServlet extends HttpServlet {
-    private static final DateTimeFormatter FORMATTER_BY_CREATE = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    private static final DateTimeFormatter FORMATTER_BY_CREATE =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+    public static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
     private static final Logger log = getLogger(MealServlet.class);
 
-    private MealDao mealDao;
+    private MealStorage mealDao;
 
     @Override
     public void init() throws ServletException {
         mealDao = new MealDao();
-
     }
 
     @Override
@@ -48,7 +46,7 @@ public class MealServlet extends HttpServlet {
             case "create":
                 log.debug("Created new meal");
                 Meal saveMeal = createdMealByreByRequest(request);
-                mealDao.save(saveMeal);
+                mealDao.create(saveMeal);
                 response.sendRedirect(request.getContextPath() + "/meals?action=show");
                 return;
             default:
@@ -70,7 +68,7 @@ public class MealServlet extends HttpServlet {
             switch (action) {
                 case "show":
                     log.debug("Show meals list");
-                    request.setAttribute("mealsTo", getMealToView(mealDao.index()));
+                    request.setAttribute("mealsTo", MealsUtil.getMealToView(mealDao.getAll()));
                     dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/meals.jsp");
                     dispatcher.forward(request, response);
                     return;
@@ -78,7 +76,7 @@ public class MealServlet extends HttpServlet {
                     log.debug("Show update form");
                     id = Integer.parseInt(request.getParameter("id"));
                     dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/mealForm.jsp");
-                    Meal mealAttribute = mealDao.getMealById(id);
+                    Meal mealAttribute = mealDao.getById(id);
                     request.setAttribute("meal", mealAttribute);
                     request.setAttribute("dateTime", mealAttribute.getDateTime().format(FORMATTER));
                     request.setAttribute("editMode", true);
@@ -114,17 +112,5 @@ public class MealServlet extends HttpServlet {
         String description = request.getParameter("description");
         int calories = Integer.parseInt(request.getParameter("calories"));
         return new Meal(id, dateTime, description, calories);
-    }
-
-    private List<MealToView> getMealToView(List<MealTo> mealsTo) {
-        return mealsTo.stream()
-                .map(mealTo -> new MealToView(
-                        mealTo.getId(),
-                        mealTo.getDateTime(),
-                        mealTo.getDateTime().format(FORMATTER),
-                        mealTo.getDescription(),
-                        mealTo.getCalories(),
-                        mealTo.isExcess()))
-                .collect(Collectors.toList());
     }
 }

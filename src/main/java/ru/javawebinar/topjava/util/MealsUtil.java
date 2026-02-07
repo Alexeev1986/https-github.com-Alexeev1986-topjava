@@ -5,25 +5,44 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import ru.javawebinar.topjava.dao.MealDao;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.MealTo;
+import ru.javawebinar.topjava.model.MealToView;
+import ru.javawebinar.topjava.web.MealServlet;
 
 public class MealsUtil {
     public static List<MealTo> filteredByStreams(List<Meal> meals, LocalTime startTime,
                                                  LocalTime endTime, int caloriesPerDay) {
-        Map<LocalDate, Integer> caloriesSumByDate = meals.stream()
-                .collect(
-                        Collectors.groupingBy(Meal::getDate, Collectors.summingInt(Meal::getCalories))
-                );
+        Map<LocalDate, Integer> caloriesSumByDate = getCaloriesSumByDate(meals);
 
         return meals.stream()
                 .filter(meal -> TimeUtil.isBetweenHalfOpen(meal.getTime(), startTime, endTime))
-                .map(meal -> createTo(meal, caloriesSumByDate.get(meal.getDate()) > caloriesPerDay))
+                .map(meal -> createToMealTo(meal, caloriesSumByDate.get(meal.getDate()) > caloriesPerDay))
                 .collect(Collectors.toList());
     }
 
-    private static MealTo createTo(Meal meal, boolean excess) {
+    private static Map<LocalDate, Integer> getCaloriesSumByDate(List<Meal> meals) {
+        return meals.stream()
+                .collect(Collectors.groupingBy(Meal::getDate, Collectors.summingInt(Meal::getCalories)));
+    }
+
+    private static MealTo createToMealTo(Meal meal, boolean excess) {
         return new MealTo(meal.getId(), meal.getDateTime(),
+                meal.getDescription(), meal.getCalories(), excess);
+    }
+
+    public static List<MealToView> getMealToView(List<Meal> meals) {
+        Map<LocalDate, Integer> caloriesSumByDate = getCaloriesSumByDate(meals);
+        return meals.stream()
+                .map(meal -> createToView(meal,
+                        caloriesSumByDate.get(meal.getDate()) > MealDao.CALORIES_PER_DAY))
+                .collect(Collectors.toList());
+    }
+
+    private static MealToView createToView(Meal meal, boolean excess) {
+        return new MealToView(meal.getId(),
+                meal.getDateTime().format(MealServlet.FORMATTER),
                 meal.getDescription(), meal.getCalories(), excess);
     }
 }

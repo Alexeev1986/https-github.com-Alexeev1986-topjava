@@ -1,18 +1,15 @@
 package ru.javawebinar.topjava.model;
 
-import java.time.LocalDateTime;
-
 public class MealToView {
     private final Integer id;
-    private final LocalDateTime dateTime;
-    private final String formattedDateTime; // <-- только для отображения
+    private final String formattedDateTime;
     private final String description;
     private final int calories;
     private final boolean excess;
 
-    public MealToView(Integer id, LocalDateTime dateTime, String formattedDateTime, String description, int calories, boolean excess) {
+    public MealToView(Integer id, String formattedDateTime, String description,
+                      int calories, boolean excess) {
         this.id = id;
-        this.dateTime = dateTime;
         this.formattedDateTime = formattedDateTime;
         this.description = description;
         this.calories = calories;
@@ -21,10 +18,6 @@ public class MealToView {
 
     public Integer getId() {
         return id;
-    }
-
-    public LocalDateTime getDateTime() {
-        return dateTime;
     }
 
     public String getFormattedDateTime() {
