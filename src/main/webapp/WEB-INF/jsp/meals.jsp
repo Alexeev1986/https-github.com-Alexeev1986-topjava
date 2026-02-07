@@ -18,9 +18,9 @@
     </tr>
     <c:forEach items="${mealsTo}" var="mealTo">
     <tr>
-        <td style="${mealTo.excess ? 'color: red;' : ''}">${mealTo.formattedDateTime}</td>
-        <td style="${mealTo.excess ? 'color: red;' : ''}">${mealTo.description}</td>
-        <td style="${mealTo.excess ? 'color: red;' : ''}">${mealTo.calories}</td>
+        <td style="${mealTo.excess ? 'color: red;' : 'green'}">${mealTo.formattedDateTime}</td>
+        <td style="${mealTo.excess ? 'color: red;' : 'green'}">${mealTo.description}</td>
+        <td style="${mealTo.excess ? 'color: red;' : 'green'}">${mealTo.calories}</td>
         <td><a href="${pageContext.request.contextPath}/meals?action=update&id=${mealTo.id}">Edit</a></td>
         <td><a href="${pageContext.request.contextPath}/meals?action=delete&id=${mealTo.id}">Delete</a></td>
     </tr>
