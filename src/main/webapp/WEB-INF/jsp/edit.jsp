@@ -14,11 +14,11 @@
 <body>
 <h1>Edit meal:</h1>
 
-<form method="post" action="/topjava/meals?action=update" enctype="application/x-www-form-urlencoded">
+<form method="post" action="${pageContext.request.contextPath}/meals?action=update" enctype="application/x-www-form-urlencoded">
     <jsp:useBean id="meal" scope="request" type="ru.javawebinar.topjava.model.Meal"/>
     <label for="dateTime">Enter date: </label>
     <input type="datetime-local" id="dateTime" name="dateTime"
-           value="${meal.formattedDateTimeForInput}" required>
+           value="${dateTime}" required>
     <br/>
 
     <label for="description">Enter description: </label>
@@ -35,6 +35,6 @@
 </form>
 <br/>
 <hr/>
-<a href="/topjava/meals?action=show">Back</a>
+<a href="${pageContext.request.contextPath}/meals?action=show">Back</a>
 </body>
 </html>

@@ -14,7 +14,7 @@
 <body>
 <h1>Edit meal:</h1>
 
-<form method="post" action="/topjava/meals?action=create" enctype="application/x-www-form-urlencoded">
+<form method="post" action="${pageContext.request.contextPath}/meals?action=create" enctype="application/x-www-form-urlencoded">
     <label for="dateTime">Enter date: </label>
     <input type="datetime-local" id="dateTime" name="dateTime"
            value="${dateTime}" required>
@@ -28,12 +28,10 @@
     <input type="text" name="calories" size="50" value="">
     <br/>
 
-    <input type="hidden" name="id" value="0">
-
     <input type="submit" value="Create!">
 </form>
 <br/>
 <hr/>
-<a href="/topjava/meals?action=show">Back</a>
+<a href="${pageContext.request.contextPath}/meals?action=show">Back</a>
 </body>
 </html>

@@ -3,44 +3,33 @@ package ru.javawebinar.topjava.model;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 
 public class Meal {
+    private Integer id;
     private LocalDateTime dateTime;
-
-    private int id;
-
     private String description;
-
     private int calories;
 
     public Meal() {
     }
 
-    public Meal(int id, LocalDateTime dateTime, String description, int calories) {
+    public Meal(LocalDateTime dateTime, String description, int calories) {
+        this(null, dateTime, description, calories);
+    }
+
+    public Meal(Integer id, LocalDateTime dateTime, String description, int calories) {
         this.id = id;
         this.dateTime = dateTime;
         this.description = description;
         this.calories = calories;
     }
 
-    public Meal(LocalDateTime dateTime, String description, int calories) {
-        id = 0;
-        this.dateTime = dateTime;
-        this.description = description;
-        this.calories = calories;
-    }
-
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
     public LocalDateTime getDateTime() {
         return dateTime;
-    }
-
-    public String getFormattedDateTimeForInput() {
-        return dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"));
     }
 
     public String getDescription() {
@@ -51,7 +40,7 @@ public class Meal {
         return calories;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
