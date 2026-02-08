@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
-import ru.javawebinar.topjava.dao.MealDao;
+import ru.javawebinar.topjava.dao.InMemoryMealDao;
 import ru.javawebinar.topjava.dao.MealStorage;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.MealsUtil;
@@ -22,7 +22,7 @@ public class MealServlet extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
-        mealDao = new MealDao();
+        mealDao = new InMemoryMealDao();
     }
 
     @Override
@@ -34,9 +34,8 @@ public class MealServlet extends HttpServlet {
         switch (action) {
             case "update":
                 log.debug("Updated meal");
-                int id = Integer.parseInt(request.getParameter("id"));
                 Meal updateMeal = createdMealByreByRequest(request);
-                mealDao.update(id, updateMeal);
+                mealDao.update(updateMeal);
                 response.sendRedirect(request.getContextPath() + "/meals?action=show");
                 return;
             case "create":

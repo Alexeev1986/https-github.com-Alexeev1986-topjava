@@ -8,9 +8,9 @@ public interface MealStorage {
 
     Meal getById(int id);
 
-    void create(Meal meal);
+    Meal create(Meal meal);
 
-    void update(int id, Meal meal);
+    Meal update(Meal meal);
 
     void delete(int id);
 }

@@ -5,11 +5,11 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import ru.javawebinar.topjava.dao.MealDao;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.MealTo;
 
 public class MealsUtil {
+    public static final int CALORIES_PER_DAY = 2000;
     public static List<MealTo> filteredByStreams(List<Meal> meals, LocalTime startTime,
                                                  LocalTime endTime, int caloriesPerDay) {
         Map<LocalDate, Integer> caloriesSumByDate = getCaloriesSumByDate(meals);
@@ -34,7 +34,7 @@ public class MealsUtil {
         Map<LocalDate, Integer> caloriesSumByDate = getCaloriesSumByDate(meals);
         return meals.stream()
                 .map(meal -> createToMealTo(meal,
-                        caloriesSumByDate.get(meal.getDate()) > MealDao.CALORIES_PER_DAY))
+                        caloriesSumByDate.get(meal.getDate()) > CALORIES_PER_DAY))
                 .collect(Collectors.toList());
     }
 }
