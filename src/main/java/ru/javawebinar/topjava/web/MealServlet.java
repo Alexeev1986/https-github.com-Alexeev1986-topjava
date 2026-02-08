@@ -70,8 +70,8 @@ public class MealServlet extends HttpServlet {
                 case "update":
                     log.debug("Show update form");
                     id = Integer.parseInt(request.getParameter("id"));
-                    dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/mealForm.jsp");
                     request.setAttribute("meal", mealDao.getById(id));
+                    dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/mealForm.jsp");
                     dispatcher.forward(request, response);
                     return;
                 case "delete":
@@ -82,6 +82,7 @@ public class MealServlet extends HttpServlet {
                     return;
                 case "create":
                     log.debug("Show create form");
+                    request.setAttribute("meal", new Meal());
                     dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/mealForm.jsp");
                     dispatcher.forward(request, response);
                     return;
