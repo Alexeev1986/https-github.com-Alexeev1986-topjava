@@ -8,8 +8,6 @@ import java.util.stream.Collectors;
 import ru.javawebinar.topjava.dao.MealDao;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.MealTo;
-import ru.javawebinar.topjava.model.MealToView;
-import ru.javawebinar.topjava.web.MealServlet;
 
 public class MealsUtil {
     public static List<MealTo> filteredByStreams(List<Meal> meals, LocalTime startTime,
@@ -32,17 +30,11 @@ public class MealsUtil {
                 meal.getDescription(), meal.getCalories(), excess);
     }
 
-    public static List<MealToView> getMealToView(List<Meal> meals) {
+    public static List<MealTo> getMealToList(List<Meal> meals) {
         Map<LocalDate, Integer> caloriesSumByDate = getCaloriesSumByDate(meals);
         return meals.stream()
-                .map(meal -> createToView(meal,
+                .map(meal -> createToMealTo(meal,
                         caloriesSumByDate.get(meal.getDate()) > MealDao.CALORIES_PER_DAY))
                 .collect(Collectors.toList());
-    }
-
-    private static MealToView createToView(Meal meal, boolean excess) {
-        return new MealToView(meal.getId(),
-                meal.getDateTime().format(MealServlet.FORMATTER),
-                meal.getDescription(), meal.getCalories(), excess);
     }
 }

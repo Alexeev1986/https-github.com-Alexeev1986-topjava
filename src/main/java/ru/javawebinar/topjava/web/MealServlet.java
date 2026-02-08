@@ -4,7 +4,6 @@ import static org.slf4j.LoggerFactory.getLogger;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -17,9 +16,6 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.MealsUtil;
 
 public class MealServlet extends HttpServlet {
-    private static final DateTimeFormatter FORMATTER_BY_CREATE =
-            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
-    public static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
     private static final Logger log = getLogger(MealServlet.class);
 
     private MealStorage mealDao;
@@ -68,7 +64,7 @@ public class MealServlet extends HttpServlet {
             switch (action) {
                 case "show":
                     log.debug("Show meals list");
-                    request.setAttribute("mealsTo", MealsUtil.getMealToView(mealDao.getAll()));
+                    request.setAttribute("mealsTo", MealsUtil.getMealToList(mealDao.getAll()));
                     dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/meals.jsp");
                     dispatcher.forward(request, response);
                     return;
@@ -76,10 +72,7 @@ public class MealServlet extends HttpServlet {
                     log.debug("Show update form");
                     id = Integer.parseInt(request.getParameter("id"));
                     dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/mealForm.jsp");
-                    Meal mealAttribute = mealDao.getById(id);
-                    request.setAttribute("meal", mealAttribute);
-                    request.setAttribute("dateTime", mealAttribute.getDateTime().format(FORMATTER));
-                    request.setAttribute("editMode", true);
+                    request.setAttribute("meal", mealDao.getById(id));
                     dispatcher.forward(request, response);
                     return;
                 case "delete":
@@ -90,9 +83,7 @@ public class MealServlet extends HttpServlet {
                     return;
                 case "create":
                     log.debug("Show create form");
-                    request.setAttribute("dateTime", LocalDateTime.now().format(FORMATTER_BY_CREATE));
                     dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/mealForm.jsp");
-                    request.setAttribute("editMode", false);
                     dispatcher.forward(request, response);
                     return;
                 default:
