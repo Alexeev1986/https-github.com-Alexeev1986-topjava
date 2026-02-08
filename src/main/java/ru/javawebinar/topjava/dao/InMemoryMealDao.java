@@ -51,9 +51,10 @@ public class InMemoryMealDao implements MealStorage {
     }
 
     @Override
-    public synchronized Meal update(Meal updateMeal) {
+    public Meal update(Meal updateMeal) {
         log.debug("Operation update in InMemoryMealDao");
-        return mealsMap.replace(updateMeal.getId(), updateMeal);
+        mealsMap.replace(updateMeal.getId(), updateMeal);
+        return updateMeal;
     }
 
     @Override

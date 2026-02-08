@@ -12,16 +12,9 @@
 <form method="post" action="${pageContext.request.contextPath}/meals?action=${meal.id != null ? 'update' : 'create'}">
     <jsp:useBean id="meal" type="ru.javawebinar.topjava.model.Meal" scope="request"/>
     <label for="dateTime">Enter date: </label>
-    <c:choose>
-        <c:when test="${meal.id == null}">
-            <input type="datetime-local" id="dateTime" name="dateTime"
-                   value="<%= java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")) %>" required>
-        </c:when>
-        <c:otherwise>
-            <input type="datetime-local" id="dateTime" name="dateTime"
-                   value="<%= meal.getDateTime().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")) %>" required>
-        </c:otherwise>
-    </c:choose>
+    <jsp:useBean id="FORMATTER" scope="request" type="java.time.format.DateTimeFormatter"/>
+    <input type="datetime-local" name="dateTime"
+           value="${meal.dateTime.format(FORMATTER)}" required>
     <br/>
     <label for="description">Enter description: </label>
     <input type="text" name="description" size="50"

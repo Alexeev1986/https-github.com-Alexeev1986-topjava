@@ -23,8 +23,7 @@
     <c:forEach items="${mealsTo}" var="mealTo">
         <jsp:useBean id="mealTo" type="ru.javawebinar.topjava.model.MealTo"/>
         <tr class="${mealTo.excess ? 'excess-row' : 'normal-row'}">
-        <% String formattedDate = mealTo.getDateTime().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")); %>
-        <td><%= formattedDate %></td>
+        <td>${mealTo.dateTime.format(FORMATTER)}</td>
         <td>${mealTo.description}</td>
         <td>${mealTo.calories}</td>
         <td><a href="${pageContext.request.contextPath}/meals?action=update&id=${mealTo.id}">Edit</a></td>
