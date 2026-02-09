@@ -17,11 +17,11 @@
     <br/>
     <label for="description">Enter description: </label>
     <input type="text" name="description" size="50"
-           value="${meal.id != null ? meal.description : ''}">
+           value="${meal.description}">
     <br/>
     <label for="calories">Enter calories: </label>
     <input type="text" name="calories" size="50"
-           value="${meal.id != null ? meal.calories : ''}">
+           value="${meal.calories}">
     <br/>
 
     <c:if test="${meal.id != null}">

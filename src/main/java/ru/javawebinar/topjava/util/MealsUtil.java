@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.MealTo;
@@ -14,13 +13,8 @@ public class MealsUtil {
                                                  LocalTime endTime, int caloriesPerDay) {
         Map<LocalDate, Integer> caloriesSumByDate = getCaloriesSumByDate(meals);
 
-        Predicate<Meal> timeFilter = (startTime == null || endTime == null)
-                ? meal -> true
-                : meal -> TimeUtil.isBetweenHalfOpen(meal.getTime(), startTime, endTime);
-
         return meals.stream()
-
-                .filter(timeFilter)
+                .filter(meal -> TimeUtil.isBetweenHalfOpen(meal.getTime(), startTime, endTime))
                 .map(meal -> createToMealTo(meal, caloriesSumByDate.get(meal.getDate()) > caloriesPerDay))
                 .collect(Collectors.toList());
     }

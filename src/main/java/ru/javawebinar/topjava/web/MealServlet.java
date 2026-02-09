@@ -36,12 +36,19 @@ public class MealServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         log.debug("POST /meals");
         Meal meal = createdMealByreByRequest(request);
-        if (meal.getId() == null) {
-            log.debug("Created new meal");
-            mealDao.create(meal);
+        Integer id = meal.getId();
+        if (id == null) {
+            Meal created = mealDao.create(meal);
+            String message = created != null
+                    ? "Created new meal with id = " + created.getId()
+                    : "Failed to create meal";
+            log.debug(message);
         } else {
-            log.debug("Updated meal");
-            mealDao.update(meal);
+            Meal updated = mealDao.update(meal);
+            String message = updated != null
+                    ? "Updated meal with id = " + id
+                    : "Failed to update meal with id = " + id;
+            log.debug(message);
         }
         response.sendRedirect(request.getContextPath() + "/meals?action=show");
     }
@@ -82,7 +89,9 @@ public class MealServlet extends HttpServlet {
                     return;
                 case "create":
                     log.debug("Show create form");
-                    request.setAttribute("meal", new Meal());
+                    Meal meal = new Meal();
+                    meal.setDateTime(LocalDateTime.now());
+                    request.setAttribute("meal", meal);
                     request.setAttribute("FORMATTER", INPUT_FORMATTER);
                     dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/mealForm.jsp");
                     dispatcher.forward(request, response);
