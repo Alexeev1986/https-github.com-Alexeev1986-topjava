@@ -39,16 +39,18 @@ public class MealServlet extends HttpServlet {
         Integer id = meal.getId();
         if (id == null) {
             Meal created = mealDao.create(meal);
-            String message = created != null
-                    ? "Created new meal with id = " + created.getId()
-                    : "Failed to create meal";
-            log.debug(message);
+            if (created != null) {
+                log.debug("Created new meal with id = {}", created.getId());
+            } else {
+                log.debug("Failed to create meal");
+            }
         } else {
             Meal updated = mealDao.update(meal);
-            String message = updated != null
-                    ? "Updated meal with id = " + id
-                    : "Failed to update meal with id = " + id;
-            log.debug(message);
+            if (updated != null) {
+                log.debug("Updated meal with id = {}", id);
+            } else {
+                log.debug("Failed to update meal with id = {}", id);
+            }
         }
         response.sendRedirect(request.getContextPath() + "/meals?action=show");
     }
