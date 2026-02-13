@@ -26,7 +26,7 @@ public class MealRestController {
         return service.getAll(authUserId());
     }
 
-    public Meal get(int userId, int id) {
+    public Meal get(int id) {
         log.info("get {}", id);
         return service.get(authUserId(), id);
     }

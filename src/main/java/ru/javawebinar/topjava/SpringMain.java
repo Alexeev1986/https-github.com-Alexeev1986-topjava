@@ -1,5 +1,7 @@
 package ru.javawebinar.topjava;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Collection;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -22,9 +24,18 @@ public class SpringMain {
             MealRestController mealRestController = appCtx.getBean(MealRestController.class);
             try {
                 Collection<Meal> meals = mealRestController.getAll();
-                System.out.println("Meals : ");
-                meals.stream().forEach(System.out::println);
-
+                System.out.println("getAll():");
+                meals.forEach(System.out::println);
+                System.out.println("get(1):");
+                System.out.println(mealRestController.get(1));
+                Meal meal = new Meal(1, null, LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "Ужин", 557);
+                System.out.println("save:");
+                System.out.println(mealRestController.create(meal));
+                System.out.println("delete:");
+                mealRestController.delete(1);
+                System.out.println("update:");
+                Meal upadateMeal = new Meal(1, 8, LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "Ужин", 777);
+                mealRestController.update(upadateMeal);
             } catch (Exception e) {
                 System.out.println("Error " + e.getMessage());
             }
