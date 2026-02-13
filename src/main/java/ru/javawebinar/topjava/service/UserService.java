@@ -1,19 +1,18 @@
 package ru.javawebinar.topjava.service;
 
+import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFound;
+
+import java.util.List;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
 
-import java.util.List;
-
-import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFound;
-
-@Service
+@Service("userService")
 public class UserService {
-
     private final UserRepository repository;
 
-    public UserService(UserRepository repository) {
+    public UserService(@Qualifier("inMemoryUserRepository") UserRepository repository) {
         this.repository = repository;
     }
 
