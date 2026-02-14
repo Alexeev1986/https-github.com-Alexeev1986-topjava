@@ -2,6 +2,7 @@ package ru.javawebinar.topjava.service;
 
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFound;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import ru.javawebinar.topjava.model.Meal;
@@ -29,6 +30,10 @@ public class MealService {
 
     public List<Meal> getAll(int userId) {
         return repository.getAll(userId);
+    }
+
+    public List<Meal> getBetweenHalfOpen(LocalDateTime startDateTime, LocalDateTime endDateTime, int userId) {
+        return repository.getBetweenHalfOpen(startDateTime, endDateTime, userId);
     }
 
     public void update(int userId, Meal meal) {

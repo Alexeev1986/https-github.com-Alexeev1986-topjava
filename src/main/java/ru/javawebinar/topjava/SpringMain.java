@@ -1,8 +1,12 @@
 package ru.javawebinar.topjava;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Collection;
+import java.util.List;
+
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import ru.javawebinar.topjava.model.Meal;
@@ -27,9 +31,19 @@ public class SpringMain {
 
             MealRestController mealRestController = appCtx.getBean(MealRestController.class);
             try {
-                Collection<MealTo> mealsTo = mealRestController.getAll();
+                List<MealTo> mealsTo = mealRestController.getAll();
                 System.out.println("\ngetAll():");
                 mealsTo.forEach(System.out::println);
+
+                System.out.println("\ngetWithFilters():");
+                List<MealTo> filteredMeals = mealRestController.getWithFilters(
+                        LocalDate.of(2020, 1, 30),
+                        LocalTime.of(0, 0),
+                        LocalDate.of(2020, 1, 31),
+                        LocalTime.of(0, 0)
+                );
+                filteredMeals.forEach(System.out::println);
+
                 System.out.println("\nget(2):");
                 System.out.println(mealRestController.get(2));
                 Meal meal = new Meal(null, LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "Ужин", 557, 2);

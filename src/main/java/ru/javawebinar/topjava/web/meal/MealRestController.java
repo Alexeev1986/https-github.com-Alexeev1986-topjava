@@ -6,6 +6,9 @@ import static ru.javawebinar.topjava.util.ValidationUtil.assureIdConsistent;
 import static ru.javawebinar.topjava.util.ValidationUtil.checkIsNew;
 import static ru.javawebinar.topjava.web.SecurityUtil.authUserId;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +29,14 @@ public class MealRestController {
         log.info("getAll");
         return getTos(service.getAll(authUserId()), DEFAULT_CALORIES_PER_DAY);
     }
+
+    public List<MealTo> getWithFilters(LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime) {
+        LocalDateTime startDateTime = LocalDateTime.of(startDate, startTime);
+        LocalDateTime endDateTime = LocalDateTime.of(endDate, endTime);
+        List<Meal> filteredMeals = service.getBetweenHalfOpen(startDateTime, endDateTime, authUserId());
+        return getTos(filteredMeals, DEFAULT_CALORIES_PER_DAY);
+    }
+
 
     public Meal get(int id) {
         log.info("get {}", id);
