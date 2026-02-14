@@ -4,7 +4,7 @@ import static ru.javawebinar.topjava.util.ValidationUtil.assureIdConsistent;
 import static ru.javawebinar.topjava.util.ValidationUtil.checkIsNew;
 import static ru.javawebinar.topjava.web.SecurityUtil.authUserId;
 
-import java.util.Collection;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,7 @@ public class MealRestController {
     @Autowired
     private MealService service;
 
-    public Collection<Meal> getAll() {
+    public List<Meal> getAll() {
         log.info("getAll");
         return service.getAll(authUserId());
     }

@@ -30,15 +30,15 @@ public class SpringMain {
                 Collection<Meal> meals = mealRestController.getAll();
                 System.out.println("\ngetAll():");
                 meals.forEach(System.out::println);
-                System.out.println("\nget(1):");
-                System.out.println(mealRestController.get(1));
-                Meal meal = new Meal(1, null, LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "Ужин", 557);
+                System.out.println("\nget(2):");
+                System.out.println(mealRestController.get(2));
+                Meal meal = new Meal(null, LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "Ужин", 557, 2);
                 System.out.println("\nsave:");
                 System.out.println(mealRestController.create(meal));
                 System.out.println("\ndelete:");
-                mealRestController.delete(1);
+                mealRestController.delete(2);
                 System.out.println("\nupdate:");
-                Meal upadateMeal = new Meal(1, 8, LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "Ужин", 777);
+                Meal upadateMeal = new Meal(12, LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "Ужин", 777, 1);
                 mealRestController.update(upadateMeal);
             } catch (Exception e) {
                 System.out.println("Error " + e.getMessage());

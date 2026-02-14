@@ -7,12 +7,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.Set;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
-@Component
-@Scope("prototype")
 public class User extends AbstractNamedEntity {
     private String email;
 

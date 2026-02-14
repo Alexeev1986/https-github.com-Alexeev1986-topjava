@@ -16,13 +16,19 @@ import ru.javawebinar.topjava.model.MealTo;
 public class MealsUtil {
     public static final int DEFAULT_CALORIES_PER_DAY = 2000;
     public static final List<Meal> meals = Arrays.asList(
-            new Meal(0, LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0), "Завтрак", 500),
-            new Meal(0, LocalDateTime.of(2020, Month.JANUARY, 30, 13, 0), "Обед", 1000),
-            new Meal(0, LocalDateTime.of(2020, Month.JANUARY, 30, 20, 0), "Ужин", 500),
-            new Meal(0, LocalDateTime.of(2020, Month.JANUARY, 31, 0, 0), "Еда на граничное значение", 100),
-            new Meal(0, LocalDateTime.of(2020, Month.JANUARY, 31, 10, 0), "Завтрак", 1000),
-            new Meal(0, LocalDateTime.of(2020, Month.JANUARY, 31, 13, 0), "Обед", 500),
-            new Meal(0, LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 410)
+        new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 8, 30), "Овсянка", 400, 2),
+        new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 9, 0), "Завтрак", 450, 1),
+        new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 12, 30), "Салат с курицей", 850, 2),
+        new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 13, 0), "Обед", 950, 1),
+        new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 18, 0), "Ужин", 550, 1),
+        new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 19, 0), "Рыба на пару", 600, 2),
+
+        new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 9, 0), "Тосты", 420, 2),
+        new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 9, 30), "Завтрак", 500, 1),
+        new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 13, 30), "Паста", 900, 2),
+        new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 14, 0), "Обед", 1000, 1),
+        new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 480, 1),
+        new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 21, 0), "Йогурт с фруктами", 300, 2)
     );
 
     public static List<MealTo> getTos(Collection<Meal> meals, int caloriesPerDay) {

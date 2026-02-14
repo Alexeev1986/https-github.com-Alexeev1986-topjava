@@ -1,6 +1,7 @@
 package ru.javawebinar.topjava.repository;
 
-import java.util.Collection;
+import java.util.List;
+
 import ru.javawebinar.topjava.model.Meal;
 
 public interface MealRepository {
@@ -10,5 +11,5 @@ public interface MealRepository {
 
     Meal get(int userId, int id);
 
-    Collection<Meal> getAll(int userId);
+    List<Meal> getAll(int userId);
 }

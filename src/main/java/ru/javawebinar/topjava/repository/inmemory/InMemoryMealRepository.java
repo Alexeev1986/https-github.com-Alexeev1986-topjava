@@ -1,6 +1,5 @@
 package ru.javawebinar.topjava.repository.inmemory;
 
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -13,15 +12,16 @@ import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.util.MealsUtil;
+import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 @Repository
 public class InMemoryMealRepository implements MealRepository {
     private static final Logger log = LoggerFactory.getLogger(InMemoryMealRepository.class);
-    private final Map<Integer, Meal> mealsMap = new ConcurrentHashMap<>();
+    private final Map<Integer, Map<Integer, Meal>> mealsByUser = new ConcurrentHashMap<>();
     private final AtomicInteger counter = new AtomicInteger(0);
 
     {
-        MealsUtil.meals.forEach(meal -> save(1, meal));
+        MealsUtil.meals.forEach(meal -> save(meal.getUserId(), meal));
     }
 
     @Override
@@ -29,55 +29,76 @@ public class InMemoryMealRepository implements MealRepository {
         if (meal.isNew()) {
             meal.setId(counter.incrementAndGet());
             meal.setUserId(userId);
-            mealsMap.put(meal.getId(), meal);
+            mealsByUser.computeIfAbsent(userId, k -> new ConcurrentHashMap<>()).put(meal.getId(), meal);
             log.info("Create {} for user {}", meal, userId);
             return meal;
         }
-
-        Meal oldMeal = mealsMap.get(meal.getId());
-
-        if (oldMeal == null || oldMeal.getUserId() != userId) {
-            log.warn("Cannot update meal {} - not found or belongs to user {}, not {}",
-                    meal.getId(),
-                    oldMeal != null ? oldMeal.getUserId() : "null",
-                    userId);
+        Map<Integer, Meal> userMeals = mealsByUser.get(userId);
+        if (userMeals == null) {
+            log.warn("Cannot update meal {} - user {} has no meals", meal.getId(), userId);
             return null;
         }
-        meal.setUserId(userId);
-        mealsMap.put(meal.getId(), meal);
-        log.info("Update meal {} for user {}", meal, userId);
-        return meal;
+        return userMeals.computeIfPresent(meal.getId(), (id, oldMeal) -> {
+            if (oldMeal.getUserId() != userId) {
+                log.warn("Cannot update meal {} belongs to user {}, not {}", id, oldMeal.getUserId(), userId);
+                return oldMeal;
+            }
+            meal.setUserId(userId);
+            return meal;
+        });
     }
 
     @Override
     public boolean delete(int userId, int id) {
-        Meal meal = mealsMap.get(id);
+        Map<Integer, Meal> userMeals = mealsByUser.get(userId);
+        if (userMeals == null) {
+            log.warn("Cannot delete meal {} - user {} has no meals", id, userId);
+            return false;
+        }
+        Meal meal = userMeals.get(id);
         if (meal == null || meal.getUserId() != userId) {
             log.warn("Meal {} not found to user {}", id, userId);
             return false;
         }
-        mealsMap.remove(id);
-        log.info("Delete meal {} for user {}", id, userId);
-        return true;
+        boolean remove = userMeals.remove(id, meal);
+        if (remove) {
+            log.info("Delete meal {} for user {}", id, userId);
+        } else {
+            log.warn("Meal {} alredy deleted", id);
+        }
+        if (userMeals.isEmpty()) {
+            mealsByUser.remove(userId);
+        }
+        return remove;
     }
 
     @Override
     public Meal get(int userId, int id) {
-        Meal meal = mealsMap.get(id);
+        Map<Integer, Meal> userMeals = mealsByUser.get(userId);
+        if (userMeals == null) {
+            log.warn("Meal {} not found for user {} ", id, userId);
+            throw new NotFoundException("Meal" + id + " not found for user " + userId);
+        }
+        Meal meal = userMeals.get(id);
         if (meal == null || meal.getUserId() != userId) {
-            log.warn("Meal {} not found to user {}", id, userId);
-            return null;
+            log.warn("Meal {} not found for user {}", id, userId);
+            throw new NotFoundException("Meal " + id + " not found for user " + userId);
         }
         log.info("Get meal {} for user {}", id, userId);
         return meal;
     }
 
     @Override
-    public Collection<Meal> getAll(int userId) {
-        List<Meal> result = mealsMap.values().stream()
-                .filter(meal -> meal.getUserId() == userId)
-                .sorted(Comparator.comparing(Meal::getDateTime).reversed())
-                .collect(Collectors.toList());
+    public List<Meal> getAll(int userId) {
+        Map<Integer, Meal> userMeals = mealsByUser.get(userId);
+        List<Meal> result;
+        if (userMeals == null) {
+            result = List.of();
+        } else {
+            result = userMeals.values().stream()
+                    .sorted(Comparator.comparing(Meal::getDateTime).reversed())
+                    .collect(Collectors.toList());
+        }
         log.info("Get {} meals for user {}", result.size(), userId);
         return result;
     }

@@ -2,7 +2,7 @@ package ru.javawebinar.topjava.service;
 
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFound;
 
-import java.util.Collection;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.javawebinar.topjava.model.Meal;
@@ -28,7 +28,7 @@ public class MealService {
         return checkNotFound(repository.get(userId, id), id);
     }
 
-    public Collection<Meal> getAll(int userId) {
+    public List<Meal> getAll(int userId) {
         return repository.getAll(userId);
     }
 

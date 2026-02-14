@@ -45,11 +45,10 @@ public class InMemoryUserRepository implements UserRepository {
     @Override
     public List<User> getAll() {
         log.info("getAll");
-        List<User> result = usersMap.values().stream()
+        return usersMap.values().stream()
                 .sorted(Comparator.comparing(User::getName, String.CASE_INSENSITIVE_ORDER)
                         .thenComparing(User::getEmail))
                 .collect(Collectors.toList());
-        return Collections.unmodifiableList(result);
     }
 
     @Override
