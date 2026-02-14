@@ -2,11 +2,11 @@ package ru.javawebinar.topjava;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
 import java.util.Collection;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import ru.javawebinar.topjava.model.Meal;
+import ru.javawebinar.topjava.model.MealTo;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.web.meal.MealRestController;
@@ -27,9 +27,9 @@ public class SpringMain {
 
             MealRestController mealRestController = appCtx.getBean(MealRestController.class);
             try {
-                Collection<Meal> meals = mealRestController.getAll();
+                Collection<MealTo> mealsTo = mealRestController.getAll();
                 System.out.println("\ngetAll():");
-                meals.forEach(System.out::println);
+                mealsTo.forEach(System.out::println);
                 System.out.println("\nget(2):");
                 System.out.println(mealRestController.get(2));
                 Meal meal = new Meal(null, LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "Ужин", 557, 2);
@@ -38,8 +38,8 @@ public class SpringMain {
                 System.out.println("\ndelete:");
                 mealRestController.delete(2);
                 System.out.println("\nupdate:");
-                Meal upadateMeal = new Meal(12, LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "Ужин", 777, 1);
-                mealRestController.update(upadateMeal);
+                Meal upadateMeal = new Meal(13, LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "Ужин", 777, 1);
+                mealRestController.update(13, upadateMeal);
             } catch (Exception e) {
                 System.out.println("Error " + e.getMessage());
             }

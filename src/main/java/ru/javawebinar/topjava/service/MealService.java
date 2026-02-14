@@ -3,7 +3,6 @@ package ru.javawebinar.topjava.service;
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFound;
 
 import java.util.List;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
@@ -12,7 +11,7 @@ import ru.javawebinar.topjava.repository.MealRepository;
 public class MealService {
     private final MealRepository repository;
 
-    public MealService(@Qualifier("inMemoryMealRepository") MealRepository repository) {
+    public MealService(MealRepository repository) {
         this.repository = repository;
     }
 
