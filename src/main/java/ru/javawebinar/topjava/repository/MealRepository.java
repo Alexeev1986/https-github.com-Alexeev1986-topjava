@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import ru.javawebinar.topjava.model.Meal;
+import ru.javawebinar.topjava.model.MealTo;
 
 public interface MealRepository {
     Meal save(int userId, Meal meal);
@@ -14,5 +15,7 @@ public interface MealRepository {
 
     List<Meal> getAll(int userId);
 
-    List<Meal> getBetweenHalfOpenByDayAndTime(LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime, int userId);
+    List<MealTo> getBetweenHalfOpenByDayAndTime(LocalDate startDate, LocalTime startTime,
+                                                LocalDate endDate, LocalTime endTime,
+                                                int userId, int caloriesPerDay);
 }

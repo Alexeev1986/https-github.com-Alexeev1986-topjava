@@ -31,8 +31,7 @@ public class MealRestController {
 
     public List<MealTo> getWithFilters(LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime) {
         log.info("Filter meals from {} {} to {} {}", startDate, startTime, endDate, endTime);
-        List<Meal> filteredMeals = service.getBetweenHalfOpenByDayAndTime(startDate, startTime, endDate, endTime, authUserId());
-        return getTos(filteredMeals, authUserCaloriesPerDay());
+        return service.getBetweenHalfOpenByDayAndTime(startDate, startTime, endDate, endTime, authUserId(), authUserCaloriesPerDay());
     }
 
     public Meal get(int id) {

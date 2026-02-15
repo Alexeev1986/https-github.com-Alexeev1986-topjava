@@ -7,6 +7,7 @@ import java.time.LocalTime;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import ru.javawebinar.topjava.model.Meal;
+import ru.javawebinar.topjava.model.MealTo;
 import ru.javawebinar.topjava.repository.MealRepository;
 
 @Service()
@@ -33,12 +34,13 @@ public class MealService {
         return repository.getAll(userId);
     }
 
-    public List<Meal> getBetweenHalfOpenByDayAndTime(LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime, int userId) {
-        return repository.getBetweenHalfOpenByDayAndTime(startDate, startTime, endDate, endTime, userId);
+    public List<MealTo> getBetweenHalfOpenByDayAndTime(LocalDate startDate, LocalTime startTime,
+                                                       LocalDate endDate, LocalTime endTime,
+                                                       int userId, int caloriesPerDay) {
+        return repository.getBetweenHalfOpenByDayAndTime(startDate, startTime, endDate, endTime, userId, caloriesPerDay);
     }
 
     public void update(int userId, Meal meal) {
-        meal.setUserId(userId);
         checkNotFound(repository.save(userId, meal), meal.getId());
     }
 }

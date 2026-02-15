@@ -14,20 +14,20 @@ public class DateTimeUtil {
 
     public static boolean isBetweenHalfOpenByDayAndTime(LocalDateTime ltd, LocalDate startDate, LocalDate endDate,
                                                         LocalTime startTime, LocalTime endTime) {
-        LocalDate mealDate = ltd.toLocalDate();
-        LocalTime mealTime = ltd.toLocalTime();
-
-        if ((startDate != null && mealDate.isBefore(startDate)) || (endDate != null && mealDate.isAfter(endDate))) return false;
-
-        if (mealDate.equals(startDate) && startTime != null && mealTime.isBefore(startTime)) return false;
-
-        if (mealDate.equals(endDate) && endTime != null && !mealTime.isBefore(endTime)) return false;
-
-        if (!mealDate.equals(startDate) && !mealDate.equals(endDate)) {
-            if (!DateTimeUtil.isBetweenHalfOpen(mealTime, startTime, endTime)) return false;
+        LocalDateTime start = null;
+        if (startDate != null) {
+            LocalTime timeStart = (startTime != null) ? startTime : LocalTime.MIN;
+            start = startDate.atTime(timeStart);
         }
-
-        return true;
+        LocalDateTime end = null;
+        if (endDate != null) {
+            LocalTime timeEnd = (endTime != null) ? endTime : LocalTime.MIN;
+            end = endDate.atTime(timeEnd);
+            if (endTime == null) {
+                end = end.plusDays(1);
+            }
+        }
+        return isBetweenHalfOpen(ltd, start, end);
     }
 
     public static String toString(LocalDateTime ldt) {

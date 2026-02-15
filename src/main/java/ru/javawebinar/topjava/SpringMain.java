@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import ru.javawebinar.topjava.model.Meal;
@@ -45,13 +44,13 @@ public class SpringMain {
 
                 System.out.println("\nget(2):");
                 System.out.println(mealRestController.get(2));
-                Meal meal = new Meal(null, LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "Ужин", 557, 2);
+                Meal meal = new Meal(null, LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "Ужин", 557);
                 System.out.println("\nsave:");
                 System.out.println(mealRestController.create(meal));
                 System.out.println("\ndelete:");
                 mealRestController.delete(2);
                 System.out.println("\nupdate:");
-                Meal upadateMeal = new Meal(13, LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "Ужин", 777, 1);
+                Meal upadateMeal = new Meal(13, LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "Ужин", 777);
                 mealRestController.update(13, upadateMeal);
             } catch (Exception e) {
                 System.out.println("Error " + e.getMessage());

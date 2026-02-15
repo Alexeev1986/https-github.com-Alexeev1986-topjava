@@ -1,20 +1,26 @@
 package ru.javawebinar.topjava.repository.inmemory;
 
+import static ru.javawebinar.topjava.util.DateTimeUtil.isBetweenHalfOpenByDayAndTime;
+import static ru.javawebinar.topjava.util.MealsUtil.getTos;
+import static ru.javawebinar.topjava.web.SecurityUtil.authUserCaloriesPerDay;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.Meal;
+import ru.javawebinar.topjava.model.MealTo;
 import ru.javawebinar.topjava.repository.MealRepository;
-import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.util.MealsUtil;
 
 @Repository
@@ -24,7 +30,11 @@ public class InMemoryMealRepository implements MealRepository {
     private final AtomicInteger counter = new AtomicInteger(0);
 
     {
-        MealsUtil.meals.forEach(meal -> save(meal.getUserId(), meal));
+        int user = 1;
+        for (int i = 0; i < 12; i++) {
+            if (i > 5) user++;
+            save(user, MealsUtil.meals.get(i));
+        }
     }
 
     @Override
@@ -32,7 +42,6 @@ public class InMemoryMealRepository implements MealRepository {
         log.debug("Save meal {} for user {}", meal, userId);
         if (meal.isNew()) {
             meal.setId(counter.incrementAndGet());
-            meal.setUserId(userId);
             mealsByUser.computeIfAbsent(userId, k -> new ConcurrentHashMap<>()).put(meal.getId(), meal);
             log.debug("Create {} for user {}", meal, userId);
             return meal;
@@ -47,7 +56,6 @@ public class InMemoryMealRepository implements MealRepository {
             log.trace("Meal {} not found for user {}", meal.getId(), userId);
             return null;
         }
-        meal.setUserId(userId);
         if (userMeals.replace(meal.getId(), oldMeal, meal)) {
             log.debug("Update meal {} for user {}", meal.getId(), userId);
             return meal;
@@ -109,18 +117,20 @@ public class InMemoryMealRepository implements MealRepository {
     }
 
     @Override
-    public List<Meal> getBetweenHalfOpenByDayAndTime(LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime, int userId) {
+    public List<MealTo> getBetweenHalfOpenByDayAndTime(
+            LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime,
+            int userId, int caloriesPerDay) {
         log.debug("Get meals for user {} between dates: {} {} and {} {}", userId, startDate, startTime, endDate, endTime);
         Map<Integer, Meal> userMeals = mealsByUser.get(userId);
         if (userMeals == null) {
             log.trace("No meals found for user {}", userId);
             return Collections.emptyList();
         }
-        return userMeals.values().stream()
-                .filter(meal -> DateTimeUtil.isBetweenHalfOpenByDayAndTime(
-                        meal.getDateTime(), startDate, endDate, startTime, endTime))
-                .sorted(Comparator.comparing(Meal::getDateTime).reversed())
-                .collect(Collectors.toList());
+        List<Meal> mealList = new ArrayList<>(userMeals.values());
+        Predicate<Meal> timePredicate = meal -> isBetweenHalfOpenByDayAndTime(
+                meal.getDateTime(), startDate, endDate, startTime, endTime);
+
+        return getTos(mealList, authUserCaloriesPerDay(), timePredicate);
     }
 }
 
