@@ -48,9 +48,13 @@ public class InMemoryMealRepository implements MealRepository {
             return null;
         }
         meal.setUserId(userId);
-        userMeals.put(meal.getId(), meal);
-        log.debug("Update meal {} for user {}", meal, userId);
-        return meal;
+        if (userMeals.replace(meal.getId(), oldMeal, meal)) {
+            log.debug("Update meal {} for user {}", meal.getId(), userId);
+            return meal;
+        } else {
+            log.warn("Failed to update meal {} for user {} ", meal, userId);
+            return null;
+        }
     }
 
     @Override
@@ -67,9 +71,6 @@ public class InMemoryMealRepository implements MealRepository {
             return false;
         }
         boolean remove = userMeals.remove(id, meal);
-        if (remove && userMeals.isEmpty()) {
-            mealsByUser.remove(userId, userMeals);
-        }
         if (remove) {
             log.info("Delete meal {} for user {}", id, userId);
         } else {

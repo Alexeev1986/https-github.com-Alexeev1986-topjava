@@ -19,7 +19,7 @@ import ru.javawebinar.topjava.service.MealService;
 
 @Controller
 public class MealRestController {
-    protected final Logger log = LoggerFactory.getLogger(MealRestController.class);
+    private final Logger log = LoggerFactory.getLogger(MealRestController.class);
 
     @Autowired
     private MealService service;
