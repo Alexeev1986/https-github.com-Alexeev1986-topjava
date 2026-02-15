@@ -1,13 +1,12 @@
 package ru.javawebinar.topjava.web.meal;
 
-import static ru.javawebinar.topjava.util.MealsUtil.DEFAULT_CALORIES_PER_DAY;
 import static ru.javawebinar.topjava.util.MealsUtil.getTos;
 import static ru.javawebinar.topjava.util.ValidationUtil.assureIdConsistent;
 import static ru.javawebinar.topjava.util.ValidationUtil.checkIsNew;
+import static ru.javawebinar.topjava.web.SecurityUtil.authUserCaloriesPerDay;
 import static ru.javawebinar.topjava.web.SecurityUtil.authUserId;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import org.slf4j.Logger;
@@ -27,16 +26,14 @@ public class MealRestController {
 
     public List<MealTo> getAll() {
         log.info("getAll");
-        return getTos(service.getAll(authUserId()), DEFAULT_CALORIES_PER_DAY);
+        return getTos(service.getAll(authUserId()), authUserCaloriesPerDay());
     }
 
     public List<MealTo> getWithFilters(LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime) {
-        LocalDateTime startDateTime = LocalDateTime.of(startDate, startTime);
-        LocalDateTime endDateTime = LocalDateTime.of(endDate, endTime);
-        List<Meal> filteredMeals = service.getBetweenHalfOpen(startDateTime, endDateTime, authUserId());
-        return getTos(filteredMeals, DEFAULT_CALORIES_PER_DAY);
+        log.info("Filter meals from {} {} to {} {}", startDate, startTime, endDate, endTime);
+        List<Meal> filteredMeals = service.getBetweenHalfOpenByDayAndTime(startDate, startTime, endDate, endTime, authUserId());
+        return getTos(filteredMeals, authUserCaloriesPerDay());
     }
-
 
     public Meal get(int id) {
         log.info("get {}", id);

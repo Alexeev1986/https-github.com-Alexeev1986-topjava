@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Collection;
 import java.util.List;
 
 import org.springframework.context.ConfigurableApplicationContext;
@@ -38,9 +37,9 @@ public class SpringMain {
                 System.out.println("\ngetWithFilters():");
                 List<MealTo> filteredMeals = mealRestController.getWithFilters(
                         LocalDate.of(2020, 1, 30),
-                        LocalTime.of(0, 0),
+                        LocalTime.of(9, 0),
                         LocalDate.of(2020, 1, 31),
-                        LocalTime.of(0, 0)
+                        LocalTime.of(18, 0)
                 );
                 filteredMeals.forEach(System.out::println);
 

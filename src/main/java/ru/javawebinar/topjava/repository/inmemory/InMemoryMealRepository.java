@@ -1,6 +1,8 @@
 package ru.javawebinar.topjava.repository.inmemory;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +16,6 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.util.MealsUtil;
-import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 @Repository
 public class InMemoryMealRepository implements MealRepository {
@@ -28,89 +29,95 @@ public class InMemoryMealRepository implements MealRepository {
 
     @Override
     public Meal save(int userId, Meal meal) {
+        log.debug("Save meal {} for user {}", meal, userId);
         if (meal.isNew()) {
             meal.setId(counter.incrementAndGet());
             meal.setUserId(userId);
             mealsByUser.computeIfAbsent(userId, k -> new ConcurrentHashMap<>()).put(meal.getId(), meal);
-            log.info("Create {} for user {}", meal, userId);
+            log.debug("Create {} for user {}", meal, userId);
             return meal;
         }
         Map<Integer, Meal> userMeals = mealsByUser.get(userId);
         if (userMeals == null) {
-            log.warn("Cannot update meal {} - user {} has no meals", meal.getId(), userId);
+            log.trace("Cannot update meal {} - user {} has no meals", meal.getId(), userId);
             return null;
         }
-        return userMeals.computeIfPresent(meal.getId(), (id, oldMeal) -> {
-            if (oldMeal.getUserId() != userId) {
-                log.warn("Cannot update meal {} belongs to user {}, not {}", id, oldMeal.getUserId(), userId);
-                return oldMeal;
-            }
-            meal.setUserId(userId);
-            return meal;
-        });
+        Meal oldMeal = userMeals.get(meal.getId());
+        if (oldMeal == null) {
+            log.trace("Meal {} not found for user {}", meal.getId(), userId);
+            return null;
+        }
+        meal.setUserId(userId);
+        userMeals.put(meal.getId(), meal);
+        log.debug("Update meal {} for user {}", meal, userId);
+        return meal;
     }
 
     @Override
     public boolean delete(int userId, int id) {
+        log.debug("Delete meal {} for user {}", id, userId);
         Map<Integer, Meal> userMeals = mealsByUser.get(userId);
         if (userMeals == null) {
-            log.warn("Cannot delete meal {} - user {} has no meals", id, userId);
+            log.trace("Cannot delete meal {} - user {} has no meals", id, userId);
             return false;
         }
         Meal meal = userMeals.get(id);
-        if (meal == null || meal.getUserId() != userId) {
-            log.warn("Meal {} not found to user {}", id, userId);
+        if (meal == null) {
+            log.trace("Meal {} not found to user {}", id, userId);
             return false;
         }
         boolean remove = userMeals.remove(id, meal);
+        if (remove && userMeals.isEmpty()) {
+            mealsByUser.remove(userId, userMeals);
+        }
         if (remove) {
             log.info("Delete meal {} for user {}", id, userId);
         } else {
-            log.warn("Meal {} alredy deleted", id);
-        }
-        if (userMeals.isEmpty()) {
-            mealsByUser.remove(userId);
+            log.warn("Meal {} already deleted", id);
         }
         return remove;
     }
 
     @Override
     public Meal get(int userId, int id) {
+        log.debug("Get meal {} for user {}", id, userId);
         Map<Integer, Meal> userMeals = mealsByUser.get(userId);
         if (userMeals == null) {
-            log.warn("Meal {} not found for user {} ", id, userId);
-            throw new NotFoundException("Meal" + id + " not found for user " + userId);
+            log.trace("No meals found for user {} ", userId);
+            return null;
         }
         Meal meal = userMeals.get(id);
-        if (meal == null || meal.getUserId() != userId) {
-            log.warn("Meal {} not found for user {}", id, userId);
-            throw new NotFoundException("Meal " + id + " not found for user " + userId);
+        if (meal == null) {
+            log.trace("Meal {} not found for user {}", id, userId);
+            return null;
         }
-        log.info("Get meal {} for user {}", id, userId);
         return meal;
     }
 
     @Override
     public List<Meal> getAll(int userId) {
+        log.debug("Get all meals for user {}", userId);
         Map<Integer, Meal> userMeals = mealsByUser.get(userId);
-        List<Meal> result;
-        if (userMeals == null) {
-            result = List.of();
-        } else {
-            result = userMeals.values().stream()
-                    .sorted(Comparator.comparing(Meal::getDateTime).reversed())
-                    .collect(Collectors.toList());
-        }
-        log.info("Get {} meals for user {}", result.size(), userId);
+        List<Meal> result = (userMeals == null) ?
+                Collections.emptyList() :
+                userMeals.values().stream()
+                        .sorted(Comparator.comparing(Meal::getDateTime).reversed())
+                        .collect(Collectors.toList());
+        log.debug("Get {} meals for user {}", result.size(), userId);
         return result;
     }
 
     @Override
-    public List<Meal> getBetweenHalfOpen(LocalDateTime startDateTime, LocalDateTime endDateTime, int userId) {
+    public List<Meal> getBetweenHalfOpenByDayAndTime(LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime, int userId) {
+        log.debug("Get meals for user {} between dates: {} {} and {} {}", userId, startDate, startTime, endDate, endTime);
         Map<Integer, Meal> userMeals = mealsByUser.get(userId);
-
+        if (userMeals == null) {
+            log.trace("No meals found for user {}", userId);
+            return Collections.emptyList();
+        }
         return userMeals.values().stream()
-                .filter(meal -> DateTimeUtil.isBetweenHalfOpen(meal.getDateTime(), startDateTime, endDateTime))
+                .filter(meal -> DateTimeUtil.isBetweenHalfOpenByDayAndTime(
+                        meal.getDateTime(), startDate, endDate, startTime, endTime))
                 .sorted(Comparator.comparing(Meal::getDateTime).reversed())
                 .collect(Collectors.toList());
     }
