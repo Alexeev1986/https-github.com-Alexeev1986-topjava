@@ -27,37 +27,35 @@ public class MealServlet extends HttpServlet {
 
     private MealRestController controller;
 
-
     @Override
     public void init() {
         ApplicationContext ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
         controller = ctx.getBean(MealRestController.class);
-
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         request.setCharacterEncoding("UTF-8");
 
-        String action = request.getParameter("action");
-        log.debug("POST action parameter: {}", action);
-        if ("filter".equals(action)) {
-            filter(request, response);
-            return;
-        }
-        if (action == null) {
-            log.warn("Action parameter is null, treating as meal save");
-        }
         String id = request.getParameter("id");
 
-        Meal meal = new Meal(id.isEmpty() ? null : Integer.valueOf(id),
+        Meal meal = new Meal(id.isEmpty() ? null : getId(request),
                 LocalDateTime.parse(request.getParameter("dateTime")),
                 request.getParameter("description"),
                 Integer.parseInt(request.getParameter("calories")));
 
         log.info(meal.isNew() ? "Create {}" : "Update {}", meal);
-        controller.create(meal);
+        if (meal.isNew()) {
+            controller.create(meal);
+        } else {
+            controller.update(getId(request), meal);
+        }
         response.sendRedirect("meals");
+    }
+
+    private int getId(HttpServletRequest request) {
+        String paramId = Objects.requireNonNull(request.getParameter("id"));
+        return Integer.parseInt(paramId);
     }
 
     @Override
@@ -72,6 +70,7 @@ public class MealServlet extends HttpServlet {
                 response.sendRedirect("meals");
                 break;
             case "create":
+
             case "update":
                 final Meal meal = "create".equals(action) ?
                         new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 1000) :
@@ -100,10 +99,6 @@ public class MealServlet extends HttpServlet {
         LocalDate endDate = parseDate(endDateParam);
         LocalTime startTime = parseTime(startTimeParam);
         LocalTime endTime = parseTime(endTimeParam);
-        if (startDate != null) request.setAttribute("startDate", startDateParam);
-        if (endDate != null) request.setAttribute("endDate", endDateParam);
-        if (startTime != null) request.setAttribute("startTime", startTimeParam);
-        if (endTime != null) request.setAttribute("endTime", endTimeParam);
 
         List<MealTo> meals = controller.getWithFilters(startDate, startTime, endDate, endTime);
         request.setAttribute("meals", meals);
@@ -117,10 +112,5 @@ public class MealServlet extends HttpServlet {
 
     private LocalTime parseTime(String timeStr) {
         return (timeStr != null && !timeStr.isEmpty()) ? LocalTime.parse(timeStr, TIME_FORMATTER) : null;
-    }
-
-    private int getId(HttpServletRequest request) {
-        String paramId = Objects.requireNonNull(request.getParameter("id"));
-        return Integer.parseInt(paramId);
     }
 }

@@ -16,20 +16,24 @@ public class DateTimeUtil {
 
     public static boolean isBetweenHalfOpenByDayAndTime(LocalDateTime ltd, LocalDate startDate, LocalDate endDate,
                                                         LocalTime startTime, LocalTime endTime) {
-        LocalDateTime start = null;
-        if (startDate != null) {
-            LocalTime timeStart = (startTime != null) ? startTime : LocalTime.MIN;
-            start = startDate.atTime(timeStart);
+        LocalDate date = ltd.toLocalDate();
+        LocalTime time = ltd.toLocalTime();
+        boolean afterStartDate = startDate == null || !date.isBefore(startDate);
+        boolean beforeEndDate = endDate == null || !endDate.isBefore(date);
+        boolean startTimeValid = true;
+        if (startDate != null && date.equals(startDate) && startTime != null) {
+            startTimeValid = !time.isBefore(startTime);
         }
-        LocalDateTime end = null;
-        if (endDate != null) {
-            LocalTime timeEnd = (endTime != null) ? endTime : LocalTime.MIN;
-            end = endDate.atTime(timeEnd);
-            if (endTime == null) {
-                end = end.plusDays(1);
-            }
+        boolean endTimeValid = true;
+        if (endDate != null && date.equals(endDate) && endTime != null) {
+            endTimeValid = time.isBefore(endTime);
         }
-        return isBetweenHalfOpen(ltd, start, end);
+        boolean globalTimeValid = true;
+        if (startDate == null && endDate == null) {
+            globalTimeValid = (startTime == null || !time.isBefore(startTime)) &&
+                    (endTime == null || time.isBefore(endTime));
+        }
+        return afterStartDate && beforeEndDate && startTimeValid && endTimeValid && globalTimeValid;
     }
 
     public static String toString(LocalDateTime ldt) {

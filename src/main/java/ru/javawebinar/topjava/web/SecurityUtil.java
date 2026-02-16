@@ -1,19 +1,23 @@
 package ru.javawebinar.topjava.web;
 
-import static ru.javawebinar.topjava.util.MealsUtil.DEFAULT_CALORIES_PER_DAY;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SecurityUtil {
+    private static final Logger log = LoggerFactory.getLogger(MealServlet.class);
+
     private static int authUserId = 1;
 
     public static int authUserId() {
         return authUserId;
     }
 
-    public static int authUserCaloriesPerDay() {
-        return DEFAULT_CALORIES_PER_DAY;
-    }
-
     public static void setAuthUserId(int userId) {
         SecurityUtil.authUserId = userId;
+        log.info("Authorization from user {}", authUserId);
+    }
+
+    public static int authUserCaloriesPerDay() {
+        return authUserId == 1 ? 2000 : 1800;
     }
 }

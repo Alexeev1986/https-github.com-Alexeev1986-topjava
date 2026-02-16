@@ -1,19 +1,11 @@
 package ru.javawebinar.topjava.repository.inmemory;
 
-import static ru.javawebinar.topjava.util.DateTimeUtil.isBetweenHalfOpenByDayAndTime;
-import static ru.javawebinar.topjava.util.MealsUtil.getTos;
-import static ru.javawebinar.topjava.web.SecurityUtil.authUserCaloriesPerDay;
-
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,13 +48,8 @@ public class InMemoryMealRepository implements MealRepository {
             log.trace("Meal {} not found for user {}", meal.getId(), userId);
             return null;
         }
-        if (userMeals.replace(meal.getId(), oldMeal, meal)) {
-            log.debug("Update meal {} for user {}", meal.getId(), userId);
-            return meal;
-        } else {
-            log.warn("Failed to update meal {} for user {} ", meal, userId);
-            return null;
-        }
+        userMeals.put(meal.getId(), meal);
+        return meal;
     }
 
     @Override
