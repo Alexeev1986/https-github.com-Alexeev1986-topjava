@@ -19,7 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.model.MealTo;
+import ru.javawebinar.topjava.to.MealTo;
 import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.util.MealsUtil;
 
@@ -32,7 +32,7 @@ public class InMemoryMealRepository implements MealRepository {
     {
         int user = 1;
         for (int i = 0; i < 12; i++) {
-            if (i > 5) user++;
+            if (i == 6) user++;
             save(user, MealsUtil.meals.get(i));
         }
     }

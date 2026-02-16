@@ -10,10 +10,10 @@ import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.model.MealTo;
+import ru.javawebinar.topjava.to.MealTo;
 
 public class MealsUtil {
-    public static final int DEFAULT_CALORIES_PER_DAY = 1500;
+    public static final int DEFAULT_CALORIES_PER_DAY = 2000;
 
     public static final List<Meal> meals = Arrays.asList(
             new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 9, 0), "Завтрак", 450),
@@ -21,7 +21,7 @@ public class MealsUtil {
             new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 18, 0), "Ужин", 550),
             new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 9, 30), "Завтрак", 500),
             new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 14, 0), "Обед", 1000),
-            new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 1500), // ← 480 → 1500
+            new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 1500),
 
             new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 8, 30), "Овсянка", 400),
             new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 12, 30), "Салат с курицей", 850),
