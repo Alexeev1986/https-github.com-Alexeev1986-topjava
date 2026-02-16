@@ -34,12 +34,6 @@ public class MealService {
         return repository.getAll(userId);
     }
 
-    public List<MealTo> getBetweenHalfOpenByDayAndTime(LocalDate startDate, LocalTime startTime,
-                                                       LocalDate endDate, LocalTime endTime,
-                                                       int userId, int caloriesPerDay) {
-        return repository.getBetweenHalfOpenByDayAndTime(startDate, startTime, endDate, endTime, userId, caloriesPerDay);
-    }
-
     public void update(int userId, Meal meal) {
         checkNotFound(repository.save(userId, meal), meal.getId());
     }

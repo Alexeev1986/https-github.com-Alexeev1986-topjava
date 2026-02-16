@@ -15,14 +15,15 @@ import ru.javawebinar.topjava.to.MealTo;
 public class MealsUtil {
     public static final int DEFAULT_CALORIES_PER_DAY = 2000;
 
-    public static final List<Meal> meals = Arrays.asList(
+    public static final List<Meal> user1Meals = Arrays.asList(
             new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 9, 0), "Завтрак", 450),
             new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 13, 0), "Обед", 950),
             new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 18, 0), "Ужин", 550),
             new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 9, 30), "Завтрак", 500),
             new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 14, 0), "Обед", 1000),
-            new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 1500),
-
+            new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 1500)
+    );
+    public static final List<Meal> user2Meals = Arrays.asList(
             new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 8, 30), "Овсянка", 400),
             new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 12, 30), "Салат с курицей", 850),
             new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 19, 0), "Рыба на пару", 600),

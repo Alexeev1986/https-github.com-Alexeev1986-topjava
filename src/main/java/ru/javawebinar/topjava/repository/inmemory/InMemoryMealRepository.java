@@ -19,7 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.to.MealTo;
 import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.util.MealsUtil;
 
@@ -30,10 +29,11 @@ public class InMemoryMealRepository implements MealRepository {
     private final AtomicInteger counter = new AtomicInteger(0);
 
     {
-        int user = 1;
-        for (int i = 0; i < 12; i++) {
-            if (i == 6) user++;
-            save(user, MealsUtil.meals.get(i));
+        for (Meal meal : MealsUtil.user1Meals) {
+            save(1, meal);
+        }
+        for (Meal meal : MealsUtil.user2Meals) {
+            save(2, meal);
         }
     }
 
@@ -114,23 +114,6 @@ public class InMemoryMealRepository implements MealRepository {
                         .collect(Collectors.toList());
         log.debug("Get {} meals for user {}", result.size(), userId);
         return result;
-    }
-
-    @Override
-    public List<MealTo> getBetweenHalfOpenByDayAndTime(
-            LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime,
-            int userId, int caloriesPerDay) {
-        log.debug("Get meals for user {} between dates: {} {} and {} {}", userId, startDate, startTime, endDate, endTime);
-        Map<Integer, Meal> userMeals = mealsByUser.get(userId);
-        if (userMeals == null) {
-            log.trace("No meals found for user {}", userId);
-            return Collections.emptyList();
-        }
-        List<Meal> mealList = new ArrayList<>(userMeals.values());
-        Predicate<Meal> timePredicate = meal -> isBetweenHalfOpenByDayAndTime(
-                meal.getDateTime(), startDate, endDate, startTime, endTime);
-
-        return getTos(mealList, authUserCaloriesPerDay(), timePredicate);
     }
 }
 

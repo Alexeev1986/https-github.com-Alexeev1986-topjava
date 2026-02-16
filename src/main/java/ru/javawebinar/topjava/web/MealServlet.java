@@ -48,7 +48,6 @@ public class MealServlet extends HttpServlet {
         if (action == null) {
             log.warn("Action parameter is null, treating as meal save");
         }
-
         String id = request.getParameter("id");
 
         Meal meal = new Meal(id.isEmpty() ? null : Integer.valueOf(id),
@@ -61,39 +60,10 @@ public class MealServlet extends HttpServlet {
         response.sendRedirect("meals");
     }
 
-    private void filter(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-        String startDateParam = request.getParameter("startDate");
-        String endDateParam = request.getParameter("endDate");
-        String startTimeParam = request.getParameter("startTime");
-        String endTimeParam = request.getParameter("endTime");
-        LocalDate startDate = parseDate(startDateParam);
-        LocalDate endDate = parseDate(endDateParam);
-        LocalTime startTime = parseTime(startTimeParam);
-        LocalTime endTime = parseTime(endTimeParam);
-        if (startDate != null) request.setAttribute("startDate", startDateParam);
-        if (endDate != null) request.setAttribute("endDate", endDateParam);
-        if (startTime != null) request.setAttribute("startTime", startTimeParam);
-        if (endTime != null) request.setAttribute("endTime", endTimeParam);
-
-        List<MealTo> meals = controller.getWithFilters(startDate, startTime, endDate, endTime);
-        request.setAttribute("meals", meals);
-
-        request.getRequestDispatcher("/meals.jsp").forward(request, response);
-    }
-
-    private LocalDate parseDate(String dateStr) {
-        return (dateStr != null && !dateStr.isEmpty()) ? LocalDate.parse(dateStr, DATE_FORMATTER) : null;
-    }
-
-    private LocalTime parseTime(String timeStr) {
-        return (timeStr != null && !timeStr.isEmpty()) ? LocalTime.parse(timeStr, TIME_FORMATTER) : null;
-    }
-
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
-
+        log.debug("GET action parameter: {}", action);
         switch (action == null ? "all" : action) {
             case "delete":
                 int id = getId(request);
@@ -121,12 +91,36 @@ public class MealServlet extends HttpServlet {
         }
     }
 
+    private void filter(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String startDateParam = request.getParameter("startDate");
+        String endDateParam = request.getParameter("endDate");
+        String startTimeParam = request.getParameter("startTime");
+        String endTimeParam = request.getParameter("endTime");
+        LocalDate startDate = parseDate(startDateParam);
+        LocalDate endDate = parseDate(endDateParam);
+        LocalTime startTime = parseTime(startTimeParam);
+        LocalTime endTime = parseTime(endTimeParam);
+        if (startDate != null) request.setAttribute("startDate", startDateParam);
+        if (endDate != null) request.setAttribute("endDate", endDateParam);
+        if (startTime != null) request.setAttribute("startTime", startTimeParam);
+        if (endTime != null) request.setAttribute("endTime", endTimeParam);
+
+        List<MealTo> meals = controller.getWithFilters(startDate, startTime, endDate, endTime);
+        request.setAttribute("meals", meals);
+
+        request.getRequestDispatcher("/meals.jsp").forward(request, response);
+    }
+
+    private LocalDate parseDate(String dateStr) {
+        return (dateStr != null && !dateStr.isEmpty()) ? LocalDate.parse(dateStr, DATE_FORMATTER) : null;
+    }
+
+    private LocalTime parseTime(String timeStr) {
+        return (timeStr != null && !timeStr.isEmpty()) ? LocalTime.parse(timeStr, TIME_FORMATTER) : null;
+    }
+
     private int getId(HttpServletRequest request) {
         String paramId = Objects.requireNonNull(request.getParameter("id"));
         return Integer.parseInt(paramId);
-    }
-
-    private int getUserId() {
-        return SecurityUtil.authUserId();
     }
 }

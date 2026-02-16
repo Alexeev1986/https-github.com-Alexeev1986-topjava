@@ -1,5 +1,6 @@
 package ru.javawebinar.topjava.web.meal;
 
+import static ru.javawebinar.topjava.util.DateTimeUtil.isBetweenHalfOpenByDayAndTime;
 import static ru.javawebinar.topjava.util.MealsUtil.getTos;
 import static ru.javawebinar.topjava.util.ValidationUtil.assureIdConsistent;
 import static ru.javawebinar.topjava.util.ValidationUtil.checkIsNew;
@@ -9,6 +10,8 @@ import static ru.javawebinar.topjava.web.SecurityUtil.authUserId;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.function.Predicate;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +33,11 @@ public class MealRestController {
     }
 
     public List<MealTo> getWithFilters(LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime) {
-        log.info("Filter meals from {} {} to {} {}", startDate, startTime, endDate, endTime);
-        return service.getBetweenHalfOpenByDayAndTime(startDate, startTime, endDate, endTime, authUserId(), authUserCaloriesPerDay());
+        log.info("Filter meals from {} {} to {} {} from user {}", startDate, startTime, endDate, endTime, authUserId());
+        List<Meal> allUserMeal = service.getAll(authUserId());
+        Predicate<Meal> timePredicate = meal -> isBetweenHalfOpenByDayAndTime(
+                meal.getDateTime(), startDate, endDate, startTime, endTime);
+        return getTos(allUserMeal, authUserCaloriesPerDay(), timePredicate);
     }
 
     public Meal get(int id) {
