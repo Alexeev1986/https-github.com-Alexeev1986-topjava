@@ -29,12 +29,12 @@ public class MealRestController {
 
     public List<MealTo> getAll() {
         log.info("getAll");
-        return getTos(service.getAll(authUserId()), authUserCaloriesPerDay());
+        return getTos(getAllByUser(), authUserCaloriesPerDay());
     }
 
     public List<MealTo> getWithFilters(LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime) {
         log.info("Filter meals from {} {} to {} {} from user {}", startDate, startTime, endDate, endTime, authUserId());
-        List<Meal> allUserMeal = service.getAll(authUserId());
+        List<Meal> allUserMeal = getAllByUser();
         Predicate<Meal> timePredicate = meal -> isBetweenHalfOpenByDayAndTime(
                 meal.getDateTime(), startDate, endDate, startTime, endTime);
         return getTos(allUserMeal, authUserCaloriesPerDay(), timePredicate);
@@ -60,5 +60,9 @@ public class MealRestController {
         log.info("update {} with id={}, with user {}", meal, meal.getId(), authUserId());
         assureIdConsistent(meal, id);
         service.update(authUserId(), meal);
+    }
+
+    private List<Meal> getAllByUser () {
+        return service.getAll(authUserId());
     }
 }
