@@ -10,7 +10,7 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.to.MealTo;
 import ru.javawebinar.topjava.repository.MealRepository;
 
-@Service()
+@Service
 public class MealService {
     private final MealRepository repository;
 

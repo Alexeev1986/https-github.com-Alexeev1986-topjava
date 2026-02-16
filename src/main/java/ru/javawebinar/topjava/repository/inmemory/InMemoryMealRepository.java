@@ -35,7 +35,6 @@ public class InMemoryMealRepository implements MealRepository {
         if (meal.isNew()) {
             meal.setId(counter.incrementAndGet());
             mealsByUser.computeIfAbsent(userId, k -> new ConcurrentHashMap<>()).put(meal.getId(), meal);
-            log.debug("Create {} for user {}", meal, userId);
             return meal;
         }
         Map<Integer, Meal> userMeals = mealsByUser.get(userId);
@@ -48,8 +47,13 @@ public class InMemoryMealRepository implements MealRepository {
             log.trace("Meal {} not found for user {}", meal.getId(), userId);
             return null;
         }
-        userMeals.put(meal.getId(), meal);
-        return meal;
+        if (userMeals.replace(meal.getId(), oldMeal, meal)) {
+            log.debug("Update meal {} for user {}", meal.getId(), userId);
+            return meal;
+        } else {
+            log.warn("Failed to update meal {} for user {} ", meal, userId);
+            return null;
+        }
     }
 
     @Override

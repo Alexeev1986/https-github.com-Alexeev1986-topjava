@@ -28,15 +28,15 @@
         <table>
             <tr>
                 <td><strong>Start Date:</strong></td>
-                <td><input type="date" name="startDate" value="${requestScope.startDate}"/></td>
+                <td><input type="date" name="startDate" value="${param.startDate}"/></td>
                 <td><strong>Start Time:</strong></td>
-                <td><input type="time" name="startTime" value="${requestScope.startTime}"/></td>
+                <td><input type="time" name="startTime" value="${param.startTime}"/></td>
             </tr>
             <tr>
                 <td><strong>End Date:</strong></td>
-                <td><input type="date" name="endDate" value="${requestScope.endDate}"/></td>
+                <td><input type="date" name="endDate" value="${param.endDate}"/></td>
                 <td><strong>End Time:</strong></td>
-                <td><input type="time" name="endTime" value="${requestScope.endTime}"/></td>
+                <td><input type="time" name="endTime" value="${param.endTime}"/></td>
                 <td><button type="submit">Filter</button></td>
             </tr>
         </table>
