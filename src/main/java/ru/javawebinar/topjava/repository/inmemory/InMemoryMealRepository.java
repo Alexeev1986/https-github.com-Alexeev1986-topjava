@@ -101,7 +101,6 @@ public class InMemoryMealRepository implements MealRepository {
 
     @Override
     public List<Meal> getAll(int userId) {
-        log.debug("Get all meals for user {}", userId);
         Map<Integer, Meal> userMeals = mealsByUser.get(userId);
         List<Meal> result = (userMeals == null) ?
                 Collections.emptyList() :

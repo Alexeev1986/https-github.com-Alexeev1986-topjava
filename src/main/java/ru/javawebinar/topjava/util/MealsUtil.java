@@ -40,11 +40,28 @@ public class MealsUtil {
         return filterByPredicate(meals, caloriesPerDay, filter);
     }
 
-    private static List<MealTo> filterByPredicate(Collection<Meal> meals, int caloriesPerDay, Predicate<Meal> filter) {
-        Map<LocalDate, Integer> caloriesSumByDate = meals.stream()
+    public static List<MealTo> getTos(Collection<Meal> filteredMeals, Collection<Meal> userMeals, int caloriesPerDay) {
+        Map<LocalDate, Integer> caloriesSumByDate = getCaloriesSumByDate(userMeals);
+        return filteredMeals.stream()
+                .map(meal -> new MealTo(
+                        meal.getId(),
+                        meal.getDateTime(),
+                        meal.getDescription(),
+                        meal.getCalories(),
+                        caloriesSumByDate.get(meal.getDate()) > caloriesPerDay
+                ))
+                .collect(Collectors.toList());
+    }
+
+    private static Map<LocalDate, Integer> getCaloriesSumByDate(Collection<Meal> meals) {
+        return meals.stream()
                 .collect(
                         Collectors.groupingBy(Meal::getDate, Collectors.summingInt(Meal::getCalories))
                 );
+    }
+
+    private static List<MealTo> filterByPredicate(Collection<Meal> meals, int caloriesPerDay, Predicate<Meal> filter) {
+        Map<LocalDate, Integer> caloriesSumByDate = getCaloriesSumByDate(meals);
 
         return meals.stream()
                 .filter(filter)

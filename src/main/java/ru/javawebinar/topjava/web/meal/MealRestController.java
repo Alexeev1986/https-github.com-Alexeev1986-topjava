@@ -32,19 +32,8 @@ public class MealRestController {
 
     public List<MealTo> getWithFilters(LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime) {
         log.info("Filter meals from {} {} to {} {} from user {}", startDate, startTime, endDate, endTime, authUserId());
-        Map<LocalDate, Integer> dailyCalories = getAllByUser().stream().collect(Collectors.groupingBy(
-                Meal::getDate, Collectors.summingInt(Meal::getCalories)));
         List<Meal> filteredMeals = service.getFilteredByDateTime(startDate, startTime, endDate, endTime, authUserId());
-        int caloriesPerDay = authUserCaloriesPerDay();
-        return filteredMeals.stream()
-                .map(meal -> new MealTo(
-                        meal.getId(),
-                        meal.getDateTime(),
-                        meal.getDescription(),
-                        meal.getCalories(),
-                        dailyCalories.get(meal.getDate()) > caloriesPerDay
-                ))
-                .collect(Collectors.toList());
+        return getTos(filteredMeals, getAllByUser(), authUserCaloriesPerDay());
     }
 
     public Meal get(int id) {
