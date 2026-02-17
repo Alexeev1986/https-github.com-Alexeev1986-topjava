@@ -7,7 +7,6 @@ import java.time.LocalTime;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.to.MealTo;
 import ru.javawebinar.topjava.repository.MealRepository;
 
 @Service
@@ -32,6 +31,10 @@ public class MealService {
 
     public List<Meal> getAll(int userId) {
         return repository.getAll(userId);
+    }
+
+    public List<Meal> getFilteredByDateTime(LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime, int userId) {
+        return repository.getFilteredByDateTime(startDate, startTime, endDate, endTime, userId);
     }
 
     public void update(int userId, Meal meal) {

@@ -21,8 +21,8 @@
     <h3><a href="index.html">Home</a></h3>
     <hr/>
     <h2>Meals</h2>
-    <a href="meals?action=create">Add Meal</a>
     <br><br>
+    <hr/>
     <form method="get" action="meals">
         <input type="hidden" name="action" value="filter"/>
         <table>
@@ -42,7 +42,7 @@
         </table>
     </form>
     <br>
-
+    <hr/>
     <table border="1" cellpadding="8" cellspacing="0">
         <thead>
         <tr>
@@ -69,6 +69,9 @@
             </tr>
         </c:forEach>
     </table>
+    <br>
+    <hr/>
+    <a href="meals?action=create">Add Meal</a>
 </section>
 </body>
 </html>

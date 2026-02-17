@@ -1,11 +1,16 @@
 package ru.javawebinar.topjava.repository.inmemory;
 
+import static ru.javawebinar.topjava.util.DateTimeUtil.isBetweenHalfOpenByDayAndTime;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -105,6 +110,15 @@ public class InMemoryMealRepository implements MealRepository {
                         .collect(Collectors.toList());
         log.debug("Get {} meals for user {}", result.size(), userId);
         return result;
+    }
+
+    @Override
+    public List<Meal> getFilteredByDateTime(LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime, int userId) {
+        Predicate<Meal> timePredicate = meal -> isBetweenHalfOpenByDayAndTime(
+                meal.getDateTime(), startDate, endDate, startTime, endTime);
+        return mealsByUser.get(userId).values().stream()
+                .filter(timePredicate)
+                .collect(Collectors.toList());
     }
 }
 
