@@ -16,7 +16,6 @@ import ru.javawebinar.topjava.web.user.AdminRestController;
 
 public class SpringMain {
     public static void main(String[] args) {
-        // java 7 automatic resource management  (ARM)
         try (ConfigurableApplicationContext appCtx = new ClassPathXmlApplicationContext("spring/spring-app.xml")) {
             System.out.println("\nBean definition names: ");
             String[] binsArr = appCtx.getBeanDefinitionNames();

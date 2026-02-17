@@ -1,23 +1,20 @@
 package ru.javawebinar.topjava.repository.inmemory;
 
-import static ru.javawebinar.topjava.util.DateTimeUtil.isBetweenHalfOpenByDayAndTime;
+import static ru.javawebinar.topjava.util.DateTimeUtil.isBetweenHalfOpen;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
-import ru.javawebinar.topjava.to.MealsFilterResult;
 import ru.javawebinar.topjava.util.MealsUtil;
 
 @Repository
@@ -113,14 +110,11 @@ public class InMemoryMealRepository implements MealRepository {
     }
 
     @Override
-    public MealsFilterResult getFilteredByDateTime(LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime, int userId) {
-        Predicate<Meal> timePredicate = meal -> isBetweenHalfOpenByDayAndTime(
-                meal.getDateTime(), startDate, endDate, startTime, endTime);
-        Map<LocalDate, Integer> excessFlags = MealsUtil.getCaloriesSumByDate(mealsByUser.get(userId).values());
-        List<Meal> filteredMeals = mealsByUser.get(userId).values().stream()
-                .filter(timePredicate)
+    public List<Meal> getFilteredByDate(LocalDate startDate, LocalDate endDate, int userId) {
+        LocalDate newEndDate = endDate.plusDays(1);
+        return mealsByUser.get(userId).values().stream()
+                .filter(meal -> isBetweenHalfOpen(meal.getDate(), startDate, newEndDate))
                 .collect(Collectors.toList());
-        return new MealsFilterResult(filteredMeals, excessFlags);
     }
 }
 

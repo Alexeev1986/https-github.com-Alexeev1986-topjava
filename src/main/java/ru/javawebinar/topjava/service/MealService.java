@@ -3,12 +3,10 @@ package ru.javawebinar.topjava.service;
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFound;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
-import ru.javawebinar.topjava.to.MealsFilterResult;
 
 @Service
 public class MealService {
@@ -34,8 +32,8 @@ public class MealService {
         return repository.getAll(userId);
     }
 
-    public MealsFilterResult getFilteredByDateTime(LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime, int userId) {
-        return repository.getFilteredByDateTime(startDate, startTime, endDate, endTime, userId);
+    public List<Meal> getFilteredByDate(LocalDate startDate, LocalDate endDate, int userId) {
+        return repository.getFilteredByDate(startDate, endDate, userId);
     }
 
     public void update(int userId, Meal meal) {

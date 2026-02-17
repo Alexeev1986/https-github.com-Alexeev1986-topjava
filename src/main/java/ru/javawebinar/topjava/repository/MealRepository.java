@@ -1,10 +1,8 @@
 package ru.javawebinar.topjava.repository;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.to.MealsFilterResult;
 
 public interface MealRepository {
     Meal save(int userId, Meal meal);
@@ -15,5 +13,5 @@ public interface MealRepository {
 
     List<Meal> getAll(int userId);
 
-    MealsFilterResult getFilteredByDateTime(LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime, int userId);
+    List<Meal> getFilteredByDate(LocalDate startDate, LocalDate endDate, int userId);
 }

@@ -5,13 +5,13 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.to.MealTo;
-import ru.javawebinar.topjava.to.MealsFilterResult;
 
 public class MealsUtil {
     public static final int DEFAULT_CALORIES_PER_DAY = 2000;
@@ -38,16 +38,9 @@ public class MealsUtil {
     }
 
     public static List<MealTo> getTos(Collection<Meal> meals, int caloriesPerDay, Predicate<Meal> filter) {
-        return filterByPredicate(meals, caloriesPerDay, filter);
-    }
-
-    public static List<MealTo> getTos(MealsFilterResult mealsFilterResult, int caloriesPerDay) {
-        List<Meal> filteredMeals = mealsFilterResult.getMeals();
-        Map<LocalDate, Integer> caloriesSumByDate = mealsFilterResult.getExcessFlags();
-        return filteredMeals.stream()
-                .map(meal -> createTo(meal, caloriesSumByDate.get(meal.getDate()) > caloriesPerDay
-                ))
-                .collect(Collectors.toList());
+        List<MealTo> result = filterByPredicate(meals, caloriesPerDay, filter);
+        result.sort(Comparator.comparing(MealTo::getDateTime).reversed());
+        return result;
     }
 
     public static Map<LocalDate, Integer> getCaloriesSumByDate(Collection<Meal> meals) {
