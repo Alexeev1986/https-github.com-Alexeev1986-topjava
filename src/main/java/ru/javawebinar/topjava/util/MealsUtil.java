@@ -11,6 +11,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.to.MealTo;
+import ru.javawebinar.topjava.to.MealsFilterResult;
 
 public class MealsUtil {
     public static final int DEFAULT_CALORIES_PER_DAY = 2000;
@@ -40,20 +41,16 @@ public class MealsUtil {
         return filterByPredicate(meals, caloriesPerDay, filter);
     }
 
-    public static List<MealTo> getTos(Collection<Meal> filteredMeals, Collection<Meal> userMeals, int caloriesPerDay) {
-        Map<LocalDate, Integer> caloriesSumByDate = getCaloriesSumByDate(userMeals);
+    public static List<MealTo> getTos(MealsFilterResult mealsFilterResult, int caloriesPerDay) {
+        List<Meal> filteredMeals = mealsFilterResult.getMeals();
+        Map<LocalDate, Integer> caloriesSumByDate = mealsFilterResult.getExcessFlags();
         return filteredMeals.stream()
-                .map(meal -> new MealTo(
-                        meal.getId(),
-                        meal.getDateTime(),
-                        meal.getDescription(),
-                        meal.getCalories(),
-                        caloriesSumByDate.get(meal.getDate()) > caloriesPerDay
+                .map(meal -> createTo(meal, caloriesSumByDate.get(meal.getDate()) > caloriesPerDay
                 ))
                 .collect(Collectors.toList());
     }
 
-    private static Map<LocalDate, Integer> getCaloriesSumByDate(Collection<Meal> meals) {
+    public static Map<LocalDate, Integer> getCaloriesSumByDate(Collection<Meal> meals) {
         return meals.stream()
                 .collect(
                         Collectors.groupingBy(Meal::getDate, Collectors.summingInt(Meal::getCalories))

@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
+import ru.javawebinar.topjava.to.MealsFilterResult;
 import ru.javawebinar.topjava.util.MealsUtil;
 
 @Repository
@@ -112,12 +113,14 @@ public class InMemoryMealRepository implements MealRepository {
     }
 
     @Override
-    public List<Meal> getFilteredByDateTime(LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime, int userId) {
+    public MealsFilterResult getFilteredByDateTime(LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime, int userId) {
         Predicate<Meal> timePredicate = meal -> isBetweenHalfOpenByDayAndTime(
                 meal.getDateTime(), startDate, endDate, startTime, endTime);
-        return mealsByUser.get(userId).values().stream()
+        Map<LocalDate, Integer> excessFlags = MealsUtil.getCaloriesSumByDate(mealsByUser.get(userId).values());
+        List<Meal> filteredMeals = mealsByUser.get(userId).values().stream()
                 .filter(timePredicate)
                 .collect(Collectors.toList());
+        return new MealsFilterResult(filteredMeals, excessFlags);
     }
 }
 

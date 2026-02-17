@@ -9,8 +9,6 @@ import static ru.javawebinar.topjava.web.SecurityUtil.authUserId;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.to.MealTo;
+import ru.javawebinar.topjava.to.MealsFilterResult;
 
 @Controller
 public class MealRestController {
@@ -32,8 +31,8 @@ public class MealRestController {
 
     public List<MealTo> getWithFilters(LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime) {
         log.info("Filter meals from {} {} to {} {} from user {}", startDate, startTime, endDate, endTime, authUserId());
-        List<Meal> filteredMeals = service.getFilteredByDateTime(startDate, startTime, endDate, endTime, authUserId());
-        return getTos(filteredMeals, getAllByUser(), authUserCaloriesPerDay());
+        MealsFilterResult filteredMeals = service.getFilteredByDateTime(startDate, startTime, endDate, endTime, authUserId());
+        return getTos(filteredMeals, authUserCaloriesPerDay());
     }
 
     public Meal get(int id) {
