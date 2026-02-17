@@ -38,9 +38,7 @@ public class MealsUtil {
     }
 
     public static List<MealTo> getTos(Collection<Meal> meals, int caloriesPerDay, Predicate<Meal> filter) {
-        List<MealTo> result = filterByPredicate(meals, caloriesPerDay, filter);
-        result.sort(Comparator.comparing(MealTo::getDateTime).reversed());
-        return result;
+        return filterByPredicate(meals, caloriesPerDay, filter);
     }
 
     public static Map<LocalDate, Integer> getCaloriesSumByDate(Collection<Meal> meals) {
@@ -56,6 +54,7 @@ public class MealsUtil {
         return meals.stream()
                 .filter(filter)
                 .map(meal -> createTo(meal, caloriesSumByDate.get(meal.getDate()) > caloriesPerDay))
+                .sorted(Comparator.comparing(MealTo::getDateTime).reversed())
                 .collect(Collectors.toList());
     }
 
