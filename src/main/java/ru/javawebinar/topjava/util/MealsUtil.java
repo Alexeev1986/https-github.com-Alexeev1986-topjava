@@ -51,7 +51,7 @@ public class MealsUtil {
                 );
     }
 
-    private static List<MealTo> filterByPredicate(Collection<Meal> meals, int caloriesPerDay, Predicate<Meal> filter) {
+    public static List<MealTo> filterByPredicate(Collection<Meal> meals, int caloriesPerDay, Predicate<Meal> filter) {
         Map<LocalDate, Integer> caloriesSumByDate = getCaloriesSumByDate(meals);
 
         return meals.stream()

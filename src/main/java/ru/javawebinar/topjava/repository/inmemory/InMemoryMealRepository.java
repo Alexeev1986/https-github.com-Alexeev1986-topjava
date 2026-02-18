@@ -3,10 +3,7 @@ package ru.javawebinar.topjava.repository.inmemory;
 import static ru.javawebinar.topjava.util.DateTimeUtil.isBetweenHalfOpen;
 
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
@@ -99,23 +96,34 @@ public class InMemoryMealRepository implements MealRepository {
     }
 
     @Override
-    public List<Meal> getAll(LocalDate startDate, LocalDate endDate, int userId) {
+    public List<Meal> getAll(int userId) {
         Map<Integer, Meal> userMeals = mealsByUser.get(userId);
+        List<Meal> result = (userMeals == null) ?
+                Collections.emptyList() :
+                getMeals(userMeals.values(), meal -> true);
+        log.debug("Get {} meals for user {}", result.size(), userId);
+        return result;
+    }
 
+    @Override
+    public List<Meal> getFilteredByDate(LocalDate startDate, LocalDate endDate, int userId) {
+        log.debug("Get filtered meals for user {} on startDate {} and endDate {}", userId, startDate, endDate);
+        Map<Integer, Meal> userMeals = mealsByUser.get(userId);
         if (userMeals == null) {
             return Collections.emptyList();
         }
         LocalDate newEndDate = (endDate != null) ? endDate.plusDays(1) : null;
-
         Predicate<Meal> filter = (startDate == null && endDate == null)
-                ? meal -> true
+                ? meal -> true  // если фильтров нет — пропускаем всё
                 : meal -> isBetweenHalfOpen(meal.getDate(), startDate, newEndDate);
-        List<Meal> result = userMeals.values().stream()
+        return getMeals(userMeals.values(), filter);
+    }
+
+    private List<Meal> getMeals(Collection<Meal> meals, Predicate<Meal> filter) {
+        return meals.stream()
                 .filter(filter)
                 .sorted(Comparator.comparing(Meal::getDateTime).reversed())
                 .collect(Collectors.toList());
-        log.debug("Get {} meals for user {} on startDate {} and endDate {}", result.size(), userId, startDate, endDate);
-        return result;
     }
 }
 
