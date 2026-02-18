@@ -30,7 +30,7 @@ public class MealRestController {
 
     public List<MealTo> getWithFilters(LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime) {
         log.info("Filter meals from {} {} to {} {} from user {}", startDate, startTime, endDate, endTime, authUserId());
-        List<Meal> filteredMeals = service.getAll(startDate, endDate, authUserId());
+        List<Meal> filteredMeals = service.getFilteredByDate(startDate, endDate, authUserId());
         return getTos(filteredMeals, authUserCaloriesPerDay(), startTime, endTime);
     }
 
@@ -58,6 +58,6 @@ public class MealRestController {
 
     private List<Meal> getAllByUser() {
         log.info("getAll bu user {}", authUserId());
-        return service.getAll(null, null, authUserId());
+        return service.getAll(authUserId());
     }
 }
