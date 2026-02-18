@@ -3,7 +3,10 @@ package ru.javawebinar.topjava.repository.inmemory;
 import static ru.javawebinar.topjava.util.DateTimeUtil.isBetweenHalfOpen;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
@@ -97,10 +100,7 @@ public class InMemoryMealRepository implements MealRepository {
 
     @Override
     public List<Meal> getAll(int userId) {
-        Map<Integer, Meal> userMeals = mealsByUser.get(userId);
-        List<Meal> result = (userMeals == null) ?
-                Collections.emptyList() :
-                getMeals(userMeals.values(), meal -> true);
+        List<Meal> result = getMeals(userId, meal -> true);
         log.debug("Get {} meals for user {}", result.size(), userId);
         return result;
     }
@@ -108,19 +108,19 @@ public class InMemoryMealRepository implements MealRepository {
     @Override
     public List<Meal> getFilteredByDate(LocalDate startDate, LocalDate endDate, int userId) {
         log.debug("Get filtered meals for user {} on startDate {} and endDate {}", userId, startDate, endDate);
+        LocalDate filterEndDate = (endDate != null) ? endDate.plusDays(1) : null;
+        Predicate<Meal> filter = (startDate == null && endDate == null)
+                ? meal -> true
+                : meal -> isBetweenHalfOpen(meal.getDate(), startDate, filterEndDate);
+        return getMeals(userId, filter);
+    }
+
+    private List<Meal> getMeals(int userId, Predicate<Meal> filter) {
         Map<Integer, Meal> userMeals = mealsByUser.get(userId);
         if (userMeals == null) {
             return Collections.emptyList();
         }
-        LocalDate newEndDate = (endDate != null) ? endDate.plusDays(1) : null;
-        Predicate<Meal> filter = (startDate == null && endDate == null)
-                ? meal -> true
-                : meal -> isBetweenHalfOpen(meal.getDate(), startDate, newEndDate);
-        return getMeals(userMeals.values(), filter);
-    }
-
-    private List<Meal> getMeals(Collection<Meal> meals, Predicate<Meal> filter) {
-        return meals.stream()
+        return userMeals.values().stream()
                 .filter(filter)
                 .sorted(Comparator.comparing(Meal::getDateTime).reversed())
                 .collect(Collectors.toList());
