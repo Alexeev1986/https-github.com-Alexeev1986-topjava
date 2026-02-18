@@ -107,12 +107,13 @@ public class InMemoryMealRepository implements MealRepository {
 
     @Override
     public List<Meal> getFilteredByDate(LocalDate startDate, LocalDate endDate, int userId) {
-        log.debug("Get filtered meals for user {} on startDate {} and endDate {}", userId, startDate, endDate);
         LocalDate filterEndDate = (endDate != null) ? endDate.plusDays(1) : null;
         Predicate<Meal> filter = (startDate == null && endDate == null)
                 ? meal -> true
                 : meal -> isBetweenHalfOpen(meal.getDate(), startDate, filterEndDate);
-        return getMeals(userId, filter);
+        List<Meal> filteredMeals = getMeals(userId, filter);
+        log.debug("Get {} filtered meals for user {} on startDate {} and endDate {}", filteredMeals.size(), userId, startDate, endDate);
+        return filteredMeals;
     }
 
     private List<Meal> getMeals(int userId, Predicate<Meal> filter) {
