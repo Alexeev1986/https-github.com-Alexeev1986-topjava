@@ -114,7 +114,7 @@ public class InMemoryMealRepository implements MealRepository {
         }
         LocalDate newEndDate = (endDate != null) ? endDate.plusDays(1) : null;
         Predicate<Meal> filter = (startDate == null && endDate == null)
-                ? meal -> true  // если фильтров нет — пропускаем всё
+                ? meal -> true
                 : meal -> isBetweenHalfOpen(meal.getDate(), startDate, newEndDate);
         return getMeals(userMeals.values(), filter);
     }
