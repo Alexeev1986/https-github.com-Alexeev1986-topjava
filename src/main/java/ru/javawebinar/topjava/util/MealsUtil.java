@@ -1,11 +1,13 @@
 package ru.javawebinar.topjava.util;
 
+import static ru.javawebinar.topjava.util.DateTimeUtil.isBetweenHalfOpen;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.Month;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -37,8 +39,9 @@ public class MealsUtil {
         return filterByPredicate(meals, caloriesPerDay, meal -> true);
     }
 
-    public static List<MealTo> getTos(Collection<Meal> meals, int caloriesPerDay, Predicate<Meal> filter) {
-        return filterByPredicate(meals, caloriesPerDay, filter);
+    public static List<MealTo> getTos(Collection<Meal> meals, int caloriesPerDay, LocalTime startTime, LocalTime endTime) {
+        Predicate<Meal> filteredByTime = meal -> isBetweenHalfOpen(meal.getTime(), startTime, endTime);
+        return filterByPredicate(meals, caloriesPerDay, filteredByTime);
     }
 
     public static Map<LocalDate, Integer> getCaloriesSumByDate(Collection<Meal> meals) {
@@ -54,7 +57,6 @@ public class MealsUtil {
         return meals.stream()
                 .filter(filter)
                 .map(meal -> createTo(meal, caloriesSumByDate.get(meal.getDate()) > caloriesPerDay))
-                .sorted(Comparator.comparing(MealTo::getDateTime).reversed())
                 .collect(Collectors.toList());
     }
 

@@ -28,12 +28,8 @@ public class MealService {
         return checkNotFound(repository.get(userId, id), id);
     }
 
-    public List<Meal> getAll(int userId) {
-        return repository.getAll(userId);
-    }
-
-    public List<Meal> getFilteredByDate(LocalDate startDate, LocalDate endDate, int userId) {
-        return repository.getFilteredByDate(startDate, endDate, userId);
+    public List<Meal> getAll(LocalDate startDate, LocalDate endDate, int userId) {
+        return repository.getAll(startDate, endDate, userId);
     }
 
     public void update(int userId, Meal meal) {

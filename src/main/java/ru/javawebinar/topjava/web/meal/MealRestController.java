@@ -1,6 +1,5 @@
 package ru.javawebinar.topjava.web.meal;
 
-import static ru.javawebinar.topjava.util.DateTimeUtil.isBetweenHalfOpen;
 import static ru.javawebinar.topjava.util.MealsUtil.getTos;
 import static ru.javawebinar.topjava.util.ValidationUtil.assureIdConsistent;
 import static ru.javawebinar.topjava.util.ValidationUtil.checkIsNew;
@@ -10,7 +9,6 @@ import static ru.javawebinar.topjava.web.SecurityUtil.authUserId;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.function.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +30,8 @@ public class MealRestController {
 
     public List<MealTo> getWithFilters(LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime) {
         log.info("Filter meals from {} {} to {} {} from user {}", startDate, startTime, endDate, endTime, authUserId());
-        List<Meal> filteredMeals = service.getFilteredByDate(startDate, endDate, authUserId());
-        Predicate<Meal> filteredByTime = meal -> isBetweenHalfOpen(meal.getTime(), startTime, endTime);
-        return getTos(filteredMeals, authUserCaloriesPerDay(), filteredByTime);
+        List<Meal> filteredMeals = service.getAll(startDate, endDate, authUserId());
+        return getTos(filteredMeals, authUserCaloriesPerDay(), startTime, endTime);
     }
 
     public Meal get(int id) {
@@ -61,6 +58,6 @@ public class MealRestController {
 
     private List<Meal> getAllByUser() {
         log.info("getAll bu user {}", authUserId());
-        return service.getAll(authUserId());
+        return service.getAll(null, null, authUserId());
     }
 }

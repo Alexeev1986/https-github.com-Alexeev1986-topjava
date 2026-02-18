@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -98,23 +99,23 @@ public class InMemoryMealRepository implements MealRepository {
     }
 
     @Override
-    public List<Meal> getAll(int userId) {
+    public List<Meal> getAll(LocalDate startDate, LocalDate endDate, int userId) {
         Map<Integer, Meal> userMeals = mealsByUser.get(userId);
-        List<Meal> result = (userMeals == null) ?
-                Collections.emptyList() :
-                userMeals.values().stream()
-                        .sorted(Comparator.comparing(Meal::getDateTime).reversed())
-                        .collect(Collectors.toList());
-        log.debug("Get {} meals for user {}", result.size(), userId);
-        return result;
-    }
 
-    @Override
-    public List<Meal> getFilteredByDate(LocalDate startDate, LocalDate endDate, int userId) {
-        LocalDate newEndDate = endDate.plusDays(1);
-        return mealsByUser.get(userId).values().stream()
-                .filter(meal -> isBetweenHalfOpen(meal.getDate(), startDate, newEndDate))
+        if (userMeals == null) {
+            return Collections.emptyList();
+        }
+        LocalDate newEndDate = (endDate != null) ? endDate.plusDays(1) : null;
+
+        Predicate<Meal> filter = (startDate == null && endDate == null)
+                ? meal -> true
+                : meal -> isBetweenHalfOpen(meal.getDate(), startDate, newEndDate);
+        List<Meal> result = userMeals.values().stream()
+                .filter(filter)
+                .sorted(Comparator.comparing(Meal::getDateTime).reversed())
                 .collect(Collectors.toList());
+        log.debug("Get {} meals for user {} on startDate {} and endDate {}", result.size(), userId, startDate, endDate);
+        return result;
     }
 }
 

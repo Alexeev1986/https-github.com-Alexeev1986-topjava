@@ -49,8 +49,8 @@ public class SpringMain {
                 System.out.println("\ndelete:");
                 mealRestController.delete(2);
                 System.out.println("\nupdate:");
-                Meal upadateMeal = new Meal(13, LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "Ужин", 777);
-                mealRestController.update(13, upadateMeal);
+                Meal updateMeal = new Meal(13, LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "Ужин", 777);
+                mealRestController.update(13, updateMeal);
             } catch (Exception e) {
                 System.out.println("Error " + e.getMessage());
             }
