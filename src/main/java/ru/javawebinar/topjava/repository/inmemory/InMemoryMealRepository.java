@@ -1,15 +1,8 @@
 package ru.javawebinar.topjava.repository.inmemory;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Repository;
-import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.repository.MealRepository;
-import ru.javawebinar.topjava.util.MealsUtil;
-import ru.javawebinar.topjava.util.Util;
+import static ru.javawebinar.topjava.repository.inmemory.MainTestData.ADMIN_ID;
+import static ru.javawebinar.topjava.repository.inmemory.MainTestData.USER_ID;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.Collections;
@@ -19,9 +12,15 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
-import static ru.javawebinar.topjava.web.UserTestData.ADMIN_ID;
-import static ru.javawebinar.topjava.web.UserTestData.USER_ID;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Repository;
+import ru.javawebinar.topjava.model.Meal;
+import ru.javawebinar.topjava.repository.MealRepository;
+import ru.javawebinar.topjava.util.MealsUtil;
+import ru.javawebinar.topjava.util.Util;
 
 @Repository
 public class InMemoryMealRepository implements MealRepository {
