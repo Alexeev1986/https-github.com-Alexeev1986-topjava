@@ -8,11 +8,13 @@ import static ru.javawebinar.topjava.web.UserTestData.user;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
 
 @Repository
+@Profile("inmemory")
 public class InMemoryUserRepository extends InMemoryBaseRepository<User> implements UserRepository {
     public InMemoryUserRepository() {
     }

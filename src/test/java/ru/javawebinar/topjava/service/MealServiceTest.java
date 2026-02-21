@@ -1,32 +1,39 @@
 package ru.javawebinar.topjava.service;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
+import static ru.javawebinar.topjava.web.MealTestData.ADMIN_ID;
+import static ru.javawebinar.topjava.web.MealTestData.MEAL_ID;
+import static ru.javawebinar.topjava.web.MealTestData.USER_ID;
+import static ru.javawebinar.topjava.web.MealTestData.getDuplicate;
+import static ru.javawebinar.topjava.web.MealTestData.getNew;
+import static ru.javawebinar.topjava.web.MealTestData.getUpdated;
+import static ru.javawebinar.topjava.web.MealTestData.meals;
+
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 import ru.javawebinar.topjava.web.MealTestData;
-
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.Arrays;
 import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
-import static ru.javawebinar.topjava.web.MealTestData.*;
-import static ru.javawebinar.topjava.web.UserTestData.ADMIN_ID;
 
 @ContextConfiguration({
         "classpath:spring/spring-app.xml",
         "classpath:spring/spring-db.xml"
 })
+@ActiveProfiles("jdbc")
 @RunWith(SpringRunner.class)
 public class MealServiceTest {
 
@@ -90,6 +97,13 @@ public class MealServiceTest {
 
     @Test
     @Sql(scripts = "/db/populateDB.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    public void updateNotFound() {
+        Meal update = getUpdated();
+        assertThrows(NotFoundException.class, () -> service.update(update, ADMIN_ID));
+    }
+
+    @Test
+    @Sql(scripts = "/db/populateDB.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     public void create() {
         Meal created = service.create(getNew(), USER_ID);
         Integer newId = created.getId();
@@ -100,10 +114,18 @@ public class MealServiceTest {
     }
 
     @Test
+    @Sql(scripts = "/db/populateDB.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     public void duplicateMailCreate() {
         Meal duplicate = getDuplicate();
         assertThrows(DataAccessException.class, () ->
                 service.create(duplicate, USER_ID));
+    }
+
+    @Test
+    @Sql(scripts = "/db/populateDB.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    public void duplicateDateTimeCreate() {
+        Meal duplicate = new Meal(null, LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0), "Дубликат", 500);
+        assertThrows(DataAccessException.class, () -> service.create(duplicate, USER_ID));
     }
 
     private static void assertMatch(Meal actual, Meal expected) {

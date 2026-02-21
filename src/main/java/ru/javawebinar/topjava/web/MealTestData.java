@@ -6,12 +6,12 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.Arrays;
 import java.util.List;
-
 import ru.javawebinar.topjava.model.Meal;
 
 public class MealTestData {
     public static final int MEAL_ID = START_SEQ;
     public static final int USER_ID = START_SEQ;
+    public static final int ADMIN_ID = START_SEQ + 1;
 
     public static final List<Meal> meals = Arrays.asList(
             new Meal(100000, LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0), "Завтрак", 500),
