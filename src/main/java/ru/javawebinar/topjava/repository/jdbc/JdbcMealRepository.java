@@ -34,7 +34,7 @@ public class JdbcMealRepository implements MealRepository {
         MapSqlParameterSource map = new MapSqlParameterSource()
                 .addValue("id", meal.getId())
                 .addValue("user_id", userId)
-                .addValue("dateTime", meal.getDateTime())
+                .addValue("date_time", meal.getDateTime())
                 .addValue("description", meal.getDescription())
                 .addValue("calories", meal.getCalories());
         if (meal.isNew()) {
@@ -44,8 +44,7 @@ public class JdbcMealRepository implements MealRepository {
         } else {
             int update = namedParameterJdbcTemplate.update(
                     "UPDATE meals SET" +
-                        " user_id=:user_id," +
-                        " dateTime=:dateTime," +
+                        " date_time=:date_time," +
                         " description=:description," +
                         " calories=:calories" +
                         " WHERE id=:id AND user_id=:user_id", map);
@@ -60,19 +59,19 @@ public class JdbcMealRepository implements MealRepository {
 
     @Override
     public Meal get(int id, int userId) {
-        List<Meal> meals = jdbcTemplate.query("SELECT * FROM meals WHERE id=? AND user_Id=?", ROW_MAPPER, id, userId);
+        List<Meal> meals = jdbcTemplate.query("SELECT * FROM meals WHERE id=? AND user_id=?", ROW_MAPPER, id, userId);
         return DataAccessUtils.singleResult(meals);
     }
 
     @Override
     public List<Meal> getAll(int userId) {
-        return jdbcTemplate.query("SELECT * FROM meals WHERE user_id=? ORDER BY dateTime DESC", ROW_MAPPER, userId);
+        return jdbcTemplate.query("SELECT * FROM meals WHERE user_id=? ORDER BY date_time DESC", ROW_MAPPER, userId);
     }
 
     @Override
     public List<Meal> getBetweenHalfOpen(LocalDateTime startDateTime, LocalDateTime endDateTime, int userId) {
         return jdbcTemplate.query("SELECT * FROM meals WHERE " +
-                "datetime>=? AND datetime<=? AND user_id=?" +
-                " ORDER BY dateTime", ROW_MAPPER, startDateTime, endDateTime, userId);
+                "date_time>? AND date_time<? AND user_id=?" +
+                " ORDER BY date_Time", ROW_MAPPER, startDateTime, endDateTime, userId);
     }
 }
