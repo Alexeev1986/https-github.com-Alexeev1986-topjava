@@ -21,6 +21,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 import static ru.javawebinar.topjava.web.MealTestData.*;
+import static ru.javawebinar.topjava.web.UserTestData.ADMIN_ID;
 
 @ContextConfiguration({
         "classpath:spring/spring-app.xml",
@@ -45,9 +46,21 @@ public class MealServiceTest {
 
     @Test
     @Sql(scripts = "/db/populateDB.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    public void getNotFound() {
+        assertThrows(NotFoundException.class, () -> service.get(MEAL_ID, ADMIN_ID));
+    }
+
+    @Test
+    @Sql(scripts = "/db/populateDB.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     public void delete() {
         service.delete(MEAL_ID, USER_ID );
         assertThrows(NotFoundException.class, () -> service.get(MEAL_ID, USER_ID));
+    }
+
+    @Test
+    @Sql(scripts = "/db/populateDB.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    public void deleteNotFound() {
+        assertThrows(NotFoundException.class, () -> service.delete(MEAL_ID, ADMIN_ID));
     }
 
     @Test
@@ -57,7 +70,7 @@ public class MealServiceTest {
                 LocalDate.of(2020, Month.JANUARY, 30),
                 LocalDate.of(2020, Month.JANUARY, 30),
                 USER_ID);
-        assertMatch(filteredMeals, meals.get(0), meals.get(1), meals.get(2), meals.get(3));
+        assertMatch(filteredMeals, meals.get(0), meals.get(1), meals.get(2));
     }
 
     @Test
@@ -71,7 +84,7 @@ public class MealServiceTest {
     @Sql(scripts = "/db/populateDB.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     public void update() {
         Meal update = getUpdated();
-        service.update(service.get(MEAL_ID, USER_ID), USER_ID);
+        service.update(update, USER_ID);
         assertEquals(service.get(MEAL_ID, USER_ID), update);
     }
 
@@ -88,9 +101,9 @@ public class MealServiceTest {
 
     @Test
     public void duplicateMailCreate() {
-        service.create(getNew(), USER_ID);
+        Meal duplicate = getDuplicate();
         assertThrows(DataAccessException.class, () ->
-                service.create(getNew(), USER_ID));
+                service.create(duplicate, USER_ID));
     }
 
     private static void assertMatch(Meal actual, Meal expected) {
