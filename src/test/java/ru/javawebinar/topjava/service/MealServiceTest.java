@@ -1,5 +1,6 @@
 package ru.javawebinar.topjava.service;
 
+import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.bridge.SLF4JBridgeHandler;
@@ -14,12 +15,11 @@ import ru.javawebinar.topjava.web.MealTestData;
 
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 import static ru.javawebinar.topjava.web.MealTestData.*;
 
 @ContextConfiguration({
@@ -82,8 +82,8 @@ public class MealServiceTest {
         Integer newId = created.getId();
         Meal newMeal = getNew();
         newMeal.setId(newId);
-        MealTestData.assertMatch(created, newMeal);
-        MealTestData.assertMatch(service.get(newId, USER_ID), newMeal);
+        assertMatch(created, newMeal);
+        assertMatch(service.get(newId, USER_ID), newMeal);
     }
 
     @Test
@@ -91,5 +91,18 @@ public class MealServiceTest {
         service.create(getNew(), USER_ID);
         assertThrows(DataAccessException.class, () ->
                 service.create(getNew(), USER_ID));
+    }
+
+    private static void assertMatch(Meal actual, Meal expected) {
+        Assertions.assertThat(actual).usingRecursiveComparison().ignoringFields("id").isEqualTo(expected);
+    }
+
+    private static void assertMatch(Iterable<Meal> actual, Meal... expected) {
+        assertMatch(actual, Arrays.asList(expected));
+    }
+
+    private static void assertMatch(Iterable<Meal> actual, Iterable<Meal> expected) {
+        Assertions.assertThat(actual).usingElementComparatorIgnoringFields("id")
+                .containsExactlyInAnyOrderElementsOf(expected);
     }
 }

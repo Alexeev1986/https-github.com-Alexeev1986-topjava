@@ -1,14 +1,11 @@
 package ru.javawebinar.topjava.web;
 
-import ru.javawebinar.topjava.model.Role;
-import ru.javawebinar.topjava.model.User;
+import static ru.javawebinar.topjava.model.AbstractBaseEntity.START_SEQ;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static ru.javawebinar.topjava.model.AbstractBaseEntity.START_SEQ;
+import ru.javawebinar.topjava.model.Role;
+import ru.javawebinar.topjava.model.User;
 
 public class UserTestData {
     public static final int USER_ID = START_SEQ;
@@ -33,17 +30,5 @@ public class UserTestData {
         updated.setEnabled(false);
         updated.setRoles(Collections.singletonList(Role.ADMIN));
         return updated;
-    }
-
-    public static void assertMatch(User actual, User expected) {
-        assertThat(actual).usingRecursiveComparison().ignoringFields("registered", "roles").isEqualTo(expected);
-    }
-
-    public static void assertMatch(Iterable<User> actual, User... expected) {
-        assertMatch(actual, Arrays.asList(expected));
-    }
-
-    public static void assertMatch(Iterable<User> actual, Iterable<User> expected) {
-        assertThat(actual).usingRecursiveFieldByFieldElementComparatorIgnoringFields("registered", "roles").isEqualTo(expected);
     }
 }

@@ -1,7 +1,7 @@
 package ru.javawebinar.topjava.repository.inmemory;
 
-import static ru.javawebinar.topjava.repository.inmemory.MainTestData.ADMIN_ID;
-import static ru.javawebinar.topjava.repository.inmemory.MainTestData.USER_ID;
+import static ru.javawebinar.topjava.web.UserTestData.ADMIN_ID;
+import static ru.javawebinar.topjava.web.UserTestData.USER_ID;
 
 import java.time.LocalDateTime;
 import java.time.Month;
