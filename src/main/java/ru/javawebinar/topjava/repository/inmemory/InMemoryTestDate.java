@@ -5,7 +5,7 @@ import static ru.javawebinar.topjava.model.AbstractBaseEntity.START_SEQ;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 
-public class inMemoryTestData {
+public class InMemoryTestDate {
     public static final int USER_ID = START_SEQ;
     public static final int ADMIN_ID = START_SEQ + 1;
     public static final int GUEST_ID = START_SEQ + 2;
