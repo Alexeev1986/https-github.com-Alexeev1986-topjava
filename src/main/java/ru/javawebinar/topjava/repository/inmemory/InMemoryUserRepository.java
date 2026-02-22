@@ -1,9 +1,9 @@
 package ru.javawebinar.topjava.repository.inmemory;
 
-import static ru.javawebinar.topjava.web.UserTestData.GUEST_ID;
-import static ru.javawebinar.topjava.web.UserTestData.admin;
-import static ru.javawebinar.topjava.web.UserTestData.guest;
-import static ru.javawebinar.topjava.web.UserTestData.user;
+import static ru.javawebinar.topjava.repository.inmemory.inMemoryTestData.GUEST_ID;
+import static ru.javawebinar.topjava.repository.inmemory.inMemoryTestData.admin;
+import static ru.javawebinar.topjava.repository.inmemory.inMemoryTestData.guest;
+import static ru.javawebinar.topjava.repository.inmemory.inMemoryTestData.user;
 
 import java.util.Comparator;
 import java.util.List;

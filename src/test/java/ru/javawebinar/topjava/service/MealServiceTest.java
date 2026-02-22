@@ -1,16 +1,10 @@
 package ru.javawebinar.topjava.service;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
-import static ru.javawebinar.topjava.web.MealTestData.ADMIN_ID;
-import static ru.javawebinar.topjava.web.MealTestData.MEAL_ID;
-import static ru.javawebinar.topjava.web.MealTestData.USER_ID;
-import static ru.javawebinar.topjava.web.MealTestData.getDuplicate;
-import static ru.javawebinar.topjava.web.MealTestData.getNew;
-import static ru.javawebinar.topjava.web.MealTestData.getUpdated;
-import static ru.javawebinar.topjava.web.MealTestData.meals;
+import static ru.javawebinar.topjava.MealTestData.*;
+import static ru.javawebinar.topjava.UserTestData.ADMIN_ID;
+import static ru.javawebinar.topjava.UserTestData.USER_ID;
 
-import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.bridge.SLF4JBridgeHandler;
@@ -22,11 +16,8 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
-import ru.javawebinar.topjava.web.MealTestData;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.Month;
-import java.util.Arrays;
 import java.util.List;
 
 @ContextConfiguration({
@@ -35,6 +26,7 @@ import java.util.List;
 })
 @ActiveProfiles("jdbc")
 @RunWith(SpringRunner.class)
+@Sql(scripts = "/db/populateDB.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 public class MealServiceTest {
 
     static {
@@ -45,65 +37,55 @@ public class MealServiceTest {
     private MealService service;
 
     @Test
-    @Sql(scripts = "/db/populateDB.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     public void get() {
-        Meal meal = service.get(MEAL_ID, USER_ID);
-        assertMatch(MealTestData.meal, meal);
+        assertMatch(service.get(MEAL_ID, USER_ID), meal);
     }
 
     @Test
-    @Sql(scripts = "/db/populateDB.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     public void getNotFound() {
         assertThrows(NotFoundException.class, () -> service.get(MEAL_ID, ADMIN_ID));
     }
 
     @Test
-    @Sql(scripts = "/db/populateDB.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     public void delete() {
         service.delete(MEAL_ID, USER_ID );
         assertThrows(NotFoundException.class, () -> service.get(MEAL_ID, USER_ID));
     }
 
     @Test
-    @Sql(scripts = "/db/populateDB.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     public void deleteNotFound() {
         assertThrows(NotFoundException.class, () -> service.delete(MEAL_ID, ADMIN_ID));
     }
 
     @Test
-    @Sql(scripts = "/db/populateDB.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     public void getBetweenInclusive() {
         List<Meal> filteredMeals = service.getBetweenInclusive(
                 LocalDate.of(2020, Month.JANUARY, 30),
                 LocalDate.of(2020, Month.JANUARY, 30),
                 USER_ID);
-        assertMatch(filteredMeals, meals.get(0), meals.get(1), meals.get(2));
+        assertMatch(filteredMeals, userMeals.get(0), userMeals.get(1), userMeals.get(2));
     }
 
     @Test
-    @Sql(scripts = "/db/populateDB.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     public void getAll() {
         List<Meal> actualMeals = service.getAll(USER_ID);
-        assertMatch(actualMeals, meals.toArray(new Meal[0]));
+        assertMatch(actualMeals, userMeals);
     }
 
     @Test
-    @Sql(scripts = "/db/populateDB.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     public void update() {
         Meal update = getUpdated();
         service.update(update, USER_ID);
-        assertEquals(service.get(MEAL_ID, USER_ID), update);
+        assertMatch(service.get(MEAL_ID, USER_ID), getUpdated());
     }
 
     @Test
-    @Sql(scripts = "/db/populateDB.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     public void updateNotFound() {
         Meal update = getUpdated();
         assertThrows(NotFoundException.class, () -> service.update(update, ADMIN_ID));
     }
 
     @Test
-    @Sql(scripts = "/db/populateDB.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     public void create() {
         Meal created = service.create(getNew(), USER_ID);
         Integer newId = created.getId();
@@ -114,30 +96,14 @@ public class MealServiceTest {
     }
 
     @Test
-    @Sql(scripts = "/db/populateDB.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     public void duplicateMailCreate() {
         Meal duplicate = getDuplicate();
-        assertThrows(DataAccessException.class, () ->
-                service.create(duplicate, USER_ID));
-    }
-
-    @Test
-    @Sql(scripts = "/db/populateDB.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    public void duplicateDateTimeCreate() {
-        Meal duplicate = new Meal(null, LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0), "Дубликат", 500);
         assertThrows(DataAccessException.class, () -> service.create(duplicate, USER_ID));
     }
 
-    private static void assertMatch(Meal actual, Meal expected) {
-        Assertions.assertThat(actual).usingRecursiveComparison().ignoringFields("id").isEqualTo(expected);
-    }
-
-    private static void assertMatch(Iterable<Meal> actual, Meal... expected) {
-        assertMatch(actual, Arrays.asList(expected));
-    }
-
-    private static void assertMatch(Iterable<Meal> actual, Iterable<Meal> expected) {
-        Assertions.assertThat(actual).usingElementComparatorIgnoringFields("id")
-                .containsExactlyInAnyOrderElementsOf(expected);
+    @Test
+    public void duplicateDateTimeCreate() {
+        Meal duplicate = new Meal(null, userMeals.get(0).getDateTime(), "Дубликат", 500);
+        assertThrows(DataAccessException.class, () -> service.create(duplicate, USER_ID));
     }
 }

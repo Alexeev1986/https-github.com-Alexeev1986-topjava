@@ -1,6 +1,5 @@
 package ru.javawebinar.topjava.service;
 
-import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.bridge.SLF4JBridgeHandler;
@@ -11,15 +10,21 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
-import ru.javawebinar.topjava.web.UserTestData;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
-import java.util.Arrays;
+
 import java.util.List;
 
 import static org.junit.Assert.assertThrows;
-import static ru.javawebinar.topjava.web.UserTestData.*;
+import static ru.javawebinar.topjava.UserTestData.NOT_FOUND;
+import static ru.javawebinar.topjava.UserTestData.USER_ID;
+import static ru.javawebinar.topjava.UserTestData.admin;
+import static ru.javawebinar.topjava.UserTestData.assertMatch;
+import static ru.javawebinar.topjava.UserTestData.getNew;
+import static ru.javawebinar.topjava.UserTestData.getUpdated;
+import static ru.javawebinar.topjava.UserTestData.guest;
+import static ru.javawebinar.topjava.UserTestData.user;
 
 @ContextConfiguration({
         "classpath:spring/spring-app.xml",
@@ -94,17 +99,5 @@ public class UserServiceTest {
     public void getAll() {
         List<User> all = service.getAll();
         assertMatch(all, admin, guest, user);
-    }
-
-    private static void assertMatch(User actual, User expected) {
-        Assertions.assertThat(actual).usingRecursiveComparison().ignoringFields("registered", "roles").isEqualTo(expected);
-    }
-
-    private static void assertMatch(Iterable<User> actual, User... expected) {
-        assertMatch(actual, Arrays.asList(expected));
-    }
-
-    private static void assertMatch(Iterable<User> actual, Iterable<User> expected) {
-        Assertions.assertThat(actual).usingRecursiveFieldByFieldElementComparatorIgnoringFields("registered", "roles").isEqualTo(expected);
     }
 }
