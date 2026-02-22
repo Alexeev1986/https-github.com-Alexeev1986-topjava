@@ -6,12 +6,11 @@ DROP TABLE IF EXISTS users;
 
 DROP SEQUENCE IF EXISTS global_seq;
 
-CREATE SEQUENCE global_seq1 START WITH 100000;
-CREATE SEQUENCE global_seq2 START WITH 100000;
+CREATE SEQUENCE global_seq START WITH 100000;
 
 CREATE TABLE users
 (
-    id               INTEGER PRIMARY KEY DEFAULT nextval('global_seq1'),
+    id               INTEGER PRIMARY KEY DEFAULT nextval('global_seq'),
     name             VARCHAR                           NOT NULL,
     email            VARCHAR                           NOT NULL,
     password         VARCHAR                           NOT NULL,
@@ -23,7 +22,7 @@ CREATE UNIQUE INDEX users_unique_email_idx ON users (email);
 
 CREATE TABLE meals
 (
-    id               INTEGER PRIMARY KEY DEFAULT nextval('global_seq2'),
+    id               INTEGER PRIMARY KEY DEFAULT nextval('global_seq'),
     user_id          INTEGER                           NOT NULL,
     date_time         TIMESTAMP                         NOT NULL,
     description      VARCHAR                           NOT NULL,
