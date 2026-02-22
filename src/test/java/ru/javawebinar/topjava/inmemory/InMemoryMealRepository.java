@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 import static ru.javawebinar.topjava.UserTestData.ADMIN_ID;
 import static ru.javawebinar.topjava.UserTestData.USER_ID;
 
-@Repository("inMemoryMealRepo")
+@Repository
 @Profile("inmemory")
 public class InMemoryMealRepository implements MealRepository {
     private static final Logger log = LoggerFactory.getLogger(InMemoryMealRepository.class);
