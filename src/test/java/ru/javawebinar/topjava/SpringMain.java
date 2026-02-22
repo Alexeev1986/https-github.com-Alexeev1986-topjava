@@ -16,7 +16,15 @@ import java.util.List;
 public class SpringMain {
     public static void main(String[] args) {
         // java 7 automatic resource management  (ARM)
+        //System.setProperty("spring.profiles.active", "inmemory");
+        System.setProperty("spring.profiles.active", "jdbc");
         try (ConfigurableApplicationContext appCtx = new ClassPathXmlApplicationContext("spring/spring-app.xml", "spring/spring-db.xml")) {
+            System.out.println("=== Active profiles: " +
+                    Arrays.toString(appCtx.getEnvironment().getActiveProfiles()));
+            System.out.println("=== MealRepository beans: " +
+                    Arrays.toString(appCtx.getBeanNamesForType(
+                            ru.javawebinar.topjava.repository.MealRepository.class)));
+
             System.out.println("Bean definition names: " + Arrays.toString(appCtx.getBeanDefinitionNames()));
             AdminRestController adminUserController = appCtx.getBean(AdminRestController.class);
             //adminUserController.create(new User(null, "userName", "email1@mail.ru", "password", Role.ADMIN));
