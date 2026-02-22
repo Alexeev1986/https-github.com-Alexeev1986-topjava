@@ -1,19 +1,17 @@
-package ru.javawebinar.topjava.repository.inmemory;
+package ru.javawebinar.topjava.inmemory;
 
-import static ru.javawebinar.topjava.repository.inmemory.InMemoryTestDate.GUEST_ID;
-import static ru.javawebinar.topjava.repository.inmemory.InMemoryTestDate.admin;
-import static ru.javawebinar.topjava.repository.inmemory.InMemoryTestDate.guest;
-import static ru.javawebinar.topjava.repository.inmemory.InMemoryTestDate.user;
-
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
 
-@Repository
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static ru.javawebinar.topjava.UserTestData.*;
+
+@Repository("inMemoryUserRepo")
 @Profile("inmemory")
 public class InMemoryUserRepository extends InMemoryBaseRepository<User> implements UserRepository {
     public InMemoryUserRepository() {

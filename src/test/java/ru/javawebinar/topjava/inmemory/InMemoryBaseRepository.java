@@ -1,12 +1,13 @@
-package ru.javawebinar.topjava.repository.inmemory;
+package ru.javawebinar.topjava.inmemory;
 
-import static ru.javawebinar.topjava.model.AbstractBaseEntity.START_SEQ;
+import ru.javawebinar.topjava.model.AbstractBaseEntity;
 
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
-import ru.javawebinar.topjava.model.AbstractBaseEntity;
+
+import static ru.javawebinar.topjava.model.AbstractBaseEntity.START_SEQ;
 
 public class InMemoryBaseRepository<T extends AbstractBaseEntity> {
     static final AtomicInteger counter = new AtomicInteger(START_SEQ);

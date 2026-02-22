@@ -8,4 +8,7 @@
 
     <context:component-scan base-package="ru.javawebinar.topjava.repository"/>
 
+    <beans profile="inmemory">
+        <import resource="classpath:spring/spring-inmemory.xml"/>
+    </beans>
 </beans>
