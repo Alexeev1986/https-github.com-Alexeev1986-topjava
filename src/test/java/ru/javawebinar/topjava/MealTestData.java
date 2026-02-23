@@ -15,23 +15,23 @@ import ru.javawebinar.topjava.model.Meal;
 public class MealTestData {
     public static final int MEAL_ID = START_SEQ + 3;
 
-    public static final Meal MEAL_1 = new Meal(START_SEQ + 3, LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0), "Завтрак", 500);
-    public static final Meal MEAL_2 = new Meal(START_SEQ + 4, LocalDateTime.of(2020, Month.JANUARY, 30, 13, 0), "Обед", 1000);
-    public static final Meal MEAL_3 = new Meal(START_SEQ + 5, LocalDateTime.of(2020, Month.JANUARY, 30, 20, 0), "Ужин", 500);
-    public static final Meal MEAL_4 = new Meal(START_SEQ + 6, LocalDateTime.of(2020, Month.JANUARY, 31, 0, 0),  "Еда на граничное значение", 100);
-    public static final Meal MEAL_5 = new Meal(START_SEQ + 7, LocalDateTime.of(2020, Month.JANUARY, 31, 10, 0), "Завтрак", 1000);
-    public static final Meal MEAL_6 = new Meal(START_SEQ + 8, LocalDateTime.of(2020, Month.JANUARY, 31, 13, 0), "Обед", 500);
-    public static final Meal MEAL_7 = new Meal(START_SEQ + 9, LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 410);
+    public static final Meal meal_1 = new Meal(START_SEQ + 3, LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0), "Завтрак", 500);
+    public static final Meal meal_2 = new Meal(START_SEQ + 4, LocalDateTime.of(2020, Month.JANUARY, 30, 13, 0), "Обед", 1000);
+    public static final Meal meal_3 = new Meal(START_SEQ + 5, LocalDateTime.of(2020, Month.JANUARY, 30, 20, 0), "Ужин", 500);
+    public static final Meal meal_4 = new Meal(START_SEQ + 6, LocalDateTime.of(2020, Month.JANUARY, 31, 0, 0),  "Еда на граничное значение", 100);
+    public static final Meal meal_5 = new Meal(START_SEQ + 7, LocalDateTime.of(2020, Month.JANUARY, 31, 10, 0), "Завтрак", 1000);
+    public static final Meal meal_6 = new Meal(START_SEQ + 8, LocalDateTime.of(2020, Month.JANUARY, 31, 13, 0), "Обед", 500);
+    public static final Meal meal_7 = new Meal(START_SEQ + 9, LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 410);
 
-    public static final Meal ADMIN_MEAL_1 = new Meal(START_SEQ + 10, LocalDateTime.of(2020, Month.JANUARY, 31, 9, 0),  "Завтрак", 900);
-    public static final Meal ADMIN_MEAL_2 = new Meal(START_SEQ + 11, LocalDateTime.of(2020, Month.JANUARY, 31, 12, 0), "Обед", 1000);
-    public static final Meal ADMIN_MEAL_3 = new Meal(START_SEQ + 12, LocalDateTime.of(2020, Month.JANUARY, 31, 19, 0), "Ужин", 600);
+    public static final Meal adminMeal_1 = new Meal(START_SEQ + 10, LocalDateTime.of(2020, Month.JANUARY, 31, 9, 0),  "Завтрак", 900);
+    public static final Meal adminMeal_2 = new Meal(START_SEQ + 11, LocalDateTime.of(2020, Month.JANUARY, 31, 12, 0), "Обед", 1000);
+    public static final Meal adminMeal_3 = new Meal(START_SEQ + 12, LocalDateTime.of(2020, Month.JANUARY, 31, 19, 0), "Ужин", 600);
 
 
-    public static final Meal meal = MEAL_1;
+    public static final Meal meal = meal_1;
 
-    public static final List<Meal> userMeals = Arrays.asList(MEAL_1, MEAL_2, MEAL_3, MEAL_4, MEAL_5, MEAL_6, MEAL_7);
-    public static final List<Meal> adminMeals = Arrays.asList(ADMIN_MEAL_1, ADMIN_MEAL_2, ADMIN_MEAL_3);
+    public static final List<Meal> userMeals = Arrays.asList(meal_1, meal_2, meal_3, meal_4, meal_5, meal_6, meal_7);
+    public static final List<Meal> adminMeals = Arrays.asList(adminMeal_1, adminMeal_2, adminMeal_3);
 
     public static Meal getNew() {
         return new Meal(null, LocalDateTime.of(2020, Month.JANUARY, 31, 1, 0), "", 0);

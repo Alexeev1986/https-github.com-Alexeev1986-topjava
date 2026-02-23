@@ -83,7 +83,7 @@ public class MealServiceTest {
                 LocalDate.of(2020, Month.JANUARY, 30),
                 LocalDate.of(2020, Month.JANUARY, 30),
                 USER_ID);
-        assertMatch(filteredMeals, MEAL_3, MEAL_2, MEAL_1);
+        assertMatch(filteredMeals, meal_3, meal_2, meal_1);
     }
 
     @Test

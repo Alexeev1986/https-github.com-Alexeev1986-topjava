@@ -1,4 +1,4 @@
-package ru.javawebinar.topjava.inmemory;
+package ru.javawebinar.topjava.repository.inmemory;
 
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
