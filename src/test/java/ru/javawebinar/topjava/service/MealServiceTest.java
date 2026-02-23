@@ -42,6 +42,11 @@ public class MealServiceTest {
     }
 
     @Test
+    public void getAdmin() {
+        assertMatch(service.get(adminMeals.get(0).getId(), ADMIN_ID), adminMeals.get(0));
+    }
+
+    @Test
     public void getNotFound() {
         assertThrows(NotFoundException.class, () -> service.get(MEAL_ID, ADMIN_ID));
     }
@@ -67,9 +72,24 @@ public class MealServiceTest {
     }
 
     @Test
+    public void getBetweenInclusiveAdmin() {
+        List<Meal> filteredMeals = service.getBetweenInclusive(
+                LocalDate.of(2020, Month.JANUARY, 31),
+                LocalDate.of(2020, Month.JANUARY, 31),
+                ADMIN_ID);
+        assertMatch(filteredMeals, getAdminMeals());
+    }
+
+    @Test
     public void getAll() {
         List<Meal> actualMeals = service.getAll(USER_ID);
-        assertMatch(actualMeals, userMeals);
+        assertMatch(actualMeals, getUserMeals());
+    }
+
+    @Test
+    public void getAllAdmin() {
+        List<Meal> actualMeals = service.getAll(ADMIN_ID);
+        assertMatch(actualMeals, getAdminMeals());
     }
 
     @Test
@@ -96,14 +116,8 @@ public class MealServiceTest {
     }
 
     @Test
-    public void duplicateMailCreate() {
-        Meal duplicate = getDuplicate();
-        assertThrows(DataAccessException.class, () -> service.create(duplicate, USER_ID));
-    }
-
-    @Test
     public void duplicateDateTimeCreate() {
-        Meal duplicate = new Meal(null, userMeals.get(0).getDateTime(), "Дубликат", 500);
+        Meal duplicate = getDuplicate();
         assertThrows(DataAccessException.class, () -> service.create(duplicate, USER_ID));
     }
 }
