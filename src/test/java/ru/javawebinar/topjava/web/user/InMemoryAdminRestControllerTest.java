@@ -3,10 +3,12 @@ package ru.javawebinar.topjava.web.user;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.javawebinar.topjava.inmemory.InMemoryUserRepository;
+import ru.javawebinar.topjava.util.BeanUtil;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 import static ru.javawebinar.topjava.UserTestData.NOT_FOUND;
 import static ru.javawebinar.topjava.UserTestData.USER_ID;
@@ -21,11 +23,18 @@ public class InMemoryAdminRestControllerTest {
     @Autowired
     private InMemoryUserRepository repository;
 
+    @Autowired
+    private ConfigurableApplicationContext appCtx;
+
+    private static boolean isPrintedBeans = false;
 
     @Before
     public void setup() {
-        // re-initialize
         repository.init();
+        if (!isPrintedBeans) {
+            isPrintedBeans = true;
+            BeanUtil.printBeans(appCtx);
+        }
     }
 
     @Test

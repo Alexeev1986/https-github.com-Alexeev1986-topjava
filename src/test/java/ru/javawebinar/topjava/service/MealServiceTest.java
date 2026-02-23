@@ -5,16 +5,19 @@ import static ru.javawebinar.topjava.MealTestData.*;
 import static ru.javawebinar.topjava.UserTestData.ADMIN_ID;
 import static ru.javawebinar.topjava.UserTestData.USER_ID;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.dao.DataAccessException;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.javawebinar.topjava.model.Meal;
+import ru.javawebinar.topjava.util.BeanUtil;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 import java.time.LocalDate;
 import java.time.Month;
@@ -28,13 +31,25 @@ import java.util.List;
 @RunWith(SpringRunner.class)
 @Sql(scripts = "/db/populateDB.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 public class MealServiceTest {
-
     static {
         SLF4JBridgeHandler.install();
     }
 
     @Autowired
     private MealService service;
+
+    @Autowired
+    private ConfigurableApplicationContext appCtx;
+
+    private static boolean isPrintedBeans = false;
+
+    @Before
+    public void setup() {
+        if (!isPrintedBeans) {
+            isPrintedBeans = true;
+            BeanUtil.printBeans(appCtx);
+        }
+    }
 
     @Test
     public void get() {
@@ -68,7 +83,7 @@ public class MealServiceTest {
                 LocalDate.of(2020, Month.JANUARY, 30),
                 LocalDate.of(2020, Month.JANUARY, 30),
                 USER_ID);
-        assertMatch(filteredMeals, userMeals.get(0), userMeals.get(1), userMeals.get(2));
+        assertMatch(filteredMeals, MEAL_3, MEAL_2, MEAL_1);
     }
 
     @Test

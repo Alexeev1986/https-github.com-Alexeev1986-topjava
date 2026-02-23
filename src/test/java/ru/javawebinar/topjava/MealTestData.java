@@ -62,6 +62,6 @@ public class MealTestData {
     }
 
     public static void assertMatch(Iterable<Meal> actual, Iterable<Meal> expected) {
-        Assertions.assertThat(actual).usingRecursiveComparison().ignoringCollectionOrder().isEqualTo(expected);
+        Assertions.assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 }
