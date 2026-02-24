@@ -17,7 +17,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.util.StringUtils;
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.util.BeanUtil;
 import ru.javawebinar.topjava.web.meal.MealRestController;
 
 public class MealServlet extends HttpServlet {
@@ -28,7 +27,6 @@ public class MealServlet extends HttpServlet {
     public void init() {
         System.setProperty("spring.profiles.active", "jdbc");
         springContext = new ClassPathXmlApplicationContext("spring/spring-app.xml", "spring/spring-db.xml");
-        BeanUtil.printBeans(springContext);
         mealController = springContext.getBean(MealRestController.class);
     }
 
