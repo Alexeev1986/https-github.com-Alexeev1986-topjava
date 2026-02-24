@@ -8,4 +8,7 @@
 
     <context:component-scan base-package="ru.javawebinar.topjava.repository"/>
 
+    <beans profile="jdbc">
+        <import resource="classpath:spring/spring-db.xml"/>
+    </beans>
 </beans>

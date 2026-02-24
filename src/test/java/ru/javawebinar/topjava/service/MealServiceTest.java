@@ -23,10 +23,7 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.List;
 
-@ContextConfiguration({
-        "classpath:spring/spring-app.xml",
-        "classpath:spring/spring-db.xml"
-})
+@ContextConfiguration("classpath:spring/spring-app.xml")
 @ActiveProfiles("jdbc")
 @RunWith(SpringRunner.class)
 @Sql(scripts = "/db/populateDB.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
