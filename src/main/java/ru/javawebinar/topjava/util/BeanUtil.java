@@ -3,17 +3,20 @@ package ru.javawebinar.topjava.util;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.context.ConfigurableApplicationContext;
 
 public class BeanUtil {
-    public static void printBeans(ConfigurableApplicationContext appCtx) {
-        System.out.println("=== Active profiles: " +
-                Arrays.toString(appCtx.getEnvironment().getActiveProfiles()));
+    private static final Logger log = LoggerFactory.getLogger(BeanUtil.class);
 
-        System.out.println("=== MealRepository beans: " +
+    public static void printBeans(ConfigurableApplicationContext appCtx) {
+
+        log.info("\n=== Active profiles: {} ===\n=== MealRepository beans: {} ===",
+                Arrays.toString(appCtx.getEnvironment().getActiveProfiles()),
                 Arrays.toString(appCtx.getBeanNamesForType(
                         ru.javawebinar.topjava.repository.MealRepository.class)));
-
         String[] beanNames = appCtx.getBeanDefinitionNames();
         Arrays.sort(beanNames);
         List<String> beans = new ArrayList<>();
@@ -28,15 +31,17 @@ public class BeanUtil {
                 } else {
                     infrastructureBeans.add(result);
                 }
-            } catch (Exception e) {
-                System.out.println(name + "[Definition only, not instantiated or complex]");
+            } catch (BeansException e) {
+                log.debug("Bean '{}' definition exist but cannot be instantiated: {}", name, e.getMessage());
             }
         }
-        System.out.println("YOUR APPLICATION BEANS(" + beans.size() + "): ");
-        beans.forEach(System.out::println);
-        System.out.println("END YOUR BEANS");
-        System.out.println("INFRASTRUCTURE BEANS: ");
-        infrastructureBeans.forEach(System.out::println);
-        System.out.println("END INFRASTRUCTURE BEANS");
+        StringBuilder output = new StringBuilder();
+        output.append("\nYOUR APPLICATION BEANS(").append(beans.size()).append("):\n");
+        beans.forEach(bean -> output.append(bean).append("\n"));
+        output.append("END YOUR BEANS\n");
+        output.append("INFRASTRUCTURE BEANS: \n");
+        infrastructureBeans.forEach(bean -> output.append(bean).append("\n"));
+        output.append("END INFRASTRUCTURE BEANS\n");
+        log.info(output.toString());
     }
 }
