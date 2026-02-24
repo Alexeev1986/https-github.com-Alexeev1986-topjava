@@ -25,7 +25,7 @@ public class BeanUtil {
             try {
                 Object bean = appCtx.getBean(name);
                 String beanClassName = bean.getClass().getName();
-                String result = "Bean : " + name + ", Class: " + bean.getClass().getName();
+                String result = "Bean : " + name + ", Class: " + beanClassName;
                 if (beanClassName.startsWith("ru.javawebinar.topjava")) {
                     beans.add(result);
                 } else {
