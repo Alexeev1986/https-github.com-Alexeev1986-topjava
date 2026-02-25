@@ -31,7 +31,6 @@
         <property name="dataSource" ref="dataSource"/>
     </bean>
 
-
     <tx:annotation-driven transaction-manager="transactionManager"/>
 
     <bean id="jdbcUserRepository" class="ru.javawebinar.topjava.repository.jdbc.JdbcUserRepository">
@@ -44,6 +43,11 @@
         <constructor-arg ref="namedParameterJdbcTemplate"/>
     </bean>
 
-    <context:component-scan base-package="ru.javawebinar.topjava.service"/>
-    <context:component-scan base-package="ru.javawebinar.topjava.web"/>
+    <bean id="userService" class="ru.javawebinar.topjava.service.UserService">
+        <constructor-arg ref="jdbcUserRepository"/>
+    </bean>
+
+    <bean id="mealService" class="ru.javawebinar.topjava.service.MealService">
+        <constructor-arg ref="jdbcMealRepository"/>
+    </bean>
 </beans>
