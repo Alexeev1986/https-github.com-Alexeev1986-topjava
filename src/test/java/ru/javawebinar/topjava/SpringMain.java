@@ -20,7 +20,7 @@ public class SpringMain {
         // java 7 automatic resource management  (ARM)
         System.setProperty("spring.profiles.active", "inmemory");
         //System.setProperty("spring.profiles.active", "jdbc");
-        try (ConfigurableApplicationContext appCtx = new ClassPathXmlApplicationContext("spring/spring-app.xml")) {
+        try (ConfigurableApplicationContext appCtx = new ClassPathXmlApplicationContext("spring/spring-inmemory.xml")) {
 
 
            BeanUtil.printBeans(appCtx);
