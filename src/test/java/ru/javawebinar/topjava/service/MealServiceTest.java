@@ -1,14 +1,24 @@
 package ru.javawebinar.topjava.service;
 
 import static org.junit.Assert.assertThrows;
-import static ru.javawebinar.topjava.MealTestData.*;
+import static ru.javawebinar.topjava.MealTestData.MEAL_ID;
+import static ru.javawebinar.topjava.MealTestData.adminMeals;
+import static ru.javawebinar.topjava.MealTestData.assertMatch;
+import static ru.javawebinar.topjava.MealTestData.getAdminMeals;
+import static ru.javawebinar.topjava.MealTestData.getDuplicate;
+import static ru.javawebinar.topjava.MealTestData.getNew;
+import static ru.javawebinar.topjava.MealTestData.getUpdated;
+import static ru.javawebinar.topjava.MealTestData.getUserMeals;
+import static ru.javawebinar.topjava.MealTestData.meal;
+import static ru.javawebinar.topjava.MealTestData.meal_1;
+import static ru.javawebinar.topjava.MealTestData.meal_2;
+import static ru.javawebinar.topjava.MealTestData.meal_3;
 import static ru.javawebinar.topjava.UserTestData.ADMIN_ID;
 import static ru.javawebinar.topjava.UserTestData.USER_ID;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.slf4j.bridge.SLF4JBridgeHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.dao.DataAccessException;
@@ -18,6 +28,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.BeanUtil;
+import ru.javawebinar.topjava.util.JULLoggingInitializer;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 import java.time.LocalDate;
 import java.time.Month;
@@ -29,7 +40,7 @@ import java.util.List;
 @Sql(scripts = "/db/populateDB.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 public class MealServiceTest {
     static {
-        SLF4JBridgeHandler.install();
+        new JULLoggingInitializer();
     }
 
     @Autowired

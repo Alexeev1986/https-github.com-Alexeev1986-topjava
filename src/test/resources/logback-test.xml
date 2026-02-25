@@ -1,9 +1,7 @@
 <configuration>
-<!--  Отключаем!!! контекстный слушатель для пропагации уровней логирования.
     <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
         <resetJUL>true</resetJUL>
     </contextListener>
--->
     <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <charset>UTF-8</charset>
