@@ -1,19 +1,25 @@
 package ru.javawebinar.topjava.service;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.*;
+import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.dao.DataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.javawebinar.topjava.model.Meal;
+import ru.javawebinar.topjava.util.BeanUtil;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
-
+import org.slf4j.Logger;
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.ArrayList;
+import java.util.List;
+
 
 import static org.junit.Assert.assertThrows;
 import static ru.javawebinar.topjava.MealTestData.*;
@@ -26,8 +32,47 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 })
 @RunWith(SpringRunner.class)
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
-@Ignore
 public class MealServiceTest {
+    private static final Logger log = LoggerFactory.getLogger(MealServiceTest.class);
+
+    @Autowired
+    private ConfigurableApplicationContext appCtx;
+
+    private static boolean isPrintedBeans = false;
+
+    private long startTime;
+    private String currentTestName;
+    private static List<String> testResults = new ArrayList<>();
+
+    @Rule
+    public TestName testNameRule = new TestName();
+
+    @Before
+    public void setup() {
+        if (!isPrintedBeans) {
+            isPrintedBeans = true;
+            BeanUtil.printBeans(appCtx);
+        }
+        currentTestName = testNameRule.getMethodName();
+        startTime = System.currentTimeMillis();
+    }
+
+    @After
+    public void logTestTime() {
+        long duration = System.currentTimeMillis() - startTime;
+        log.info("\n\nTEST {} FINISHED, DURATION [{}]\n\n", currentTestName, duration);
+        testResults.add(String.format("%-40s %d ms", currentTestName, duration));
+    }
+
+    @AfterClass
+    public static void printTestsTiming() {
+        StringBuilder result = new StringBuilder();
+        result.append("\n");
+        result.append("\n=====================Tests timing=====================\n");
+        testResults.forEach(t -> result.append(t).append("\n"));
+        result.append("========================================================");
+        log.info(result.toString());
+    }
 
     @Autowired
     private MealService service;

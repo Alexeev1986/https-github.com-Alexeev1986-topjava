@@ -17,7 +17,9 @@ import org.hibernate.validator.constraints.Range;
 
 @NamedQueries({
         @NamedQuery(name = Meal.DELETE, query = "DELETE FROM Meal m WHERE m.id=:id AND m.user.id=:userId"),
-        @NamedQuery(name = Meal.GET, query = "SELECT  m FROM Meal m WHERE m.id=:id and m.user.id=:userId"),
+        @NamedQuery(name = Meal.GET, query = "SELECT m " +
+                                             "FROM Meal m " +
+                                             "WHERE m.id=:id and m.user.id=:userId"),
         @NamedQuery(name = Meal.ALL_SORTED, query = "SELECT m " +
                                                     "FROM Meal m " +
                                                     "WHERE m.user.id=:userId " +
