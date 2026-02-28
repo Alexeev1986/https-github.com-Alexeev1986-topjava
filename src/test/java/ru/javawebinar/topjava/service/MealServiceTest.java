@@ -42,7 +42,7 @@ public class MealServiceTest {
 
     private long startTime;
     private String currentTestName;
-    private static List<String> testResults = new ArrayList<>();
+    private static final List<String> testResults = new ArrayList<>();
 
     @Rule
     public TestName testNameRule = new TestName();
@@ -69,6 +69,8 @@ public class MealServiceTest {
         StringBuilder result = new StringBuilder();
         result.append("\n");
         result.append("\n=====================Tests timing=====================\n");
+        result.append(String.format("%-40s %s", "TEST NAME", "DURATION")).append("\n");
+        result.append("========================================================\n");
         testResults.forEach(t -> result.append(t).append("\n"));
         result.append("========================================================");
         log.info(result.toString());
