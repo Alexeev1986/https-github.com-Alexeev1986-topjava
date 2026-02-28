@@ -1,11 +1,11 @@
 package ru.javawebinar.topjava.service;
 
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.Stopwatch;
 import org.junit.rules.TestRule;
+import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.slf4j.LoggerFactory;
@@ -44,8 +44,6 @@ public class MealServiceTest {
 
     private static final List<String> testResults = new ArrayList<>();
 
-    private static boolean isPrintedBeans = false;
-
     @Rule
     public TestRule timingWatcher = new Stopwatch() {
         @Override
@@ -57,13 +55,19 @@ public class MealServiceTest {
         }
     };
 
-    @Before
-    public void setup() {
-        if (!isPrintedBeans) {
-            isPrintedBeans = true;
-            BeanUtil.printBeans(appCtx);
+    private static boolean isPrinted = false;
+
+    @Rule
+    public TestRule beanPrinter = new TestWatcher() {
+
+        @Override
+        protected void starting(Description description) {
+            if (!isPrinted) {
+                isPrinted = true;
+                BeanUtil.printBeans(appCtx);
+            }
         }
-    }
+    };
 
     @AfterClass
     public static void printTestsTiming() {
