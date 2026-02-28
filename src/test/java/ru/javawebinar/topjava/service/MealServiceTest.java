@@ -59,7 +59,6 @@ public class MealServiceTest {
 
     @Rule
     public TestRule beanPrinter = new TestWatcher() {
-
         @Override
         protected void starting(Description description) {
             if (!isPrinted) {
