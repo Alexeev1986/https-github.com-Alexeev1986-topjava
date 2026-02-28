@@ -11,8 +11,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.Range;
 
 @NamedQueries({
@@ -32,7 +34,9 @@ import org.hibernate.validator.constraints.Range;
                                                                "ORDER BY m.dateTime DESC")
 })
 @Entity
-@Table(name = "meal")
+@Table(name = "meal",
+        uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "date_time"},
+                                                            name = "meal_unique_user_datetime_idx")})
 public class Meal extends AbstractBaseEntity {
     public static final String DELETE = "Meal.delete";
     public static final String GET = "Meal.get";
@@ -44,6 +48,7 @@ public class Meal extends AbstractBaseEntity {
     private LocalDateTime dateTime;
 
     @Column(name = "description", nullable = false)
+    @Length(min = 2, max = 120)
     @NotBlank
     private String description;
 
@@ -52,6 +57,7 @@ public class Meal extends AbstractBaseEntity {
     private int calories;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @NotNull
     @JoinColumn(name = "user_id")
     private User user;
 
