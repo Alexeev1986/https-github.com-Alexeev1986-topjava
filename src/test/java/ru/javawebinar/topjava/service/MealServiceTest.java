@@ -1,8 +1,8 @@
 package ru.javawebinar.topjava.service;
 
 import org.junit.*;
+import org.junit.rules.Stopwatch;
 import org.junit.rules.TestRule;
-import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.slf4j.LoggerFactory;
@@ -19,8 +19,9 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 import org.slf4j.Logger;
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertThrows;
 import static ru.javawebinar.topjava.MealTestData.*;
@@ -38,50 +39,36 @@ public class MealServiceTest {
     @Autowired
     private ConfigurableApplicationContext appCtx;
 
+    private static final List<String> testResults = new ArrayList<>();
+
     private static boolean isPrintedBeans = false;
 
-    private static final Map<String, Long> testResults = new HashMap<>();
-
     @Rule
-    public TestRule timingWatcher = new TestWatcher() {
-        private long startTime;
-
+    public TestRule timingWatcher = new Stopwatch() {
         @Override
-        protected void starting(Description description) {
-            if (!isPrintedBeans) {
-                isPrintedBeans = true;
-                BeanUtil.printBeans(appCtx);
-            }
-            startTime = System.currentTimeMillis();
-        }
-
-        @Override
-        protected void succeeded(Description description) {
-            finished(description);
-        }
-
-        @Override
-        protected void failed(Throwable e, Description description) {
-            finished(description);
-        }
-        @Override
-        protected void finished(Description description) {
-            long duration = System.currentTimeMillis() - startTime;
+        protected void finished(long nanos, Description description) {
+            long ms = TimeUnit.NANOSECONDS.toMillis(nanos);
             String testName = description.getMethodName();
-            log.info("\n\nTEST {} FINISHED, DURATION [{}]\n\n", testName, duration);
-            testResults.put(testName, duration);
+            testResults.add(String.format("%-40s %d ms", testName, ms));
+            log.info("TEST {} FINISHED, DURATION [{}]ms", testName, ms);
         }
     };
+
+    @Before
+    public void setup() {
+        if (!isPrintedBeans) {
+            isPrintedBeans = true;
+            BeanUtil.printBeans(appCtx);
+        }
+    }
 
     @AfterClass
     public static void printTestsTiming() {
         StringBuilder result = new StringBuilder();
-        result.append("\n");
         result.append("\n=====================Tests timing=====================\n");
-        result.append(String.format("%-40s %s", "TEST NAME", "DURATION")).append("\n");
+        result.append(String.format("%-40s %s", "TEST NAME", "DURATION(ms)")).append("\n");
         result.append("========================================================\n");
-        testResults.forEach((name, duration) ->
-                result.append(String.format("%-40s %d ms", name, duration)).append("\n"));
+        testResults.forEach(r -> result.append(r).append("\n"));
         result.append("========================================================");
         log.info(result.toString());
     }

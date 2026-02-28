@@ -41,7 +41,7 @@ public class BeanUtil {
         output.append("END YOUR BEANS\n");
         output.append("INFRASTRUCTURE BEANS: \n");
         infrastructureBeans.forEach(bean -> output.append(bean).append("\n"));
-        output.append("END INFRASTRUCTURE BEANS\n");
+        output.append("END INFRASTRUCTURE BEANS");
         log.info(output.toString());
     }
 }
