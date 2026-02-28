@@ -51,7 +51,7 @@ public class MealServiceTest {
             long ms = TimeUnit.NANOSECONDS.toMillis(nanos);
             String testName = description.getMethodName();
             testResults.add(String.format("%-40s %d ms", testName, ms));
-            log.info("TEST {} FINISHED, DURATION [{}]ms", testName, ms);
+            log.info("TEST {} FINISHED, DURATION [{}ms]", testName, ms);
         }
     };
 
@@ -72,7 +72,7 @@ public class MealServiceTest {
     public static void printTestsTiming() {
         StringBuilder result = new StringBuilder();
         result.append("\n=====================Tests timing=====================\n");
-        result.append(String.format("%-40s %s", "TEST NAME", "DURATION(ms)")).append("\n");
+        result.append(String.format("%-40s %s", "TEST NAME", "DURATION (ms)")).append("\n");
         result.append("========================================================\n");
         testResults.forEach(r -> result.append(r).append("\n"));
         result.append("========================================================");
