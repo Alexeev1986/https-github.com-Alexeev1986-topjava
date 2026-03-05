@@ -13,8 +13,8 @@
 
 <!--    <context:component-scan base-package="ru.javawebinar.**.repository.jpa"/>-->
 
-    <context:component-scan base-package="ru.javawebinar.**.repository.datajpa"/>
-    <jpa:repositories base-package="ru.javawebinar.**.repository.datajpa"/>
+    <context:component-scan base-package="ru.javawebinar.topjava.repository.datajpa"/>
+    <jpa:repositories base-package="ru.javawebinar.topjava.repository.datajpa"/>
 
     <jdbc:initialize-database data-source="dataSource" enabled="${database.init}">
         <jdbc:script location="${jdbc.initLocation}"/>
@@ -23,7 +23,7 @@
 
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
           p:dataSource-ref="dataSource"
-          p:packagesToScan="ru.javawebinar.**.model">
+          p:packagesToScan="ru.javawebinar.topjava.model">
         <!--p:persistenceUnitName="persistenceUnit">-->
 
         <property name="jpaPropertyMap">
