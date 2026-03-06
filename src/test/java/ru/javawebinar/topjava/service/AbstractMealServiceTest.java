@@ -34,20 +34,10 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 @ActiveProfiles(resolver = ActiveDbProfileResolver.class)
 
-public class MealServiceTest {
+abstract public class AbstractMealServiceTest {
     private static final Logger log = getLogger("result");
 
     private static final StringBuilder results = new StringBuilder();
-
-    @BeforeClass
-    public static void logActiveProfile() {
-        //System.setProperty("db.profile", "hsqldb");
-        System.setProperty("db.profile", "jdbc");
-        //System.setProperty("db.profile", "datajpa");
-        //System.setProperty("db.profile", "postgres");
-        log.info(">>> Active DB profile: {}", System.getProperty("db.profile"));
-
-    }
 
     @Rule
     // http://stackoverflow.com/questions/14892125/what-is-the-best-practice-to-determine-the-execution-time-of-the-bussiness-relev
