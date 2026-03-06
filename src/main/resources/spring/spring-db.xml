@@ -11,34 +11,37 @@
        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
        http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
 
-    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
-          p:dataSource-ref="dataSource"
-          p:packagesToScan="ru.javawebinar.topjava.model">
-
-        <property name="jpaPropertyMap">
-            <map>
-                <entry key="#{T(org.hibernate.cfg.AvailableSettings).FORMAT_SQL}" value="${hibernate.format_sql}"/>
-                <entry key="#{T(org.hibernate.cfg.AvailableSettings).USE_SQL_COMMENTS}" value="${hibernate.use_sql_comments}"/>
-                <entry key="#{T(org.hibernate.cfg.AvailableSettings).JPA_PROXY_COMPLIANCE}" value="false"/>
-            </map>
-        </property>
-
-        <property name="jpaVendorAdapter">
-            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"
-                  p:showSql="${jpa.showSql}">
-            </bean>
-        </property>
-    </bean>
-
-    <tx:annotation-driven/>
-
     <jdbc:initialize-database data-source="dataSource" enabled="${database.init}">
         <jdbc:script location="${jdbc.initLocation}"/>
         <jdbc:script encoding="utf-8" location="classpath:db/populateDB.sql"/>
     </jdbc:initialize-database>
 
-    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"
-          p:entityManagerFactory-ref="entityManagerFactory"/>
+    <beans profile="jpa, datajpa">
+        <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
+              p:dataSource-ref="dataSource"
+              p:packagesToScan="ru.javawebinar.topjava.model">
+
+            <property name="jpaPropertyMap">
+                <map>
+                    <entry key="#{T(org.hibernate.cfg.AvailableSettings).FORMAT_SQL}" value="${hibernate.format_sql}"/>
+                    <entry key="#{T(org.hibernate.cfg.AvailableSettings).USE_SQL_COMMENTS}" value="${hibernate.use_sql_comments}"/>
+                    <entry key="#{T(org.hibernate.cfg.AvailableSettings).JPA_PROXY_COMPLIANCE}" value="false"/>
+                </map>
+            </property>
+
+            <property name="jpaVendorAdapter">
+                <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"
+                      p:showSql="${jpa.showSql}">
+                </bean>
+            </property>
+        </bean>
+
+        <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"
+              p:entityManagerFactory-ref="entityManagerFactory"/>
+
+        <tx:annotation-driven/>
+
+    </beans>
 
     <beans profile="hsqldb">
         <context:property-placeholder location="classpath:db/hsqldb.properties" system-properties-mode="OVERRIDE" ignore-unresolvable="true"/>
@@ -51,11 +54,10 @@
     </beans>
 
     <beans profile="postgres">
+        <context:property-placeholder location="classpath:db/postgres.properties" system-properties-mode="OVERRIDE" ignore-unresolvable="true"/>
         <bean class="org.springframework.beans.factory.config.MethodInvokingBean">
             <property name="staticMethod" value="org.slf4j.bridge.SLF4JBridgeHandler.install"/>
         </bean>
-
-        <context:property-placeholder location="classpath:db/postgres.properties" system-properties-mode="OVERRIDE" ignore-unresolvable="true"/>
 
         <bean id="dataSource"
               class="org.apache.tomcat.jdbc.pool.DataSource"
@@ -66,8 +68,6 @@
     </beans>
 
     <beans profile="jdbc">
-        <context:property-placeholder location="classpath:db/postgres.properties" system-properties-mode="OVERRIDE" ignore-unresolvable="true"/>
-
         <context:component-scan base-package="ru.javawebinar.topjava.repository.jdbc"/>
 
         <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
@@ -80,14 +80,10 @@
     </beans>
 
     <beans profile="jpa">
-        <context:property-placeholder location="classpath:db/postgres.properties" system-properties-mode="OVERRIDE" ignore-unresolvable="true"/>
-        
         <context:component-scan base-package="ru.javawebinar.topjava.repository.jpa"/>
     </beans>
 
     <beans profile="datajpa">
-        <context:property-placeholder location="classpath:db/postgres.properties" system-properties-mode="OVERRIDE" ignore-unresolvable="true"/>
-
         <context:component-scan base-package="ru.javawebinar.topjava.repository.datajpa"/>
 
         <jpa:repositories base-package="ru.javawebinar.topjava.repository.datajpa"/>

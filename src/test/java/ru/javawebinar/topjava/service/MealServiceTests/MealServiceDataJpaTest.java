@@ -1,7 +1,7 @@
-package ru.javawebinar.topjava.service;
+package ru.javawebinar.topjava.service.MealServiceTests;
 
 import org.springframework.test.context.ActiveProfiles;
 
-@ActiveProfiles({"postgres", "datajpa"})
+@ActiveProfiles({"datajpa"})
 public class MealServiceDataJpaTest extends AbstractMealServiceTest {
 }
