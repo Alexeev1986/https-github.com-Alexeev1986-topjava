@@ -5,7 +5,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.util.StringUtils;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.web.meal.MealRestController;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -27,7 +26,11 @@ public class MealServlet extends HttpServlet {
 
     @Override
     public void init() {
-        springContext = new ClassPathXmlApplicationContext("spring/spring-app.xml", "spring/spring-db.xml");
+        ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext();
+        ctx.getEnvironment().setActiveProfiles("hsqldb", "datajpa");
+        ctx.setConfigLocations("classpath:spring/spring-app.xml", "classpath:spring/spring-db.xml");
+        ctx.refresh();
+        springContext = ctx;
         mealController = springContext.getBean(MealRestController.class);
     }
 
