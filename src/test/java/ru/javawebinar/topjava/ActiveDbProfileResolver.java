@@ -18,13 +18,13 @@ public class ActiveDbProfileResolver extends DefaultActiveProfilesResolver {
         String[] activeProfiles = super.resolve(aClass);
         String dbProfile = Profiles.getActiveDbProfile();
         String[] activeProfilesWithDb = Arrays.copyOf(activeProfiles, activeProfiles.length + 1);
-        activeProfilesWithDb[activeProfiles.length] = Profiles.getActiveDbProfile();
+        activeProfilesWithDb[activeProfiles.length] =dbProfile;
 
         log.info("\n========================================\n" +
                         "ActiveDbProfileResolver for: {}\n" +
                         "  • Explicit profiles:  {}\n" +
                         "  • Detected DB profile: {}\n" +
-                        "  • Final active profiles: {}\n" +
+                        "  • Profiles return by resolver: {}\n" +
                         "========================================",
                 aClass.getSimpleName(),
                 Arrays.toString(activeProfiles),
