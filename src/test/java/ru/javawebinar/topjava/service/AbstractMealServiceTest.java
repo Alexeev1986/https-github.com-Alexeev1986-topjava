@@ -1,11 +1,9 @@
-package ru.javawebinar.topjava.service.meal_service_tests;
+package ru.javawebinar.topjava.service;
 
 import org.junit.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.service.AbstractBaseServiceTest;
-import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 import java.time.LocalDate;
 import java.time.Month;

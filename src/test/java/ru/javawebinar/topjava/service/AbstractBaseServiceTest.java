@@ -62,5 +62,6 @@ abstract public class AbstractBaseServiceTest {
                 "\n---------------------------------" +
                 results +
                 "\n---------------------------------");
+        results.delete(0, results.length());
     }
 }

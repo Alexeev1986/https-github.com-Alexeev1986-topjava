@@ -1,4 +1,4 @@
-package ru.javawebinar.topjava.service.user_service_tests;
+package ru.javawebinar.topjava.service;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -8,10 +8,10 @@ import org.springframework.dao.DataAccessException;
 import ru.javawebinar.topjava.UserTestData;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
-import ru.javawebinar.topjava.service.AbstractBaseServiceTest;
-import ru.javawebinar.topjava.service.UserService;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 import java.util.List;
+import java.util.Objects;
+
 import static org.junit.Assert.assertThrows;
 import static ru.javawebinar.topjava.UserTestData.*;
 
@@ -24,7 +24,7 @@ abstract public class AbstractUserServiceTest extends AbstractBaseServiceTest {
 
     @Before
     public void setup() {
-        cacheManager.getCache("users").clear();
+        Objects.requireNonNull(cacheManager.getCache("users")).clear();
     }
 
     @Test

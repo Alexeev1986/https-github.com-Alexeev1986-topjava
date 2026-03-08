@@ -23,24 +23,19 @@ public class DataJpaMealRepository implements MealRepository {
     @Transactional
     public Meal save(Meal meal, int userId) {
         User ref = userRepository.getReferenceById(userId);
+        meal.setUser(ref);
         if (meal.isNew()) {
-            meal.setUser(ref);
             return crudRepository.save(meal);
         } else {
             Meal existingMeal = crudRepository.findByIdAndUserId(meal.id(), userId);
             if (existingMeal != null) {
-                existingMeal.setDateTime(meal.getDateTime());
-                existingMeal.setDescription(meal.getDescription());
-                existingMeal.setCalories(meal.getCalories());
-                existingMeal.setUser(ref);
-                return crudRepository.save(existingMeal);
+                return crudRepository.save(meal);
             }
             throw new NotFoundException("Not found entity with id=" + meal.id());
         }
     }
 
     @Override
-    @Transactional
     public boolean delete(int id, int userId) {
         return crudRepository.delete(id, userId) != 0;
     }
