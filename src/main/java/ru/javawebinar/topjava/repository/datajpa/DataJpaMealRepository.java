@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.MealRepository;
-import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 @Repository
 public class DataJpaMealRepository implements MealRepository {
@@ -31,7 +30,7 @@ public class DataJpaMealRepository implements MealRepository {
             if (existingMeal != null) {
                 return crudRepository.save(meal);
             }
-            throw new NotFoundException("Not found entity with id=" + meal.id());
+            return null;
         }
     }
 
