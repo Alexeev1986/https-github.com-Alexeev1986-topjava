@@ -1,21 +1,19 @@
 package ru.javawebinar.topjava.service;
 
+import static ru.javawebinar.topjava.util.DateTimeUtil.atStartOfDayOrMin;
+import static ru.javawebinar.topjava.util.DateTimeUtil.atStartOfNextDayOrMax;
+import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFound;
+
+import java.time.LocalDate;
+import java.util.List;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 
-import java.time.LocalDate;
-import java.util.List;
-
-import static ru.javawebinar.topjava.util.DateTimeUtil.atStartOfDayOrMin;
-import static ru.javawebinar.topjava.util.DateTimeUtil.atStartOfNextDayOrMax;
-import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFound;
-
 @Service
 public class MealService {
-
     private final MealRepository repository;
 
     public MealService(MealRepository repository) {
@@ -24,6 +22,10 @@ public class MealService {
 
     public Meal get(int id, int userId) {
         return checkNotFound(repository.get(id, userId), id);
+    }
+
+    public Meal getWithUser(int id, int userId) {
+        return checkNotFound(repository.getWithUser(id, userId), id);
     }
 
     public void delete(int id, int userId) {

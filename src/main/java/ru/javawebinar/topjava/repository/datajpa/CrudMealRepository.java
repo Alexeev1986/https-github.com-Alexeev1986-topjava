@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.model.Meal;
 
-@Transactional(readOnly = false)
+@Transactional(readOnly = true)
 public interface CrudMealRepository extends JpaRepository<Meal, Integer> {
     @Transactional
     @Modifying
@@ -17,7 +17,10 @@ public interface CrudMealRepository extends JpaRepository<Meal, Integer> {
     int delete(@Param("id") int id, @Param("userId") int userId);
 
     @Query("SELECT m FROM Meal m WHERE m.id=:id AND m.user.id=:userId")
-    Meal findByIdAndUserId(@Param("id") int id, @Param("userId") int userId);
+    Meal getByIdAndUserId(@Param("id") int id, @Param("userId") int userId);
+
+    @Query("SELECT m FROM Meal m LEFT JOIN FETCH m.user WHERE m.id=:id AND m.user.id=:userId")
+    Meal getWithUser(@Param("id") int id, @Param("userId") int userId);
 
     @Query("SELECT m FROM Meal m WHERE m.user.id=:userId ORDER BY m.dateTime DESC")
     List<Meal> getAllByUserId(@Param("userId") int userId);

@@ -1,26 +1,24 @@
 package ru.javawebinar.topjava.repository.jpa;
 
+import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.List;
-
 @Repository
 @Transactional(readOnly = true)
 public class JpaUserRepository implements UserRepository {
-
 /*
-    @Autowired
-    private SessionFactory sessionFactory;
+@Autowired
+private SessionFactory sessionFactory;
 
-    private Session openSession() {
-        return sessionFactory.getCurrentSession();
-    }
+private Session openSession() {
+    return sessionFactory.getCurrentSession();
+}
 */
 
     @PersistenceContext
@@ -33,7 +31,16 @@ public class JpaUserRepository implements UserRepository {
             em.persist(user);
             return user;
         } else {
-            return em.merge(user);
+            User existingUser = em.find(User.class, user.id());
+            if (existingUser != null) {
+                existingUser.setName(user.getName());
+                existingUser.setEmail(user.getEmail());
+                existingUser.setPassword(user.getPassword());
+                existingUser.setEnabled(user.isEnabled());
+                existingUser.setCaloriesPerDay(user.getCaloriesPerDay());
+                return existingUser;
+            }
+            return null;
         }
     }
 
@@ -43,14 +50,23 @@ public class JpaUserRepository implements UserRepository {
     }
 
     @Override
+    public User getById(int id) {
+        return null;
+    }
+
+    @Override
+    public User getWithMeals(int id) {
+        return null;
+    }
+
+    @Override
     @Transactional
     public boolean delete(int id) {
+/*  User ref = em.getReference(User.class, id);
+    em.remove(ref);
 
-/*      User ref = em.getReference(User.class, id);
-        em.remove(ref);
-
-        Query query = em.createQuery("DELETE FROM User u WHERE u.id=:id");
-        return query.setParameter("id", id).executeUpdate() != 0;
+    Query query = em.createQuery("DELETE FROM User u WHERE u.id=:id");
+    return query.setParameter("id", id).executeUpdate() != 0;
 */
         return em.createNamedQuery(User.DELETE)
                 .setParameter("id", id)

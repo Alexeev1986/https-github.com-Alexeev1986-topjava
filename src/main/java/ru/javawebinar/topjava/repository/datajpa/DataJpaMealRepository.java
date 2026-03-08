@@ -26,7 +26,7 @@ public class DataJpaMealRepository implements MealRepository {
         if (meal.isNew()) {
             return crudRepository.save(meal);
         } else {
-            Meal existingMeal = crudRepository.findByIdAndUserId(meal.id(), userId);
+            Meal existingMeal = crudRepository.getByIdAndUserId(meal.id(), userId);
             if (existingMeal != null) {
                 return crudRepository.save(meal);
             }
@@ -41,7 +41,13 @@ public class DataJpaMealRepository implements MealRepository {
 
     @Override
     public Meal get(int id, int userId) {
-        return crudRepository.findByIdAndUserId(id, userId);
+        return crudRepository.getByIdAndUserId(id, userId);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Meal getWithUser(int id, int userId) {
+        return crudRepository.getWithUser(id, userId);
     }
 
     @Override

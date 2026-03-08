@@ -1,19 +1,18 @@
 package ru.javawebinar.topjava.service;
 
+import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFound;
+
+import java.util.List;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
 
-import java.util.List;
-
-import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFound;
-
 @Service
 public class UserService {
-
     private final UserRepository repository;
 
     public UserService(UserRepository repository) {
@@ -35,6 +34,14 @@ public class UserService {
         return checkNotFound(repository.get(id), id);
     }
 
+    public User getById(int id) {
+        return checkNotFound(repository.getById(id), id);
+    }
+
+    public User getWithMeals(int id) {
+        return checkNotFound(repository.getWithMeals(id), id);
+    }
+
     public User getByEmail(String email) {
         Assert.notNull(email, "email must not be null");
         return checkNotFound(repository.getByEmail(email), "email=" + email);
@@ -46,6 +53,7 @@ public class UserService {
     }
 
     @CacheEvict(value = "users", allEntries = true)
+    @Transactional
     public void update(User user) {
         Assert.notNull(user, "user must not be null");
         checkNotFound(repository.save(user), user.id());
