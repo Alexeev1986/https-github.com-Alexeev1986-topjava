@@ -2,9 +2,9 @@ package ru.javawebinar.topjava.repository.jdbc.strategy;
 
 import java.time.LocalDateTime;
 
-public class PostgresDataTimeStrategy implements DateTimeConversionStrategy {
+public class PostgresDataTimeStrategy extends AbstractDateTimeConversionStrategy {
     @Override
-    public Object convertDataTime(LocalDateTime localDateTime) {
+    public Object doConvertDataTime(LocalDateTime localDateTime) {
         return localDateTime;
     }
 }

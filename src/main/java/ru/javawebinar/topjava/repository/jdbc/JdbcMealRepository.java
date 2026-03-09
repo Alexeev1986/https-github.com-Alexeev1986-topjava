@@ -1,8 +1,5 @@
 package ru.javawebinar.topjava.repository.jdbc;
 
-import static ru.javawebinar.topjava.Profiles.HSQL_DB;
-import static ru.javawebinar.topjava.Profiles.POSTGRES_DB;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,16 +11,13 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
-import ru.javawebinar.topjava.Profiles;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
-import ru.javawebinar.topjava.repository.jdbc.strategy.DateTimeConversionStrategy;
-import ru.javawebinar.topjava.repository.jdbc.strategy.HsqldbDataTimeStrategy;
-import ru.javawebinar.topjava.repository.jdbc.strategy.PostgresDataTimeStrategy;
+import ru.javawebinar.topjava.repository.jdbc.strategy.AbstractDateTimeConversionStrategy;
 
 @Repository
 public class JdbcMealRepository implements MealRepository {
-    private final DateTimeConversionStrategy strategy;
+    private final AbstractDateTimeConversionStrategy strategy;
 
     private static final RowMapper<Meal> ROW_MAPPER = BeanPropertyRowMapper.newInstance(Meal.class);
 
@@ -35,20 +29,12 @@ public class JdbcMealRepository implements MealRepository {
 
     @Autowired
     public JdbcMealRepository(JdbcTemplate jdbcTemplate,
-                              NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
+                              NamedParameterJdbcTemplate namedParameterJdbcTemplate,
+                              AbstractDateTimeConversionStrategy strategy) {
+        this.strategy = strategy;
         this.insertMeal = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("meal")
                 .usingGeneratedKeyColumns("id");
-
-        String activeDbProfile = Profiles.getActiveDbProfile();
-        if (activeDbProfile.equals(POSTGRES_DB)) {
-            this.strategy = new PostgresDataTimeStrategy();
-        } else if (activeDbProfile.equals(HSQL_DB)) {
-            this.strategy = new HsqldbDataTimeStrategy();
-        } else {
-            throw new IllegalStateException("Unsupported database profile " + activeDbProfile);
-        }
-
         this.jdbcTemplate = jdbcTemplate;
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }

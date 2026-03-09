@@ -24,6 +24,7 @@
               p:url="${database.url}"
               p:username="${database.username}"
               p:password="${database.password}"/>
+        <bean id="strategy" class="ru.javawebinar.topjava.repository.jdbc.strategy.HsqldbDataTimeStrategy"/>
     </beans>
 
     <beans profile="postgres">
@@ -38,6 +39,7 @@
               p:url="${database.url}"
               p:username="${database.username}"
               p:password="${database.password}"/>
+        <bean id="strategy" class="ru.javawebinar.topjava.repository.jdbc.strategy.PostgresDataTimeStrategy"/>
     </beans>
 
     <beans profile="jdbc">
