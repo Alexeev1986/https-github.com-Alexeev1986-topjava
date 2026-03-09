@@ -45,12 +45,6 @@ public class DataJpaMealRepository implements MealRepository {
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public Meal getWithUser(int id, int userId) {
-        return crudRepository.getWithUser(id, userId);
-    }
-
-    @Override
     public List<Meal> getAll(int userId) {
         return crudRepository.getAllByUserId(userId);
     }
@@ -58,5 +52,11 @@ public class DataJpaMealRepository implements MealRepository {
     @Override
     public List<Meal> getBetweenHalfOpen(LocalDateTime startDateTime, LocalDateTime endDateTime, int userId) {
         return crudRepository.getBetween(startDateTime, endDateTime, userId);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Meal getWithUser(int id, int userId) {
+        return crudRepository.getWithUser(id, userId);
     }
 }

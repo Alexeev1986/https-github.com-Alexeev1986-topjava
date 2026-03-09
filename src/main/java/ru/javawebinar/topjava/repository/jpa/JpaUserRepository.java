@@ -50,16 +50,6 @@ private Session openSession() {
     }
 
     @Override
-    public User getById(int id) {
-        return null;
-    }
-
-    @Override
-    public User getWithMeals(int id) {
-        return null;
-    }
-
-    @Override
     @Transactional
     public boolean delete(int id) {
 /*  User ref = em.getReference(User.class, id);

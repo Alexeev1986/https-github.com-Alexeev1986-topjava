@@ -14,7 +14,6 @@ import ru.javawebinar.topjava.repository.UserRepository;
 
 @Repository
 public class JdbcUserRepository implements UserRepository {
-
     private static final BeanPropertyRowMapper<User> ROW_MAPPER = BeanPropertyRowMapper.newInstance(User.class);
 
     private final JdbcTemplate jdbcTemplate;
@@ -58,16 +57,6 @@ public class JdbcUserRepository implements UserRepository {
     public User get(int id) {
         List<User> users = jdbcTemplate.query("SELECT * FROM users WHERE id=?", ROW_MAPPER, id);
         return DataAccessUtils.singleResult(users);
-    }
-
-    @Override
-    public User getById(int id) {
-        return null;
-    }
-
-    @Override
-    public User getWithMeals(int id) {
-        return null;
     }
 
     @Override
