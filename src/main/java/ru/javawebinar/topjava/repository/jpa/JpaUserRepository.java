@@ -31,16 +31,7 @@ private Session openSession() {
             em.persist(user);
             return user;
         } else {
-            User existingUser = em.find(User.class, user.id());
-            if (existingUser != null) {
-                existingUser.setName(user.getName());
-                existingUser.setEmail(user.getEmail());
-                existingUser.setPassword(user.getPassword());
-                existingUser.setEnabled(user.isEnabled());
-                existingUser.setCaloriesPerDay(user.getCaloriesPerDay());
-                return existingUser;
-            }
-            return null;
+            return em.merge(user);
         }
     }
 

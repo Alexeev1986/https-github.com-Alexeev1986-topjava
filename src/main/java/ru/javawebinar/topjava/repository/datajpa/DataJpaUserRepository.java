@@ -20,20 +20,7 @@ public class DataJpaUserRepository implements UserRepository {
     @Override
     @Transactional
     public User save(User user) {
-        if (user.isNew()) {
-            return crudRepository.save(user);
-        } else {
-            User existUser = crudRepository.getById(user.id());
-            if (existUser != null) {
-                existUser.setName(user.getName());
-                existUser.setEmail(user.getEmail());
-                existUser.setPassword(user.getPassword());
-                existUser.setEnabled(user.isEnabled());
-                existUser.setCaloriesPerDay(user.getCaloriesPerDay());
-                return crudRepository.save(existUser);
-            }
-            return null;
-        }
+        return crudRepository.save(user);
     }
 
     @Override
