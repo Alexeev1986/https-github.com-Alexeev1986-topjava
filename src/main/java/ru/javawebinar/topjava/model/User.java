@@ -2,6 +2,7 @@ package ru.javawebinar.topjava.model;
 
 import static ru.javawebinar.topjava.util.MealsUtil.DEFAULT_CALORIES_PER_DAY;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.EnumSet;
@@ -74,7 +75,7 @@ public class User extends AbstractNamedEntity {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @OrderBy("dateTime DESC")
-    private List<Meal> meals;
+    private List<Meal> meals = new ArrayList<>();
 
     public User() {
     }

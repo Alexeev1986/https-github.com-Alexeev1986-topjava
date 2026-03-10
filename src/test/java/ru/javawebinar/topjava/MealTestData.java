@@ -7,6 +7,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import static java.time.LocalDateTime.of;
+import static ru.javawebinar.topjava.UserTestData.admin;
+import static ru.javawebinar.topjava.UserTestData.user;
 import static ru.javawebinar.topjava.model.AbstractBaseEntity.START_SEQ;
 
 public class MealTestData {
@@ -34,5 +36,17 @@ public class MealTestData {
 
     public static Meal getUpdated() {
         return new Meal(MEAL1_ID, meal1.getDateTime().plus(2, ChronoUnit.MINUTES), "Обновленный завтрак", 200);
+    }
+
+    static {
+        meal1.setUser(user);
+        meal2.setUser(user);
+        meal3.setUser(user);
+        meal4.setUser(user);
+        meal5.setUser(user);
+        meal6.setUser(user);
+        meal7.setUser(user);
+        adminMeal1.setUser(admin);
+        adminMeal2.setUser(admin);
     }
 }
