@@ -1,5 +1,6 @@
 package ru.javawebinar.topjava.repository.datajpa;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertThrows;
 import static ru.javawebinar.topjava.MealTestData.MEAL_MATCHER;
 import static ru.javawebinar.topjava.MealTestData.meals;
@@ -11,9 +12,6 @@ import org.springframework.test.context.ActiveProfiles;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.service.AbstractUserServiceTest;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
-
-import java.util.Collection;
-import java.util.Collections;
 
 @ActiveProfiles(DATAJPA)
 public class DataJpaUserServiceTest extends AbstractUserServiceTest {
@@ -29,7 +27,7 @@ public class DataJpaUserServiceTest extends AbstractUserServiceTest {
     public void getWithMealsUserWithNotMeals() {
         User testUser = service.getWithMeals(GUEST_ID);
         USER_MATCHER.assertMatch(testUser, guest);
-        MEAL_MATCHER.assertMatch(testUser.getMeals(), Collections.emptyList());
+        assertThat(testUser.getMeals().isEmpty());
     }
 
     @Test
