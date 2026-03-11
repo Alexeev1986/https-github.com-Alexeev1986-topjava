@@ -75,7 +75,7 @@ public class User extends AbstractNamedEntity {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @OrderBy("dateTime DESC")
-    private List<Meal> meals = new ArrayList<>();
+    private List<Meal> meals;
 
     public User() {
     }
