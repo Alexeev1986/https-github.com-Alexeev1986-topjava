@@ -58,7 +58,7 @@
     </beans>
 
     <beans profile="jdbc">
-        <context:component-scan base-package="ru.javawebinar.**.repository.jdbc"/>
+        <context:component-scan base-package="ru.javawebinar.topjava.repository.jdbc"/>
         <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
             <constructor-arg ref="dataSource"/>
         </bean>
@@ -71,7 +71,7 @@
     <beans profile="jpa,datajpa">
         <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
               p:dataSource-ref="dataSource"
-              p:packagesToScan="ru.javawebinar.**.model">
+              p:packagesToScan="ru.javawebinar.topjava.model">
             <!--p:persistenceUnitName="persistenceUnit">-->
 
             <property name="jpaPropertyMap">
@@ -111,11 +111,11 @@
     </beans>
 
     <beans profile="jpa">
-        <context:component-scan base-package="ru.javawebinar.**.repository.jpa"/>
+        <context:component-scan base-package="ru.javawebinar.topjava.repository.jpa"/>
     </beans>
 
     <beans profile="datajpa">
-        <context:component-scan base-package="ru.javawebinar.**.repository.datajpa"/>
-        <jpa:repositories base-package="ru.javawebinar.**.repository.datajpa"/>
+        <context:component-scan base-package="ru.javawebinar.topjava.repository.datajpa"/>
+        <jpa:repositories base-package="ru.javawebinar.topjava.repository.datajpa"/>
     </beans>
 </beans>
