@@ -1,4 +1,4 @@
-package ru.javawebinar.topjava.repository;
+package ru.javawebinar.topjava.util;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
