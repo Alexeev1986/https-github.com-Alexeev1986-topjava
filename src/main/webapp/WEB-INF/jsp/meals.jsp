@@ -13,7 +13,6 @@
     <hr/>
     <h2><spring:message code="meal.title"/></h2>
     <form method="get" action="<c:url value='/meals/filter'/>">
-        <input type="hidden" name="action" value="filter">
         <dl>
             <dt><spring:message code="meal.filter.startDate"/>:</dt>
             <dd><input type="date" name="startDate" value="${param.startDate}"></dd>
