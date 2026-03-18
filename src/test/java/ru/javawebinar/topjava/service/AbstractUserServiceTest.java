@@ -1,25 +1,22 @@
 package ru.javawebinar.topjava.service;
 
+import static org.junit.Assert.assertThrows;
+import static ru.javawebinar.topjava.UserTestData.*;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.CacheManager;
-import org.springframework.context.annotation.Primary;
 import org.springframework.dao.DataAccessException;
 import ru.javawebinar.topjava.UserTestData;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
-
 import javax.validation.ConstraintViolationException;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import ru.javawebinar.topjava.util.JpaUtil;
-
-import static org.junit.Assert.assertThrows;
-import static ru.javawebinar.topjava.UserTestData.*;
 
 public abstract class AbstractUserServiceTest extends AbstractServiceTest {
 
@@ -30,7 +27,6 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
     private CacheManager cacheManager;
 
     @Autowired(required = false)
-    @Qualifier("jpaUtil")
     protected JpaUtil jpaUtil;
 
     @Before
