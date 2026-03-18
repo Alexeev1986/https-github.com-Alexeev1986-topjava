@@ -68,7 +68,7 @@ public class JspMealController extends AbstractController {
                 request.getParameter("description"),
                 Integer.parseInt(request.getParameter("calories"))
                 );
-        if (idParam != null && idParam.isEmpty()) {
+        if (idParam != null && !idParam.isEmpty()) {
             int id = Integer.parseInt(idParam);
             meal.setId(id);
             mealService.update(meal, userId);
