@@ -1,10 +1,19 @@
 package ru.javawebinar.topjava.service;
 
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static ru.javawebinar.topjava.util.BeanUtil.printBeans;
+
 import org.junit.ClassRule;
 import org.junit.Rule;
+import org.junit.Test;
 import org.junit.rules.ExternalResource;
 import org.junit.rules.Stopwatch;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.env.Environment;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
@@ -12,8 +21,7 @@ import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.javawebinar.topjava.ActiveDbProfileResolver;
 import ru.javawebinar.topjava.TimingRules;
-
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import java.util.Arrays;
 
 @ContextConfiguration({
         "classpath:spring/spring-app.xml",
@@ -23,6 +31,13 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 @ActiveProfiles(resolver = ActiveDbProfileResolver.class)
 public abstract class AbstractServiceTest {
+    protected final Logger log = LoggerFactory.getLogger(getClass());
+
+    @Autowired
+    protected ConfigurableApplicationContext appCtx;
+
+    @Autowired
+    protected Environment environment;
 
     @ClassRule
     public static ExternalResource summary = TimingRules.SUMMARY;
@@ -35,5 +50,12 @@ public abstract class AbstractServiceTest {
         assertThatExceptionOfType(Throwable.class)
                 .isThrownBy(runnable::run)
                 .withRootCauseInstanceOf(rootExceptionClass);
+    }
+
+    @Test
+    public void testActiveProfiles() {
+        log.info("=== Active profile === {}", Arrays.toString(environment.getActiveProfiles()));
+        log.info("=== Properties === {}", "jpa.showSql = " + environment.getProperty("jpa.showSql"));
+        printBeans(appCtx);
     }
 }
