@@ -18,10 +18,7 @@ public class JpaUserServiceTest extends AbstractUserServiceTest {
 
     @Test
     public void testActiveProfiles() {
-        System.out.println("=== Активные профили ===");
-        System.out.println(Arrays.toString(environment.getActiveProfiles()));
-
-        System.out.println("=== Свойства ===");
-        System.out.println("jpa.showSql = " + environment.getProperty("jpa.showSql"));
+        log.info("=== Active profile === {}", Arrays.toString(environment.getActiveProfiles()));
+        log.info("=== Properties === {}", "jpa.showSql = " + environment.getProperty("jpa.showSql"));
     }
 }

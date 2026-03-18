@@ -5,6 +5,8 @@ import static ru.javawebinar.topjava.UserTestData.*;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.dao.DataAccessException;
@@ -19,6 +21,7 @@ import java.util.Set;
 import ru.javawebinar.topjava.util.JpaUtil;
 
 public abstract class AbstractUserServiceTest extends AbstractServiceTest {
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     @Autowired
     protected UserService service;
