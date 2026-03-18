@@ -23,7 +23,7 @@ public abstract class AbstractController {
     }
 
     protected int getId(HttpServletRequest request) {
-        String paramId = request.getParameter("id");
+        String paramId = request.getParameter("userId");
         return Integer.parseInt(paramId);
     }
 }
