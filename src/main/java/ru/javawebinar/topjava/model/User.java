@@ -77,7 +77,7 @@ public class User extends AbstractNamedEntity {
     private Set<Role> roles;
 
     @Column(name = "calories_per_day", nullable = false, columnDefinition = "int default 2000")
-    @Range(min = 10, max = 10000)
+    @Range(min = 10, max = 5000)
     private int caloriesPerDay = DEFAULT_CALORIES_PER_DAY;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")   // cascade = CascadeType.REMOVE, orphanRemoval = true)
