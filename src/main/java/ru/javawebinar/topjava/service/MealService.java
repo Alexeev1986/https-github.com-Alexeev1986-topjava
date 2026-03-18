@@ -11,9 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
-import ru.javawebinar.topjava.to.MealTo;
-import ru.javawebinar.topjava.util.MealsUtil;
-import ru.javawebinar.topjava.web.SecurityUtil;
 
 @Service
 public class MealService {
@@ -37,10 +34,6 @@ public class MealService {
 
     public List<Meal> getAll(int userId) {
         return repository.getAll(userId);
-    }
-
-    public List<MealTo> getAllMealTo(int userId) {
-        return MealsUtil.getTos(repository.getAll(userId), SecurityUtil.authUserCaloriesPerDay());
     }
 
     public void update(Meal meal, int userId) {

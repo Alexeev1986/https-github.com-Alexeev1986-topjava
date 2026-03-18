@@ -1,5 +1,6 @@
 package ru.javawebinar.topjava.web;
 
+import static ru.javawebinar.topjava.web.SecurityUtil.authUserCaloriesPerDay;
 import static ru.javawebinar.topjava.web.SecurityUtil.authUserId;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,5 +26,9 @@ public abstract class AbstractController {
     protected int getId(HttpServletRequest request) {
         String paramId = request.getParameter("userId");
         return Integer.parseInt(paramId);
+    }
+
+    protected int getAuthUserCaloriesPerDay() {
+        return authUserCaloriesPerDay();
     }
 }

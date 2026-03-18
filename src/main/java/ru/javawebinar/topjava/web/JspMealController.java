@@ -27,7 +27,7 @@ public class JspMealController extends AbstractController {
     public String getAll(Model model) {
         int userId = getUserId();
         log.info("get all for user {}", userId);
-        model.addAttribute("meals", mealService.getAllMealTo(userId));
+        model.addAttribute("meals", MealsUtil.getTos(mealService.getAll(userId), getAuthUserCaloriesPerDay()));
         return "meals";
     }
 
