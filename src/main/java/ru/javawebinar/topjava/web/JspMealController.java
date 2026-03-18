@@ -4,22 +4,27 @@ import static ru.javawebinar.topjava.util.DateTimeUtil.parseLocalDate;
 import static ru.javawebinar.topjava.util.DateTimeUtil.parseLocalTime;
 import static ru.javawebinar.topjava.web.SecurityUtil.authUserId;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.service.MealService;
-import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
+import javax.servlet.http.HttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import ru.javawebinar.topjava.model.Meal;
+import ru.javawebinar.topjava.service.MealService;
 
 @Controller
+@RequestMapping("/meals")
 public class JspMealController {
     private static final Logger log = LoggerFactory.getLogger(JspMealController.class);
 
@@ -30,7 +35,7 @@ public class JspMealController {
     public String getAll(Model model) {
         int userId = authUserId();
         log.info("get all for user {}", userId);
-        model.addAttribute("meals", service.getAll(userId));
+        model.addAttribute("meals", service.getAllMealTo(userId));
         return "meals";
     }
 
@@ -90,10 +95,5 @@ public class JspMealController {
         log.info("delete meal {} for user {}", id, userId);
         service.delete(id, userId);
         return "redirect:/meals";
-    }
-
-    private int getId(HttpServletRequest request) {
-        String paramId = Objects.requireNonNull(request.getParameter("id"));
-        return Integer.parseInt(paramId);
     }
 }
