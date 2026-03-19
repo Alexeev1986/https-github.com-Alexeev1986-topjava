@@ -3,17 +3,19 @@ package ru.javawebinar.topjava.repository.jdbc;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
@@ -26,15 +28,14 @@ import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-import javax.validation.Validator;
-
 @Repository
 @Transactional(readOnly = true)
 public class JdbcUserRepository implements UserRepository {
     private static final BeanPropertyRowMapper<User> ROW_MAPPER = BeanPropertyRowMapper.newInstance(User.class);
+
     private static final Logger log = LoggerFactory.getLogger(JdbcUserRepository.class);
+
+    private static final UserResultSetExtractor EXTRACTOR = new UserResultSetExtractor();
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -105,33 +106,16 @@ public class JdbcUserRepository implements UserRepository {
     }
 
     @Override
-    public User getByEmail(String email) {
-        // return jdbcTemplate.queryForObject("SELECT * FROM users WHERE email=?", ROW_MAPPER, email);
-        List<User> users = jdbcTemplate.query("SELECT * FROM users WHERE email=?", ROW_MAPPER, email);
-        User user = DataAccessUtils.singleResult(users);
-        setRoles(user);
-        return user;
-    }
-
-    private void setRoles(User user) {
-        if (user == null) return;
-        List<Role> roles = jdbcTemplate.query("SELECT * FROM user_role WHERE user_id=?",
-                (rs, rowNum) -> Role.valueOf(rs.getString("role")), user.id());
-        user.setRoles(roles);
-    }
-
-    @Override
     public List<User> getAll() {
         Map<Integer, User> map = new LinkedHashMap<>();
         jdbcTemplate.query("SELECT u.*, r.role FROM users u LEFT JOIN user_role r ON u.id=r.user_id ORDER BY u.name, u.email",
                 (rs -> {
                     int userId = rs.getInt("id");
                     User user = map.get(userId);
-
                     if (user == null) {
-                        user = ROW_MAPPER.mapRow(rs, 0);
+                        user = ROW_MAPPER.mapRow(rs, rs.getRow());
                         if (user.getRoles() == null) {
-                            user.setRoles(new HashSet<>());
+                            user.setRoles(EnumSet.noneOf(Role.class));
                         }
                         map.put(userId, user);
                     }
@@ -144,19 +128,25 @@ public class JdbcUserRepository implements UserRepository {
     }
 
     @Override
+    public User getByEmail(String email) {
+        return jdbcTemplate.query("SELECT u.*, r.role FROM users u LEFT JOIN user_role r on u.id=r.user_id WHERE u.email=?",
+                EXTRACTOR, email);
+    }
+
+    @Override
     public User get(int id) {
         return jdbcTemplate.query("SELECT u.*, r.role FROM users u LEFT JOIN user_role r on u.id=r.user_id WHERE u.id=?",
-                new UserResultSetExtractor(), id);
+                EXTRACTOR, id);
     }
 
     private static class UserResultSetExtractor implements ResultSetExtractor<User> {
         @Override
         public User extractData(ResultSet rs) throws SQLException, DataAccessException {
             User user = null;
-            Set<Role> roles = new HashSet<>();
+            Set<Role> roles = EnumSet.noneOf(Role.class);
             while (rs.next()) {
                 if (user == null) {
-                    user = ROW_MAPPER.mapRow(rs, 0);
+                    user = ROW_MAPPER.mapRow(rs, rs.getRow());
                 }
                 String roleStr = rs.getString("role");
                 if (roleStr != null) {
