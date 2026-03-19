@@ -71,6 +71,13 @@
             <property name="dataSource" ref="dataSource"/>
         </bean>
 
+        <bean id="validatorFactory" class="javax.validation.Validation"
+              factory-method="buildDefaultValidatorFactory"
+              destroy-method="close"/>
+
+        <bean id="validator" factory-bean="validatorFactory"
+              factory-method="getValidator"/>
+
         <tx:annotation-driven/>
     </beans>
 
