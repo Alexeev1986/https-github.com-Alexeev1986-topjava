@@ -8,6 +8,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.support.DataAccessUtils;
@@ -27,6 +30,7 @@ import ru.javawebinar.topjava.repository.UserRepository;
 @Transactional(readOnly = true)
 public class JdbcUserRepository implements UserRepository {
     private static final BeanPropertyRowMapper<User> ROW_MAPPER = BeanPropertyRowMapper.newInstance(User.class);
+    private static final Logger log = LoggerFactory.getLogger(JdbcUserRepository.class);
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -51,13 +55,35 @@ public class JdbcUserRepository implements UserRepository {
         if (user.isNew()) {
             Number newKey = insertUser.executeAndReturnKey(parameterSource);
             user.setId(newKey.intValue());
-        } else if (namedParameterJdbcTemplate.update("""
-                   UPDATE users SET name=:name, email=:email, password=:password,
-                   registered=:registered, enabled=:enabled, calories_per_day=:caloriesPerDay WHERE id=:id
-                """, parameterSource) == 0) {
-            return null;
+            insertRoles(user);
+        } else {
+            if (namedParameterJdbcTemplate.update("""
+                       UPDATE users SET name=:name, email=:email, password=:password,
+                       registered=:registered, enabled=:enabled, calories_per_day=:caloriesPerDay WHERE id=:id
+                       """, parameterSource) == 0) {
+                return null;
+            }
+            updateRoles(user);
         }
         return user;
+    }
+
+    private void insertRoles(User user) {
+        Set<Role> roles = user.getRoles();
+        if (roles == null || roles.isEmpty()) {
+            return;
+        }
+        int[] updateCounts = jdbcTemplate.batchUpdate("INSERT INTO user_role (user_id, role) VALUES (?, ?)",
+                roles.stream()
+                        .map(role -> new Object[]{user.id(), role.name()})
+                        .collect(Collectors.toList())
+        );
+        log.debug("inserted {} roles for user {}", updateCounts.length, user.id());
+    }
+
+    private void updateRoles(User user) {
+        jdbcTemplate.update("DELETE FROM user_role WHERE user_id=?", user.id());
+        insertRoles(user);
     }
 
     @Override
@@ -92,6 +118,9 @@ public class JdbcUserRepository implements UserRepository {
 
                     if (user == null) {
                         user = ROW_MAPPER.mapRow(rs, 0);
+                        if (user.getRoles() == null) {
+                            user.setRoles(new HashSet<>());
+                        }
                         map.put(userId, user);
                     }
                     String roleStr = rs.getString("role");
@@ -99,7 +128,6 @@ public class JdbcUserRepository implements UserRepository {
                         user.getRoles().add(Role.valueOf(roleStr));
                     }
                 }));
-
         return new ArrayList<>(map.values());
     }
 

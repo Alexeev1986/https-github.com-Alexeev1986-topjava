@@ -27,10 +27,4 @@ public class DataJpaUserServiceTest extends AbstractUserServiceTest {
         Assert.assertThrows(NotFoundException.class,
                 () -> service.getWithMeals(NOT_FOUND));
     }
-
-    @Test
-    public void printUserRoles() {
-        log.debug("User roles {}", service.get(USER_ID).getRoles());
-        log.debug("Admin roles {}", service.get(ADMIN_ID).getRoles());
-    }
 }
