@@ -10,7 +10,6 @@ import java.time.temporal.ChronoUnit;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,8 +21,6 @@ import ru.javawebinar.topjava.model.Meal;
 public class JspMealController extends AbstractController {
     @GetMapping
     public String getAll(Model model) {
-        int userId = getUserId();
-        log.info("get all for user {}", userId);
         model.addAttribute("meals", getAllTos());
         return "meals";
     }
@@ -48,18 +45,12 @@ public class JspMealController extends AbstractController {
 
     @GetMapping("/update/{id}")
     public String updateForm(@PathVariable("id") int id, Model model) {
-        int userId = getUserId();
-        log.info("update for meal {} for user {}", id, userId);
-        Meal meal = service.get(id, userId);
-        model.addAttribute("meal", meal);
+        model.addAttribute("meal", super.get(id));
         return "mealForm";
     }
 
     @PostMapping("/save")
     public String save(HttpServletRequest request) {
-        int userId = getUserId();
-        log.info("save for user {}", userId);
-
         String idParam = request.getParameter("id");
         Meal meal = new Meal(
                 LocalDateTime.parse(request.getParameter("dateTime")),
@@ -69,18 +60,16 @@ public class JspMealController extends AbstractController {
         if (idParam != null && !idParam.isEmpty()) {
             int id = Integer.parseInt(idParam);
             meal.setId(id);
-            service.update(meal, userId);
+            super.update(meal, id);
         } else {
-            service.create(meal, userId);
+            super.create(meal);
         }
         return "redirect:/meals";
     }
 
-    @DeleteMapping("/{id}")
-    public String delete(@PathVariable("id") int id) {
-        int userId = getUserId();
-        log.info("delete meal {} for user {}", id, userId);
-        service.delete(id, userId);
+    @GetMapping("/delete/{id}")
+    public String deleteMeal(@PathVariable("id") int id) {
+        super.delete(id);
         return "redirect:/meals";
     }
 }

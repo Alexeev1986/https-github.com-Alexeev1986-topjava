@@ -44,4 +44,28 @@ public abstract class AbstractController {
         List<Meal> mealsDateFiltered = service.getBetweenInclusive(startDate, endDate, userId);
         return MealsUtil.getFilteredTos(mealsDateFiltered, SecurityUtil.authUserCaloriesPerDay(), startTime, endTime);
     }
+
+    protected Meal get(int id) {
+        int userId = getUserId();
+        log.info("get meal {} for user {}", id, userId);
+        return service.get(id, userId);
+    }
+
+    protected void delete(int id) {
+        int userId = getUserId();
+        log.info("delete meal {} for user {}", id, userId);
+        service.delete(id, userId);
+    }
+
+    protected Meal create(Meal meal) {
+        int userId = getUserId();
+        log.info("create meal {} for user {}", meal, userId);
+        return service.create(meal, userId);
+    }
+
+    protected void update(Meal meal, int id) {
+        int userId = getUserId();
+        log.info("update meal {} for user {}", meal, userId);
+        service.update(meal, userId);
+    }
 }
