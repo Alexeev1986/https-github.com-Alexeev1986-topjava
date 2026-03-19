@@ -9,8 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
+import ru.javawebinar.topjava.util.ValidationUtil;
 
 @Repository
 @Transactional(readOnly = true)
@@ -60,10 +59,7 @@ public class JdbcUserRepository implements UserRepository {
     @Override
     @Transactional
     public User save(User user) {
-        Set<ConstraintViolation<User>> violationSet = validator.validate(user);
-        if (!violationSet.isEmpty()) {
-            throw new ConstraintViolationException(violationSet);
-        }
+        ValidationUtil.validate(validator, user);
         BeanPropertySqlParameterSource parameterSource = new BeanPropertySqlParameterSource(user);
         if (user.isNew()) {
             Number newKey = insertUser.executeAndReturnKey(parameterSource);
@@ -129,7 +125,7 @@ public class JdbcUserRepository implements UserRepository {
 
     @Override
     public User getByEmail(String email) {
-        return jdbcTemplate.query("SELECT u.*, r.role FROM users u LEFT JOIN user_role r on u.id=r.user_id WHERE u.email=?",
+        return jdbcTemplate.query("SELECT DISTINCT u.*, r.role FROM users u LEFT JOIN user_role r on u.id=r.user_id WHERE u.email=?",
                 EXTRACTOR, email);
     }
 

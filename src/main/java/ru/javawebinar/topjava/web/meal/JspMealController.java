@@ -31,7 +31,7 @@ public class JspMealController extends AbstractController {
         LocalDate endDate = parseLocalDate(request.getParameter("endDate"));
         LocalTime startTime = parseLocalTime(request.getParameter("startTime"));
         LocalTime endTime = parseLocalTime(request.getParameter("endTime"));
-        model.addAttribute("meals", getFilteredTos(startDate, endDate, startTime, endTime));
+        model.addAttribute("meals", getFilteredTos(startDate, startTime, endDate, endTime));
         return "meals";
     }
 
