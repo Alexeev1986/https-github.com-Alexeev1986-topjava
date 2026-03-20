@@ -21,7 +21,9 @@ import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.javawebinar.topjava.ActiveDbProfileResolver;
 import ru.javawebinar.topjava.TimingRules;
+
 import java.util.Arrays;
+import java.util.Objects;
 
 @ContextConfiguration({
         "classpath:spring/spring-app.xml",
@@ -45,11 +47,18 @@ public abstract class AbstractServiceTest {
     @Rule
     public Stopwatch stopwatch = TimingRules.STOPWATCH;
 
-    //  Check root cause with AssertJ: https://github.com/junit-team/junit-framework/issues/2129#issuecomment-565712630
-    protected <T extends Throwable> void validateRootCause(Class<T> rootExceptionClass, Runnable runnable) {
-        assertThatExceptionOfType(Throwable.class)
-                .isThrownBy(runnable::run)
-                .withRootCauseInstanceOf(rootExceptionClass);
+    protected <T extends Throwable> void validateExceptionInChain(Class<T> exceptionClass, Runnable runnable) {
+        assertThatExceptionOfType(Throwable.class).isThrownBy(runnable::run).satisfies(e -> {
+            Throwable current = e;
+            while (current != null) {
+                if (exceptionClass.isInstance(current)) {
+                    return;
+                }
+                current = current.getCause();
+            }
+            throw new AssertionError("Exception " + exceptionClass.getSimpleName() + " in exception chain, but got:" +
+                    Objects.requireNonNull(e).getClass().getSimpleName());
+        });
     }
 
     @Test
