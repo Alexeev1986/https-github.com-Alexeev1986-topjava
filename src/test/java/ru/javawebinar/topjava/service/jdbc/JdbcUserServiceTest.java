@@ -6,11 +6,13 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 
 import org.junit.Test;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.service.AbstractUserServiceTest;
 import java.util.List;
 
 @ActiveProfiles(JDBC)
+@TestPropertySource(properties = "spring.cache.type=NONE")
 public class JdbcUserServiceTest extends AbstractUserServiceTest {
     @Test
     public void printUserRoles() {
