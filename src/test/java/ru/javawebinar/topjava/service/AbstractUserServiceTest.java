@@ -22,18 +22,18 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
     @Autowired
     protected UserService service;
 
-    @Autowired
+    /*@Autowired
     private CacheManager cacheManager;
-
-    @Autowired(required = false)
-    protected JpaUtil jpaUtil;
+*/
+   /* @Autowired(required = false)
+    protected JpaUtil jpaUtil;*/
 
     @Before
     public void setup() {
-        cacheManager.getCache("users").clear();
+       /* cacheManager.getCache("users").clear();
         if (jpaUtil != null) {
             jpaUtil.clear2ndLevelHibernateCache();
-        }
+        }*/
     }
 
     @Test
