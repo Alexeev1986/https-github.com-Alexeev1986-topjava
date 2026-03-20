@@ -2,21 +2,21 @@ package ru.javawebinar.topjava.service.datajpa;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
 import ru.javawebinar.topjava.MealTestData;
 import ru.javawebinar.topjava.UserTestData;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.service.AbstractUserServiceTest;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
+import java.util.List;
 
 import static ru.javawebinar.topjava.MealTestData.MEAL_MATCHER;
 import static ru.javawebinar.topjava.Profiles.DATAJPA;
 import static ru.javawebinar.topjava.UserTestData.*;
 
 @ActiveProfiles(DATAJPA)
-@TestPropertySource(properties = {"spring.cache.type=NONE",
-        "spring.jpa.properties.hibernate.cache.use_second_level_cache=false"})
 public class DataJpaUserServiceTest extends AbstractUserServiceTest {
     @Test
     public void getWithMeals() {
@@ -29,5 +29,15 @@ public class DataJpaUserServiceTest extends AbstractUserServiceTest {
     public void getWithMealsNotFound() {
         Assert.assertThrows(NotFoundException.class,
                 () -> service.getWithMeals(NOT_FOUND));
+    }
+
+    @Autowired
+    private CacheManager cacheManager;
+
+    @Test
+    public void testCacheIsDisabled() {
+        log.debug("CacheManager class: {}", cacheManager.getClass());
+        List<User> firstCall = service.getAll();
+        List<User> secondCall = service.getAll();
     }
 }
