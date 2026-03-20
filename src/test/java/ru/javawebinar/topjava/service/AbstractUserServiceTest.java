@@ -1,15 +1,16 @@
 package ru.javawebinar.topjava.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertThrows;
 import static ru.javawebinar.topjava.UserTestData.*;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import ru.javawebinar.topjava.UserTestData;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
+import ru.javawebinar.topjava.repository.UserRepository;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 import javax.validation.ConstraintViolationException;
 import java.util.Date;
@@ -20,18 +21,15 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
     @Autowired
     protected UserService service;
 
-    /*@Autowired
-    private CacheManager cacheManager;
-*/
-   /* @Autowired(required = false)
-    protected JpaUtil jpaUtil;*/
+    @Autowired
+    private UserRepository userRepository;
 
-    @Before
-    public void setup() {
-       /* cacheManager.getCache("users").clear();
-        if (jpaUtil != null) {
-            jpaUtil.clear2ndLevelHibernateCache();
-        }*/
+    @Test
+    public void springCacheInAction() {
+        List<User> before = service.getAll();
+        userRepository.delete(USER_ID);
+        List<User> after = service.getAll();
+        assertThat(before.size()).isGreaterThan(after.size());
     }
 
     @Test
