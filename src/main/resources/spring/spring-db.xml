@@ -13,7 +13,7 @@
        http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
        http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd">
 
-    <jdbc:initialize-database data-source="dataSource" enabled="${database.init}">
+    <jdbc:initialize-database enabled="${database.init}">
         <jdbc:script location="${jdbc.initLocation}"/>
         <jdbc:script encoding="utf-8" location="classpath:db/populateDB.sql"/>
     </jdbc:initialize-database>
@@ -64,8 +64,6 @@
         <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
             <property name="dataSource" ref="dataSource"/>
         </bean>
-
-        <bean id="ehCacheManager" class="org.springframework.cache.support.NoOpCacheManager"/>
     </beans>
 
     <beans profile="jpa,datajpa">
@@ -97,7 +95,6 @@
             </property>
         </bean>
 
-        <!-- Transaction manager for a single JPA EntityManagerFactory (alternative to JTA) -->
         <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"
               p:entityManagerFactory-ref="entityManagerFactory"/>
 
