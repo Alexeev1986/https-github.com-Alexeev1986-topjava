@@ -56,15 +56,14 @@ public abstract class AbstractMealController {
     }
 
     public List<MealTo> getBetween(@Nullable LocalDate startDate, @Nullable LocalTime startTime,
-                                            @Nullable LocalDate endDate, @Nullable LocalTime endTime) {
+                                        @Nullable LocalDate endDate, @Nullable LocalTime endTime) {
         int userId = SecurityUtil.authUserId();
         log.info("getBetween dates({} - {}) time({} - {}) for user {}", startDate, endDate, startTime, endTime, userId);
 
-        List<Meal> mealsDateFiltered = service.getBetweenInclusive(startDate, endDate, userId);
-        return MealsUtil.getFilteredTos(mealsDateFiltered, SecurityUtil.authUserCaloriesPerDay(), startTime, endTime);
+        return getBetweenInclusiveTos(startDate, endDate, startTime, endTime, userId);
     }
 
-    public List<MealTo> getBetween(@Nullable LocalDateTime startDateTime, @Nullable LocalDateTime endDateTime) {
+    public List<MealTo> getBetween(LocalDateTime startDateTime, LocalDateTime endDateTime) {
         int userId = SecurityUtil.authUserId();
         log.info("getBetween startDateTime={}, endDateTime={} for user {}", startDateTime, endDateTime, userId);
 
@@ -73,6 +72,10 @@ public abstract class AbstractMealController {
         LocalTime startTime = startDateTime != null ? startDateTime.toLocalTime() : null;
         LocalTime endTime = endDateTime != null ? endDateTime.toLocalTime() : null;
 
+        return getBetweenInclusiveTos(startDate, endDate, startTime, endTime, userId);
+    }
+
+    private List<MealTo> getBetweenInclusiveTos(LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime, int userId) {
         List<Meal> mealsDateFiltered = service.getBetweenInclusive(startDate, endDate, userId);
         return MealsUtil.getFilteredTos(mealsDateFiltered, SecurityUtil.authUserCaloriesPerDay(), startTime, endTime);
     }

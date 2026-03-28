@@ -4,12 +4,14 @@ import java.text.ParseException;
 import java.time.LocalTime;
 import java.util.Locale;
 import org.springframework.format.Formatter;
+import org.springframework.lang.Nullable;
 import ru.javawebinar.topjava.util.DateTimeUtil;
 
 public class LocalTimeFormatter implements Formatter<LocalTime> {
+    @Nullable
     @Override
     public LocalTime parse(String text, Locale locale) throws ParseException {
-        if (text == null || text.trim().isEmpty()) {
+        if (text.trim().isEmpty()) {
             return null;
         }
         return DateTimeUtil.parseLocalTime(text);
