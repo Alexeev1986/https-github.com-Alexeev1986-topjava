@@ -92,13 +92,94 @@ class MealRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void getBetweenByDateTime() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + "filter-by-datetime")
-                .param("startDateTime", "2020-01-30T10:00:00")
-                .param("endDateTime", "2020-01-31T20:00:00"))
+    void getBetweenWithNoParameters() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL + "filter"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(MEAL_TO_MATCHER.contentJson(getBetweenTestData()));
+                .andExpect(MEAL_TO_MATCHER.contentJson(mealTo));
+    }
+
+    @Test
+    void getBetweenWithEmptyStrings() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL + "filter")
+                .param("startDate", "")
+                .param("startTime", "")
+                .param("endDate", "")
+                .param("endTime", ""))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(MEAL_TO_MATCHER.contentJson(mealTo));
+    }
+
+    @Test
+    void getBetweenWithOnlyStartParams() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL + "filter")
+                .param("startDate", "2020-01-31")
+                .param("startTime", "10:00"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(MEAL_TO_MATCHER.contentJson(getBetweenOnlyStartParamsTestData()));
+    }
+
+    @Test
+    void getBetweenWithOnlyEndParams() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL + "filter")
+                .param("endDate", "2020-01-30")
+                .param("endTime", "20:00"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(MEAL_TO_MATCHER.contentJson(getBetweenOnlyEndParamsTestData()));
+    }
+
+    @Test
+    void getBetweenWithMissingStartTimeParam() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL + "filter")
+                .param("startDate", "2020-01-30")
+                .param("endDate", "2020-01-31")
+                .param("endTime", "20:00"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(MEAL_TO_MATCHER.contentJson(getBetweenMissingStartTimeTestData()));
+    }
+
+    @Test
+    void getBetweenWithMissingStartDateParam() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL + "filter")
+                .param("startTime", "10:00")
+                .param("endDate", "2020-01-31")
+                .param("endTime", "20:00"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(MEAL_TO_MATCHER.contentJson(getBetweenMissingStartDateTestData()));
+    }
+
+    @Test
+    void getBetweenWithMissingEndDateParam() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL + "filter")
+                .param("startDate", "2020-01-30")
+                .param("startTime", "10:00")
+                .param("endTime", "20:00"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(MEAL_TO_MATCHER.contentJson(getBetweenMissingEndDateTestData()));
+    }
+
+    @Test
+    void getBetweenWithMissingEndTimeParam() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL + "filter")
+                .param("startDate", "2020-01-30")
+                .param("startTime", "10:00")
+                .param("endDate", "2020-01-31"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(MEAL_TO_MATCHER.contentJson(getBetweenMissingEndTimeTestData()));
     }
 }
