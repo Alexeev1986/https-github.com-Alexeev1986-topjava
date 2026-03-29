@@ -1,23 +1,37 @@
 package ru.javawebinar.topjava.model;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.*;
-import org.hibernate.validator.constraints.Range;
-import org.springframework.util.CollectionUtils;
+import static ru.javawebinar.topjava.util.MealsUtil.DEFAULT_CALORIES_PER_DAY;
 
+import java.util.Collection;
+import java.util.Date;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Set;
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
-import javax.persistence.*;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.*;
-
-import static ru.javawebinar.topjava.util.MealsUtil.DEFAULT_CALORIES_PER_DAY;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.validator.constraints.Range;
+import org.springframework.util.CollectionUtils;
 
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @NamedQueries({
@@ -42,6 +56,7 @@ public class User extends AbstractNamedEntity {
     @Column(name = "password", nullable = false)
     @NotBlank
     @Size(min = 5, max = 128)
+    //@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     @Column(name = "enabled", nullable = false, columnDefinition = "bool default true")
@@ -67,10 +82,10 @@ public class User extends AbstractNamedEntity {
     @Range(min = 10, max = 10000)
     private int caloriesPerDay = DEFAULT_CALORIES_PER_DAY;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")//, cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")       // , cascade = CascadeType.REMOVE, orphanRemoval = true)
     @OrderBy("dateTime DESC")
-    @OnDelete(action = OnDeleteAction.CASCADE) //https://stackoverflow.com/a/44988100/548473
-//    @JsonIgnore
+    @OnDelete(action = OnDeleteAction.CASCADE)                   // https://stackoverflow.com/a/44988100/548473
+    // @JsonIgnore
     private List<Meal> meals;
 
     public User() {

@@ -1,21 +1,26 @@
 package ru.javawebinar.topjava.web.user;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import ru.javawebinar.topjava.model.User;
-import ru.javawebinar.topjava.service.UserService;
-import ru.javawebinar.topjava.util.exception.NotFoundException;
-import ru.javawebinar.topjava.web.AbstractControllerTest;
-import ru.javawebinar.topjava.web.json.JsonUtil;
-
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static ru.javawebinar.topjava.MealTestData.MEAL_MATCHER;
+import static ru.javawebinar.topjava.MealTestData.getAdminFood;
 import static ru.javawebinar.topjava.UserTestData.*;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import ru.javawebinar.topjava.model.User;
+import ru.javawebinar.topjava.service.MealService;
+import ru.javawebinar.topjava.service.UserService;
+import ru.javawebinar.topjava.util.exception.NotFoundException;
+import ru.javawebinar.topjava.web.AbstractControllerTest;
+import ru.javawebinar.topjava.web.json.JsonUtil;
 
 class AdminRestControllerTest extends AbstractControllerTest {
 
@@ -23,6 +28,10 @@ class AdminRestControllerTest extends AbstractControllerTest {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private ObjectMapper objectMapper;
+    @Autowired
+    private MealService mealService;
 
     @Test
     void get() throws Exception {
@@ -82,5 +91,21 @@ class AdminRestControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(USER_MATCHER.contentJson(admin, guest, user));
+    }
+
+    @Test
+    void getWithMeals() throws Exception {
+        MvcResult result =perform(MockMvcRequestBuilders.get(REST_URL + ADMIN_ID + "/with-meals"))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        String jsonResponse = result.getResponse().getContentAsString();
+        User actualUser = objectMapper.readValue(jsonResponse, User.class);
+
+        USER_MATCHER.assertMatch(actualUser, admin);
+
+        MEAL_MATCHER.assertMatch(actualUser.getMeals(), getAdminFood());
     }
 }

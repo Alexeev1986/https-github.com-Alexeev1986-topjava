@@ -41,6 +41,10 @@ public class MealTestData {
         return new Meal(MEAL1_ID, meal1.getDateTime().plus(2, ChronoUnit.MINUTES), "Обновленный завтрак", 200);
     }
 
+    public static List<Meal> getAdminFood() {
+        return List.of(adminMeal2, adminMeal1);
+    }
+
     public static List<MealTo> getBetweenTestData() {
         return List.of(
                 new MealTo(MEAL1_ID + 5, of(2020, Month.JANUARY, 31, 13, 0), "Обед", 1000, true),
