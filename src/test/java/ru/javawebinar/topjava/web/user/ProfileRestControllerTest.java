@@ -8,7 +8,6 @@ import static ru.javawebinar.topjava.MealTestData.meals;
 import static ru.javawebinar.topjava.UserTestData.*;
 import static ru.javawebinar.topjava.web.user.ProfileRestController.REST_URL;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -23,9 +22,6 @@ class ProfileRestControllerTest extends AbstractControllerTest {
 
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @Test
     void get() throws Exception {
@@ -62,7 +58,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
                 .andReturn();
 
         String jsonResponse = result.getResponse().getContentAsString();
-        User actualUser = objectMapper.readValue(jsonResponse, User.class);
+        User actualUser = JsonUtil.readValue(jsonResponse, User.class);
 
         USER_MATCHER.assertMatch(actualUser, user);
 
