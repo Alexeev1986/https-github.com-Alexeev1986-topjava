@@ -12,13 +12,9 @@ public class LocalDateFormatter implements Formatter<LocalDate> {
     @NonNull
     public LocalDate parse(@NonNull String text, @NonNull Locale locale) throws ParseException {
         if (text.trim().isEmpty()) {
-            throw new ParseException("Date string is empty", 0);
+            throw new IllegalArgumentException("Date string is empty");
         }
-        LocalDate result = DateTimeUtil.parseLocalDate(text);
-        if (result == null) {
-            throw new ParseException("Unable to parse date: " + text, 0);
-        }
-        return result;
+        return DateTimeUtil.parseLocalDate(text);
     }
 
     @Override

@@ -12,13 +12,9 @@ public class LocalTimeFormatter implements Formatter<LocalTime> {
     @NonNull
     public LocalTime parse(@NonNull String text, @NonNull Locale locale) throws ParseException {
         if (text.trim().isEmpty()) {
-            throw new ParseException("Time string is empty", 0);
+            throw new IllegalArgumentException("Time string is empty");
         }
-        LocalTime result = DateTimeUtil.parseLocalTime(text);
-        if (result == null) {
-            throw new ParseException("Unable to parse time: " + text, 0);
-        }
-        return result;
+        return DateTimeUtil.parseLocalTime(text);
     }
 
     @Override
