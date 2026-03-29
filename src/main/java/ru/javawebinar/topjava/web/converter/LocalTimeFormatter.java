@@ -3,7 +3,6 @@ package ru.javawebinar.topjava.web.converter;
 import java.text.ParseException;
 import java.time.LocalTime;
 import java.util.Locale;
-import java.util.Objects;
 import org.springframework.format.Formatter;
 import org.springframework.lang.NonNull;
 import ru.javawebinar.topjava.util.DateTimeUtil;
@@ -15,7 +14,11 @@ public class LocalTimeFormatter implements Formatter<LocalTime> {
         if (text.trim().isEmpty()) {
             throw new ParseException("Time string is empty", 0);
         }
-        return Objects.requireNonNull(DateTimeUtil.parseLocalTime(text));
+        LocalTime result = DateTimeUtil.parseLocalTime(text);
+        if (result == null) {
+            throw new ParseException("Unable to parse time: " + text, 0);
+        }
+        return result;
     }
 
     @Override
