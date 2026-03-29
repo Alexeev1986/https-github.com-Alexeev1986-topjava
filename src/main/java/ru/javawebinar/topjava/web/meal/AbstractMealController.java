@@ -4,7 +4,6 @@ import static ru.javawebinar.topjava.util.ValidationUtil.assureIdConsistent;
 import static ru.javawebinar.topjava.util.ValidationUtil.checkIsNew;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import org.slf4j.Logger;
@@ -59,18 +58,6 @@ public abstract class AbstractMealController {
                                         @Nullable LocalDate endDate, @Nullable LocalTime endTime) {
         int userId = SecurityUtil.authUserId();
         log.info("getBetween dates({} - {}) time({} - {}) for user {}", startDate, endDate, startTime, endTime, userId);
-
-        return getBetweenInclusiveTos(startDate, endDate, startTime, endTime, userId);
-    }
-
-    public List<MealTo> getBetween(LocalDateTime startDateTime, LocalDateTime endDateTime) {
-        int userId = SecurityUtil.authUserId();
-        log.info("getBetween startDateTime={}, endDateTime={} for user {}", startDateTime, endDateTime, userId);
-
-        LocalDate startDate = startDateTime != null ? startDateTime.toLocalDate() : null;
-        LocalDate endDate = endDateTime != null ? endDateTime.toLocalDate() : null;
-        LocalTime startTime = startDateTime != null ? startDateTime.toLocalTime() : null;
-        LocalTime endTime = endDateTime != null ? endDateTime.toLocalTime() : null;
 
         return getBetweenInclusiveTos(startDate, endDate, startTime, endTime, userId);
     }
