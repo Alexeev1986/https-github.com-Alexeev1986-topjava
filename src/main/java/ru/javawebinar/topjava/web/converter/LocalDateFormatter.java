@@ -3,22 +3,24 @@ package ru.javawebinar.topjava.web.converter;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.Locale;
+import java.util.Objects;
 import org.springframework.format.Formatter;
-import org.springframework.lang.Nullable;
+import org.springframework.lang.NonNull;
 import ru.javawebinar.topjava.util.DateTimeUtil;
 
 public class LocalDateFormatter implements Formatter<LocalDate> {
-    @Nullable
     @Override
-    public LocalDate parse(String text, Locale locale) throws ParseException {
+    @NonNull
+    public LocalDate parse(@NonNull String text, @NonNull Locale locale) throws ParseException {
         if (text.trim().isEmpty()) {
-            return null;
+            throw new ParseException("Date string is empty", 0);
         }
-        return DateTimeUtil.parseLocalDate(text);
+        return Objects.requireNonNull(DateTimeUtil.parseLocalDate(text));
     }
 
     @Override
-    public String print(LocalDate object, Locale locale) {
-        return object != null ? object.toString() : "";
+    @NonNull
+    public String print(@NonNull LocalDate object, @NonNull Locale locale) {
+        return object.toString();
     }
 }
