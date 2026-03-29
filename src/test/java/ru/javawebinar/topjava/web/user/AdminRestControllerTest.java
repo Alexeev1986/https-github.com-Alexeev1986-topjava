@@ -8,7 +8,6 @@ import static ru.javawebinar.topjava.MealTestData.MEAL_MATCHER;
 import static ru.javawebinar.topjava.MealTestData.getAdminFood;
 import static ru.javawebinar.topjava.UserTestData.*;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -16,7 +15,6 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.javawebinar.topjava.model.User;
-import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.service.UserService;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
@@ -28,10 +26,6 @@ class AdminRestControllerTest extends AbstractControllerTest {
 
     @Autowired
     private UserService userService;
-    @Autowired
-    private ObjectMapper objectMapper;
-    @Autowired
-    private MealService mealService;
 
     @Test
     void get() throws Exception {
@@ -102,7 +96,7 @@ class AdminRestControllerTest extends AbstractControllerTest {
                 .andReturn();
 
         String jsonResponse = result.getResponse().getContentAsString();
-        User actualUser = objectMapper.readValue(jsonResponse, User.class);
+        User actualUser =JsonUtil.readValue(jsonResponse, User.class);
 
         USER_MATCHER.assertMatch(actualUser, admin);
 
