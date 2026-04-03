@@ -32,4 +32,18 @@ $(function () {
             $('#dateTime').val(getCurrentDateTime());
         }
     });
+
+    $(".edit").click(function () {
+        editRow($(this).closest('tr').attr("id"));
+    });
 });
+
+function editRow(id) {
+    var rowData = ctx.datatableApi.row($('#' + id)).data();
+    form.find("#id").val(rowData.id);
+    form.find("#dateTime").val(rowData.dateTime.replace(' ', 'T').substring(0, 16));
+    form.find("#description").val(rowData.description);
+    form.find("#calories").val(rowData.calories);
+    $("#editRow").modal();
+}
+
