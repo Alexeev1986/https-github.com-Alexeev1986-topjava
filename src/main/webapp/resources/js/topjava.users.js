@@ -20,5 +20,25 @@ $(function () {
         })
     );
 
+    $('#datatable').on('change', '.user-activation', function () {
 
+        const checkbox = $(this);
+        const row = checkbox.closest('tr');
+        const id = row.attr('id');
+        const enabled = checkbox.is(':checked');
+
+        checkbox.prop('disabled', true);
+
+        $.ajax({
+            url: userAjaxUrl + id + '/' + enabled,
+            type: 'PUT',
+            success: function () {
+                row.attr('data-user-enabled', enabled);
+                updateTable();
+            },
+            complete: function (){
+                checkbox.prop('disabled', false);
+            }
+        });
+    });
 });

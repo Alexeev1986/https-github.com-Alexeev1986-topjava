@@ -72,7 +72,6 @@ public class AdminRestController extends AbstractUserController {
     @PutMapping("/{id}/{enabled}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void setEnabled(@PathVariable int id, @PathVariable boolean enabled) {
-        User user = super.get(id);
         super.updateEnabled(id, enabled);
     }
 }
