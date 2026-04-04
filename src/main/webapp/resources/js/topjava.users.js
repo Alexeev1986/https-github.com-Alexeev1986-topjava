@@ -11,7 +11,11 @@ $(function () {
                 { "data": "name" },
                 { "data": "email" },
                 { "data": "roles" },
-                { "data": "enabled" },
+                { "data": "enabled",
+                    "render": function(data) {
+                        return '<input type="checkbox" class="user-activation" ' +
+                            (data ? 'checked' : '') + '/>';
+                    } },
                 { "data": "registered" },
                 { "defaultContent": "Edit", "orderable": false },
                 { "defaultContent": "Delete", "orderable": false }
