@@ -49,4 +49,10 @@ public class UserTestData {
         updated.setRoles(Collections.singletonList(Role.ADMIN));
         return updated;
     }
+
+    public static User disabledUser() {
+        User user = new User(USER_ID, "User", "user@yandex.ru", "password", Role.USER);
+        user.setEnabled(false);
+        return user;
+    }
 }
