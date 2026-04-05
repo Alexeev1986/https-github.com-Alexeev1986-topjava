@@ -19,6 +19,7 @@ $(function () {
 });
 
 function filter() {
+    isFilterActive = true;
     $.get(mealAjaxUrl + "filter", {
         startDate: $('#startDate').val(),
         endDate: $('#endDate').val(),
@@ -35,6 +36,8 @@ function resetFilter() {
     $('#endDate').val('');
     $('#startTime').val('');
     $('#endTime').val('');
+
+    isFilterActive = false;
 
     updateTable();
 }
