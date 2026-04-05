@@ -26,7 +26,7 @@ function filter() {
         startTime: $('#startTime').val(),
         endTime: $('#endTime').val()
     }, function (filteredMeals) {
-        ctx.datatableApi.clear().rows.add(filteredMeals).draw();
+        updateTableWithData(filteredMeals);
     });
     return false;
 }

@@ -34,7 +34,7 @@ $(function () {
         checkbox.prop('disabled', true);
 
         $.ajax({
-            url: userAjaxUrl + id + '/' + enabled,
+            url: userAjaxUrl + id + '/status?enabled=' + enabled,
             type: 'PUT',
             success: function () {
                 row.attr('data-user-enabled', enabled);

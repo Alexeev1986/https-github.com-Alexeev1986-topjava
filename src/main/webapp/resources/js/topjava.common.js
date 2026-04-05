@@ -18,6 +18,10 @@ function makeEditable(datatableApi) {
     $.ajaxSetup({cache: false});
 }
 
+function updateTableWithData(data) {
+    ctx.datatableApi.clear().rows.add(data).draw();
+}
+
 function add() {
     form.find(":input").val("");
     $("#editRow").modal();
@@ -38,7 +42,7 @@ function updateTable() {
         filter();
     } else {
         $.get(ctx.ajaxUrl, function (data) {
-            ctx.datatableApi.clear().rows.add(data).draw();
+            updateTableWithData(data);
         });
     }
 }
