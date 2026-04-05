@@ -11,11 +11,7 @@ $(function () {
                 { "data": "name" },
                 { "data": "email" },
                 { "data": "roles" },
-                { "data": "enabled",
-                    "render": function(data) {
-                        return '<input type="checkbox" class="user-activation" ' +
-                            (data ? 'checked' : '') + '/>';
-                    } },
+                { "data": "enabled"},
                 { "data": "registered" },
                 { "defaultContent": "Edit", "orderable": false },
                 { "defaultContent": "Delete", "orderable": false }
@@ -25,23 +21,25 @@ $(function () {
     );
 
     $('#datatable').on('change', '.user-activation', function () {
-
         const checkbox = $(this);
         const row = checkbox.closest('tr');
-        const id = row.attr('id');
+        const id = checkbox.data('id');
         const enabled = checkbox.is(':checked');
-
-        checkbox.prop('disabled', true);
+        const previousState = !enabled;
 
         $.ajax({
             url: userAjaxUrl + id + '/status?enabled=' + enabled,
             type: 'PUT',
             success: function () {
-                row.attr('data-user-enabled', enabled);
-                updateTable();
+                if (enabled) {
+                    row.removeClass('disabled-user');
+                } else {
+                    row.addClass('disabled-user');
+                }
+                successNoty("User" + (enabled ? "activated" : "deactivated"));
             },
-            complete: function (){
-                checkbox.prop('disabled', false);
+            error: function () {
+                checkbox.prop('checked', previousState);
             }
         });
     });

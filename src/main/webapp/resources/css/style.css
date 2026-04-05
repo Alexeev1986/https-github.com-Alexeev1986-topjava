@@ -23,12 +23,8 @@ tr[data-meal-excess="true"] {
     color: red;
 }
 
-tr[user-isEnabled="true"] {
-    color: green;
-}
-
-tr[user-isEnabled="false"] {
-    color: red;
+tr.disabled-user{
+    color: grey;
 }
 
 .fa {
