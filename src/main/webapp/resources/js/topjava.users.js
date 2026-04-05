@@ -1,7 +1,6 @@
 const userAjaxUrl = "admin/users/";
 const ctx = { ajaxUrl: userAjaxUrl };
 
-// $(document).ready(function () {
 $(function () {
     makeEditable(
         $("#datatable").DataTable({
@@ -44,3 +43,9 @@ $(function () {
         });
     });
 });
+
+function updateTable() {
+    $.get(ctx.ajaxUrl, function (data) {
+        updateTableWithData(data);
+    })
+}

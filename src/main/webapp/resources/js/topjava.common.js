@@ -1,5 +1,4 @@
 let form;
-let isFilterActive = false;
 
 function makeEditable(datatableApi) {
     ctx.datatableApi = datatableApi;
@@ -35,16 +34,6 @@ function deleteRow(id) {
         updateTable();
         successNoty("Deleted");
     });
-}
-
-function updateTable() {
-    if (isFilterActive) {
-        filter();
-    } else {
-        $.get(ctx.ajaxUrl, function (data) {
-            updateTableWithData(data);
-        });
-    }
 }
 
 function save() {

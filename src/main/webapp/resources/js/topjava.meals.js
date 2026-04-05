@@ -1,5 +1,6 @@
 const mealAjaxUrl = "profile/meals/";
-const ctx = { ajaxUrl: mealAjaxUrl };
+const ctx = { ajaxUrl: mealAjaxUrl }
+let isFilterActive = false;
 
 $(function () {
     makeEditable(
@@ -40,4 +41,14 @@ function resetFilter() {
     isFilterActive = false;
 
     updateTable();
+}
+
+function updateTable() {
+    if (isFilterActive) {
+        filter();
+    } else {
+        $.get(ctx.ajaxUrl, function (data) {
+            updateTableWithData(data);
+        });
+    }
 }
