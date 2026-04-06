@@ -30,12 +30,8 @@ $(function () {
             url: userAjaxUrl + id + '/status?enabled=' + enabled,
             type: 'PUT',
             success: function () {
-                if (enabled) {
-                    row.removeClass('disabled-user');
-                } else {
-                    row.addClass('disabled-user');
-                }
-                successNoty("User" + (enabled ? "activated" : "deactivated"));
+                row.toggleClass('disabled-user', !enabled);
+                successNoty("User " + (enabled ? "activated" : "deactivated"));
             },
             error: function () {
                 checkbox.prop('checked', previousState);
