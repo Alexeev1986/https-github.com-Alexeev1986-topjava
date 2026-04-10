@@ -17,7 +17,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.javawebinar.topjava.TestUtil.userHttpBasic;
-import static ru.javawebinar.topjava.UserTestData.*;
+import static ru.javawebinar.topjava.UserTestData.ADMIN_ID;
+import static ru.javawebinar.topjava.UserTestData.USER_ID;
+import static ru.javawebinar.topjava.UserTestData.USER_MATCHER;
+import static ru.javawebinar.topjava.UserTestData.USER_WITH_MEALS_MATCHER;
+import static ru.javawebinar.topjava.UserTestData.admin;
+import static ru.javawebinar.topjava.UserTestData.getNew;
+import static ru.javawebinar.topjava.UserTestData.getUpdated;
+import static ru.javawebinar.topjava.UserTestData.guest;
+import static ru.javawebinar.topjava.UserTestData.user;
 
 class AdminRestControllerTest extends AbstractControllerTest {
 

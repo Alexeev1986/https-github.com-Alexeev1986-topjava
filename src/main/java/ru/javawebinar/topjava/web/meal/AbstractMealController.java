@@ -1,5 +1,11 @@
 package ru.javawebinar.topjava.web.meal;
 
+import static ru.javawebinar.topjava.util.ValidationUtil.assureIdConsistent;
+import static ru.javawebinar.topjava.util.ValidationUtil.checkIsNew;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,13 +15,6 @@ import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.to.MealTo;
 import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.web.SecurityUtil;
-
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.List;
-
-import static ru.javawebinar.topjava.util.ValidationUtil.assureIdConsistent;
-import static ru.javawebinar.topjava.util.ValidationUtil.checkIsNew;
 
 public abstract class AbstractMealController {
     private final Logger log = LoggerFactory.getLogger(getClass());
@@ -48,19 +47,13 @@ public abstract class AbstractMealController {
         return service.create(meal, userId);
     }
 
-    public void update(Meal meal, int id) {
+    public void update(MealTo mealTo, int id) {
         int userId = SecurityUtil.authUserId();
-        log.info("update {} for user {}", meal, userId);
-        assureIdConsistent(meal, id);
-        service.update(meal, userId);
+        log.info("update {} for user {}", mealTo, userId);
+        assureIdConsistent(mealTo, id);
+        service.update(mealTo, userId);
     }
 
-    /**
-     * <ol>Filter separately
-     * <li>by date</li>
-     * <li>by time for every date</li>
-     * </ol>
-     */
     public List<MealTo> getBetween(@Nullable LocalDate startDate, @Nullable LocalTime startTime,
                                             @Nullable LocalDate endDate, @Nullable LocalTime endTime) {
         int userId = SecurityUtil.authUserId();

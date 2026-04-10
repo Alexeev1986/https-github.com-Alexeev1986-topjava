@@ -1,8 +1,5 @@
 package ru.javawebinar.topjava.util;
 
-import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.to.MealTo;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Collection;
@@ -10,9 +7,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import ru.javawebinar.topjava.model.Meal;
+import ru.javawebinar.topjava.to.MealTo;
 
 public class MealsUtil {
-
     private MealsUtil() {
     }
 
@@ -28,7 +26,7 @@ public class MealsUtil {
         Map<LocalDate, Integer> caloriesSumByDate = meals.stream()
                 .collect(
                         Collectors.groupingBy(Meal::getDate, Collectors.summingInt(Meal::getCalories))
-//                      Collectors.toMap(Meal::getDate, Meal::getCalories, Integer::sum)
+                // Collectors.toMap(Meal::getDate, Meal::getCalories, Integer::sum)
                 );
 
         return meals.stream()
@@ -39,5 +37,12 @@ public class MealsUtil {
 
     public static MealTo createTo(Meal meal, boolean excess) {
         return new MealTo(meal.getId(), meal.getDateTime(), meal.getDescription(), meal.getCalories(), excess);
+    }
+
+    public static Meal updatedFromTo(Meal meal, MealTo mealTo) {
+        meal.setDateTime(mealTo.getDateTime());
+        meal.setDescription(mealTo.getDescription());
+        meal.setCalories(mealTo.getCalories());
+        return meal;
     }
 }
