@@ -8,9 +8,7 @@ import ru.javawebinar.topjava.service.AbstractUserServiceTest;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import static ru.javawebinar.topjava.Profiles.DATAJPA;
-import static ru.javawebinar.topjava.UserTestData.ADMIN_ID;
-import static ru.javawebinar.topjava.UserTestData.NOT_FOUND;
-import static ru.javawebinar.topjava.UserTestData.USER_MATCHER;
+import static ru.javawebinar.topjava.UserTestData.*;
 
 @ActiveProfiles(DATAJPA)
 class DataJpaUserServiceTest extends AbstractUserServiceTest {
