@@ -12,3 +12,7 @@
         </form>
     </div>
 </nav>
+
+<script type="text/javascript">
+    const localization = "${pageContext.response.locale}";
+</script>
