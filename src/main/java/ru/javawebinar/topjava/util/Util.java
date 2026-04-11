@@ -3,7 +3,6 @@ package ru.javawebinar.topjava.util;
 import org.springframework.lang.Nullable;
 
 public class Util {
-
     private Util() {
     }
 

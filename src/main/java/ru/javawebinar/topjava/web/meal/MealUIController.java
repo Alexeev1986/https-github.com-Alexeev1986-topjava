@@ -1,9 +1,10 @@
 package ru.javawebinar.topjava.web.meal;
 
+import static ru.javawebinar.topjava.util.ValidationUtil.getErrorResponse;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.stream.Collectors;
 import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -44,17 +45,14 @@ public class MealUIController extends AbstractMealController {
     }
 
     @PostMapping
-    public ResponseEntity<String> createOrUpdate(@Valid MealTo mealTo, BindingResult result) {
+    public ResponseEntity<String> createOrUpdate(@Valid Meal meal, BindingResult result) {
         if (result.hasErrors()) {
-            String errorFieldsMsg = result.getFieldErrors().stream()
-                    .map(fe -> String.format("[%s] %s", fe.getField(), fe.getDefaultMessage()))
-                    .collect(Collectors.joining("<br>"));
-            return ResponseEntity.unprocessableEntity().body(errorFieldsMsg);
+            return getErrorResponse(result);
         }
-        if (mealTo.isNew()) {
-            super.create(new Meal(null, mealTo.getDateTime(), mealTo.getDescription(), mealTo.getCalories()));
+        if (meal.isNew()) {
+            super.create(meal);
         } else {
-            super.update(mealTo, mealTo.id());
+            super.update(meal, meal.id());
         }
         return ResponseEntity.ok().build();
     }

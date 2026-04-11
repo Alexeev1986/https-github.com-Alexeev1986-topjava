@@ -13,9 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
-import ru.javawebinar.topjava.repository.UserRepository;
-import ru.javawebinar.topjava.to.MealTo;
-import ru.javawebinar.topjava.util.MealsUtil;
 
 @Service
 @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
@@ -42,11 +39,9 @@ public class MealService {
         return repository.getAll(userId);
     }
 
-    public void update(MealTo mealTo, int userId) {
-        Meal meal = get(mealTo.id(), userId);
-        Meal updatedMeal = MealsUtil.updatedFromTo(meal, mealTo);
-        Assert.notNull(meal, "meal must not be null");
-        checkNotFound(repository.save(updatedMeal, userId), updatedMeal.id());
+    public void update(Meal meal, int userId) {
+        get(meal.id(), userId);
+        repository.save(meal, userId);
     }
 
     public Meal create(Meal meal, int userId) {

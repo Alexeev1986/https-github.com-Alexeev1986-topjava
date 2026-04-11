@@ -47,11 +47,11 @@ public abstract class AbstractMealController {
         return service.create(meal, userId);
     }
 
-    public void update(MealTo mealTo, int id) {
+    public void update(Meal meal, int id) {
         int userId = SecurityUtil.authUserId();
-        log.info("update {} for user {}", mealTo, userId);
-        assureIdConsistent(mealTo, id);
-        service.update(mealTo, userId);
+        log.info("update {} for user {}", meal, userId);
+        assureIdConsistent(meal, id);
+        service.update(meal, userId);
     }
 
     public List<MealTo> getBetween(@Nullable LocalDate startDate, @Nullable LocalTime startTime,

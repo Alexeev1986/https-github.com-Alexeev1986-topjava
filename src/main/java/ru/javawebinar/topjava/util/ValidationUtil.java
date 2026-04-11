@@ -1,13 +1,18 @@
 package ru.javawebinar.topjava.util;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import ru.javawebinar.topjava.HasId;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
-import javax.validation.*;
-import java.util.Set;
-
 public class ValidationUtil {
-
     private static final Validator validator;
 
     static {
@@ -18,6 +23,16 @@ public class ValidationUtil {
     }
 
     private ValidationUtil() {
+    }
+
+    public static ResponseEntity<String> getErrorResponse(BindingResult result) {
+        if (result.hasErrors()) {
+            String errorFieldsMsg = result.getFieldErrors().stream()
+                    .map(fe -> String.format("[%s] %s", fe.getField(), fe.getDefaultMessage()))
+                    .collect(Collectors.joining("<br>"));
+            return ResponseEntity.unprocessableEntity().body(errorFieldsMsg);
+        }
+        return null;
     }
 
     public static <T> void validate(T bean) {
