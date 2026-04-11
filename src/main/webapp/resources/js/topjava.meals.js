@@ -58,6 +58,7 @@ $(function () {
         timepicker: false,
         format: 'Y-m-d',
         formatDate: 'Y-m-d',
+        theme: 'dark',
         onShow: function (date) {
             this.setOptions({ maxDate: endDate.val() ? endDate.val() : false })
         }
@@ -67,6 +68,7 @@ $(function () {
         timepicker: false,
         format: 'Y-m-d',
         formatDate: 'Y-m-d',
+        theme: 'dark',
         onShow: function (date) {
             this.setOptions({ minDate: startDate.val() ? startDate.val() : false })
         }
@@ -77,6 +79,7 @@ $(function () {
     startTime.datetimepicker({
         datepicker: false,
         format: 'H:i',
+        theme: 'dark',
         onShow: function (time) {
             this.setOptions({minTime: endTime.val() ? endTime.val() : false })
         }
@@ -85,6 +88,7 @@ $(function () {
     endTime.datetimepicker({
         datepicker: false,
         format: 'H:i',
+        theme: 'dark',
         onShow: function (time) {
             this.setOptions({maxTime: startTime.val() ? startTime.val() : false })
         }
