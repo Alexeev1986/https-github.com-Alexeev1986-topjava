@@ -37,8 +37,7 @@ public class MealService {
     }
 
     public void update(Meal meal, int userId) {
-        get(meal.id(), userId);
-        repository.save(meal, userId);
+        checkNotFound(repository.save(meal, userId), meal.id());
     }
 
     public Meal create(Meal meal, int userId) {
