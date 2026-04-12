@@ -37,6 +37,7 @@ public class MealService {
     }
 
     public void update(Meal meal, int userId) {
+        get(meal.id(), userId);
         checkNotFound(repository.save(meal, userId), meal.id());
     }
 
