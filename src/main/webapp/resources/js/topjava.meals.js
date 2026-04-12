@@ -60,7 +60,7 @@ $(function () {
         formatDate: 'Y-m-d',
         theme: 'dark',
         onShow: function (date) {
-            this.setOptions({ maxDate: endDate.val() ? endDate.val() : false })
+            this.setOptions({ maxDate: endDate.val() || false })
         }
     });
 
@@ -70,7 +70,7 @@ $(function () {
         formatDate: 'Y-m-d',
         theme: 'dark',
         onShow: function (date) {
-            this.setOptions({ minDate: startDate.val() ? startDate.val() : false })
+            this.setOptions({ minDate: startDate.val() || false })
         }
     });
 
@@ -81,7 +81,7 @@ $(function () {
         format: 'H:i',
         theme: 'dark',
         onShow: function (time) {
-            this.setOptions({minTime: endTime.val() ? endTime.val() : false })
+            this.setOptions({maxTime: endTime.val() || false })
         }
     });
 
@@ -90,7 +90,7 @@ $(function () {
         format: 'H:i',
         theme: 'dark',
         onShow: function (time) {
-            this.setOptions({maxTime: startTime.val() ? startTime.val() : false })
+            this.setOptions({minTime: startTime.val() || false })
         }
     });
 
