@@ -5,6 +5,7 @@ import static ru.javawebinar.topjava.util.exception.ErrorType.DATA_ERROR;
 import static ru.javawebinar.topjava.util.exception.ErrorType.DATA_NOT_FOUND;
 import static ru.javawebinar.topjava.util.exception.ErrorType.VALIDATION_ERROR;
 
+import java.util.Map;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
@@ -12,12 +13,14 @@ import javax.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.transaction.TransactionSystemException;
+import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -35,6 +38,21 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 public class ExceptionInfoHandler {
     private static final Logger log = LoggerFactory.getLogger(ExceptionInfoHandler.class);
 
+    private final MessageSourceAccessor messageSourceAccessor;
+
+    public ExceptionInfoHandler(MessageSourceAccessor messageSourceAccessor) {
+        this.messageSourceAccessor = messageSourceAccessor;
+    }
+
+    private static final String EXCEPTION_DUPLICATE_EMAIL = "user.duplicate.email";
+
+    private static final String EXCEPTION_DUPLICATE_DATETIME = "meal.duplicate.datetime";
+
+    private static final Map<String, String> CONSTRAINS_I18N_MAP = Map.of(
+            "users_unique_email_idx", EXCEPTION_DUPLICATE_EMAIL,
+            "meals_unique_user_datetime_idx", EXCEPTION_DUPLICATE_DATETIME);
+
+
     //  http://stackoverflow.com/a/22358422/548473
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     @ExceptionHandler(NotFoundException.class)
@@ -45,6 +63,16 @@ public class ExceptionInfoHandler {
     @ResponseStatus(HttpStatus.CONFLICT)  // 409
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ErrorInfo conflict(HttpServletRequest req, DataIntegrityViolationException e) {
+        String rootMsg = ValidationUtil.getRootCause(e).getMessage();
+        if (rootMsg != null) {
+            String lowerCaseMsg = rootMsg.toLowerCase();
+            for (Map.Entry<String, String> entry : CONSTRAINS_I18N_MAP.entrySet()) {
+                if (lowerCaseMsg.contains(entry.getKey())) {
+                    String message = messageSourceAccessor.getMessage(entry.getValue());
+                    return logAndGetErrorInfo(req, new Exception(message), false, VALIDATION_ERROR);
+                }
+            }
+        }
         return logAndGetErrorInfo(req, e, true, DATA_ERROR);
     }
 
@@ -55,12 +83,21 @@ public class ExceptionInfoHandler {
     }
 
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    @ExceptionHandler(BindException.class)
+    public ErrorInfo bindException(HttpServletRequest req, BindException e) {
+        String customMessage = e.getBindingResult().getFieldErrors().stream()
+                .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                .collect(Collectors.joining("\n"));
+        return logAndGetErrorInfo(req, customMessage, false, VALIDATION_ERROR);
+    }
+
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ErrorInfo handleMethodArgumentNotValid(HttpServletRequest req, MethodArgumentNotValidException e) {
         String customMessage = e.getBindingResult().getFieldErrors().stream()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .collect(Collectors.joining("\n"));
-        return logAndGetErrorInfo(req, new Exception(customMessage), false, VALIDATION_ERROR);
+        return logAndGetErrorInfo(req, customMessage, false, VALIDATION_ERROR);
     }
 
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
@@ -72,7 +109,7 @@ public class ExceptionInfoHandler {
             String customMessage = cve.getConstraintViolations().stream()
                     .map(ConstraintViolation::getMessage)
                     .collect(Collectors.joining("\n"));
-            return logAndGetErrorInfo(req, new Exception(customMessage), false, VALIDATION_ERROR);
+            return logAndGetErrorInfo(req, customMessage, false, VALIDATION_ERROR);
         }
         return logAndGetErrorInfo(req, e, true, APP_ERROR);
     }
@@ -83,7 +120,7 @@ public class ExceptionInfoHandler {
         String customMessage = e.getConstraintViolations().stream()
                 .map(ConstraintViolation::getMessage)
                 .collect(Collectors.joining("\n"));
-        return logAndGetErrorInfo(req, new Exception(customMessage), false, VALIDATION_ERROR);
+        return logAndGetErrorInfo(req, customMessage, false, VALIDATION_ERROR);
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -101,5 +138,14 @@ public class ExceptionInfoHandler {
             log.warn("{} at request  {}: {}", errorType, req.getRequestURL(), rootCause.toString());
         }
         return new ErrorInfo(req.getRequestURL(), errorType, rootCause.toString());
+    }
+
+    private static ErrorInfo logAndGetErrorInfo(HttpServletRequest req, String message, boolean logException, ErrorType errorType) {
+        if (logException) {
+            log.error(errorType + " at request " + req.getRequestURL(), message);
+        } else {
+            log.warn("{} at request  {}: {}", errorType, req.getRequestURL(), message);
+        }
+        return new ErrorInfo(req.getRequestURL(), errorType, message);
     }
 }

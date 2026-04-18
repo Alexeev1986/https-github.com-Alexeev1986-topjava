@@ -36,6 +36,7 @@
             <set>
                 <bean class="ru.javawebinar.topjava.web.converter.DateTimeFormatters.LocalTimeFormatter"/>
                 <bean class="ru.javawebinar.topjava.web.converter.DateTimeFormatters.LocalDateFormatter"/>
+                <bean class="ru.javawebinar.topjava.web.converter.DateTimeFormatters.LocalDateTimeFormatter"/>
             </set>
         </property>
     </bean>
@@ -68,6 +69,10 @@
           p:defaultEncoding="UTF-8">
         <property name="basenames" value="file:///#{systemEnvironment[TOPJAVA_ROOT]}/config/messages/app"/>
         <property name="fallbackToSystemLocale" value="false"/>
+    </bean>
+
+    <bean id="messageSourceAccessor" class="org.springframework.context.support.MessageSourceAccessor">
+        <constructor-arg ref="messageSource"/>
     </bean>
 
     <mvc:interceptors>

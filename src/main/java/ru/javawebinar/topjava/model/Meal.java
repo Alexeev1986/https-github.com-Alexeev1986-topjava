@@ -45,13 +45,13 @@ public class Meal extends AbstractBaseEntity {
 
     @Column(name = "description", nullable = false)
     @NotBlank(message = "[Описание] не должно быть пустым")
-    @Size(min = 2, max = 120, message = "Размер [Описание] должен быть между 2 и 120")
+    @Size(min = 2, max = 120, message = "[Описание] размер должен быть между 2 и 120")
     private String description;
 
     @Column(name = "calories", nullable = false)
     @Range(min = 10, max = 5000, message = "[Калории] должны быть в диапазоне от 10 до 5000")
-    @NotNull(message = "[Калории] не должны быть пустым")
-    private int calories;
+    @NotNull(message = "[Калории] не должны быть пустыми")
+    private Integer calories;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -63,7 +63,7 @@ public class Meal extends AbstractBaseEntity {
     public Meal() {
     }
 
-    public Meal(Integer id, LocalDateTime dateTime, String description, int calories) {
+    public Meal(Integer id, LocalDateTime dateTime, String description, Integer calories) {
         super(id);
         this.dateTime = dateTime;
         this.description = description;
@@ -78,7 +78,7 @@ public class Meal extends AbstractBaseEntity {
         return description;
     }
 
-    public int getCalories() {
+    public Integer getCalories() {
         return calories;
     }
 
@@ -98,7 +98,7 @@ public class Meal extends AbstractBaseEntity {
         this.description = description;
     }
 
-    public void setCalories(int calories) {
+    public void setCalories(Integer calories) {
         this.calories = calories;
     }
 

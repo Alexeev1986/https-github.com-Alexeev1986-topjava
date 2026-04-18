@@ -3,19 +3,27 @@ package ru.javawebinar.topjava.to;
 import java.beans.ConstructorProperties;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import org.hibernate.validator.constraints.Range;
 
 public class MealTo extends BaseTo {
-
+    @NotNull(message = "[Дата/Время] не должно быть пустым")
     private final LocalDateTime dateTime;
 
+    @NotBlank(message = "[Описание] не должно быть пустым")
+    @Size(min = 2, max = 120, message = "[Описание] размер должен быть между 2 и 120")
     private final String description;
 
-    private final int calories;
+    @NotNull(message = "[Калории] не должны быть пустыми")
+    @Range(min = 10, max = 5000, message = "[Калории] должны быть в диапазоне от 10 до 5000")
+    private final Integer calories;
 
     private final boolean excess;
 
     @ConstructorProperties({"id", "dateTime", "description", "calories", "excess"})
-    public MealTo(Integer id, LocalDateTime dateTime, String description, int calories, boolean excess) {
+    public MealTo(Integer id, LocalDateTime dateTime, String description, Integer calories, boolean excess) {
         super(id);
         this.dateTime = dateTime;
         this.description = description;
@@ -31,7 +39,7 @@ public class MealTo extends BaseTo {
         return description;
     }
 
-    public int getCalories() {
+    public Integer getCalories() {
         return calories;
     }
 

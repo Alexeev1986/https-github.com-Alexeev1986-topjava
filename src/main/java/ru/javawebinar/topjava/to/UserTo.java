@@ -14,7 +14,7 @@ public class UserTo extends BaseTo implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @NotBlank(message = "[Имя] не должно быть пустым")
-    @Size(min = 2, max = 100, message = "Размер [Имя] должно быть между 5 и 100 символами")
+    @Size(min = 2, max = 100, message = "[Имя] размер должно быть между 5 и 100 символами")
     private String name;
 
     @Email(message = "[Почта] должна быть корректным email адресом")
@@ -27,7 +27,7 @@ public class UserTo extends BaseTo implements Serializable {
     private String password;
 
     @Range(min = 10, max = 10000, message = "[Калории] должны быть в диапазоне от 10 до 10000")
-    @NotNull(message = "[Калории] не должны быть пустым")
+    @NotNull(message = "[Калории] не должны быть пустыми")
     private Integer caloriesPerDay = UsersUtil.DEFAULT_CALORIES_PER_DAY;
 
     public UserTo() {
