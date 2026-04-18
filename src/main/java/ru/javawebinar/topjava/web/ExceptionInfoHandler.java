@@ -1,12 +1,24 @@
 package ru.javawebinar.topjava.web;
 
+import static ru.javawebinar.topjava.util.exception.ErrorType.APP_ERROR;
+import static ru.javawebinar.topjava.util.exception.ErrorType.DATA_ERROR;
+import static ru.javawebinar.topjava.util.exception.ErrorType.DATA_NOT_FOUND;
+import static ru.javawebinar.topjava.util.exception.ErrorType.VALIDATION_ERROR;
+
+import java.util.stream.Collectors;
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.transaction.TransactionSystemException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,10 +29,6 @@ import ru.javawebinar.topjava.util.exception.ErrorInfo;
 import ru.javawebinar.topjava.util.exception.ErrorType;
 import ru.javawebinar.topjava.util.exception.IllegalRequestDataException;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
-
-import javax.servlet.http.HttpServletRequest;
-
-import static ru.javawebinar.topjava.util.exception.ErrorType.*;
 
 @RestControllerAdvice(annotations = RestController.class)
 @Order(Ordered.HIGHEST_PRECEDENCE + 5)
@@ -44,6 +52,38 @@ public class ExceptionInfoHandler {
     @ExceptionHandler({IllegalRequestDataException.class, MethodArgumentTypeMismatchException.class, HttpMessageNotReadableException.class})
     public ErrorInfo validationError(HttpServletRequest req, Exception e) {
         return logAndGetErrorInfo(req, e, false, VALIDATION_ERROR);
+    }
+
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ErrorInfo handleMethodArgumentNotValid(HttpServletRequest req, MethodArgumentNotValidException e) {
+        String customMessage = e.getBindingResult().getFieldErrors().stream()
+                .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                .collect(Collectors.joining("\n"));
+        return logAndGetErrorInfo(req, new Exception(customMessage), false, VALIDATION_ERROR);
+    }
+
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    @ExceptionHandler(TransactionSystemException.class)
+    public ErrorInfo handleTransactionSystemException(HttpServletRequest req, TransactionSystemException e) {
+        Throwable rootCause = ValidationUtil.getRootCause(e);
+
+        if (rootCause instanceof ConstraintViolationException cve) {
+            String customMessage = cve.getConstraintViolations().stream()
+                    .map(ConstraintViolation::getMessage)
+                    .collect(Collectors.joining("\n"));
+            return logAndGetErrorInfo(req, new Exception(customMessage), false, VALIDATION_ERROR);
+        }
+        return logAndGetErrorInfo(req, e, true, APP_ERROR);
+    }
+
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ErrorInfo handleConstraintViolation(HttpServletRequest req, ConstraintViolationException e) {
+        String customMessage = e.getConstraintViolations().stream()
+                .map(ConstraintViolation::getMessage)
+                .collect(Collectors.joining("\n"));
+        return logAndGetErrorInfo(req, new Exception(customMessage), false, VALIDATION_ERROR);
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
