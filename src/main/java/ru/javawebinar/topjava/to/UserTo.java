@@ -1,34 +1,33 @@
 package ru.javawebinar.topjava.to;
 
-import org.hibernate.validator.constraints.Range;
-import ru.javawebinar.topjava.util.UsersUtil;
-
+import java.io.Serial;
+import java.io.Serializable;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.io.Serial;
-import java.io.Serializable;
+import org.hibernate.validator.constraints.Range;
+import ru.javawebinar.topjava.util.UsersUtil;
 
 public class UserTo extends BaseTo implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    @NotBlank
-    @Size(min = 2, max = 100)
+    @NotBlank(message = "[Имя] не должно быть пустым")
+    @Size(min = 2, max = 100, message = "Размер [Имя] должно быть между 5 и 100 символами")
     private String name;
 
-    @Email
-    @NotBlank
-    @Size(max = 100)
+    @Email(message = "[Почта] должна быть корректным email адресом")
+    @NotBlank(message = "[Почта] не должна быть пустой")
+    @Size(max = 128, message = "Размер [Почта] не более 128 символов")
     private String email;
 
-    @NotBlank
-    @Size(min = 5, max = 32, message = "length must be between 5 and 32 characters")
+    @NotBlank(message = "[Пароль] не должен быть пустым")
+    @Size(min = 5, max = 128, message = "Размер [Пароль] должен быть между 5 и 128 символами")
     private String password;
 
-    @Range(min = 10, max = 10000)
-    @NotNull
+    @Range(min = 10, max = 10000, message = "[Калории] должны быть в диапазоне от 10 до 10000")
+    @NotNull(message = "[Калории] не должны быть пустым")
     private Integer caloriesPerDay = UsersUtil.DEFAULT_CALORIES_PER_DAY;
 
     public UserTo() {
