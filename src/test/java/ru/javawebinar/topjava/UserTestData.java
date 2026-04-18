@@ -2,6 +2,7 @@ package ru.javawebinar.topjava;
 
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
+import ru.javawebinar.topjava.to.UserTo;
 import ru.javawebinar.topjava.web.json.JsonUtil;
 
 import java.util.Collections;
@@ -40,6 +41,10 @@ public class UserTestData {
         return new User(null, "New", "new@gmail.com", "newPass", 1555, false, new Date(), Collections.singleton(Role.USER));
     }
 
+    public static User getUserWithInvalidEmail() {
+        return new User(null, "New", "invalid-email", "newPass", 1555, false, new Date(), Collections.singleton(Role.USER));
+    }
+
     public static User getUpdated() {
         User updated = new User(user);
         updated.setEmail("update@gmail.com");
@@ -49,6 +54,14 @@ public class UserTestData {
         updated.setEnabled(false);
         updated.setRoles(Collections.singletonList(Role.ADMIN));
         return updated;
+    }
+
+    public static UserTo getInvalidEmailUserTo() {
+        return new UserTo(null, "Name", "invalid-email", "password", 2000);
+    }
+
+    public static UserTo getEmptyNameUserTo() {
+        return new UserTo(null, "", "email@yandex.ru", "password", 2000);
     }
 
     public static String jsonWithPassword(User user, String passw) {
