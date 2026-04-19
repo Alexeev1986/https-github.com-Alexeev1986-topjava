@@ -3,21 +3,12 @@ package ru.javawebinar.topjava.to;
 import java.beans.ConstructorProperties;
 import java.time.LocalDateTime;
 import java.util.Objects;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import org.hibernate.validator.constraints.Range;
 
 public class MealTo extends BaseTo {
-    @NotNull(message = "[Дата/Время] не должно быть пустым")
     private final LocalDateTime dateTime;
 
-    @NotBlank(message = "[Описание] не должно быть пустым")
-    @Size(min = 2, max = 120, message = "[Описание] размер должен быть между 2 и 120")
     private final String description;
 
-    @NotNull(message = "[Калории] не должны быть пустыми")
-    @Range(min = 10, max = 5000, message = "[Калории] должны быть в диапазоне от 10 до 5000")
     private final Integer calories;
 
     private final boolean excess;
@@ -52,11 +43,11 @@ public class MealTo extends BaseTo {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MealTo mealTo = (MealTo) o;
-        return calories == mealTo.calories &&
-                excess == mealTo.excess &&
+        return excess == mealTo.excess &&
                 Objects.equals(id, mealTo.id) &&
                 Objects.equals(dateTime, mealTo.dateTime) &&
-                Objects.equals(description, mealTo.description);
+                Objects.equals(description, mealTo.description) &&
+                Objects.equals(calories, mealTo.calories);
     }
 
     @Override

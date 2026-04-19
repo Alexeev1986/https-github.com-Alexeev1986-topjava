@@ -40,17 +40,17 @@ public class Meal extends AbstractBaseEntity {
     public static final String GET_BETWEEN = "Meal.getBetween";
 
     @Column(name = "date_time", nullable = false)
-    @NotNull(message = "[Дата/Время] не должно быть пустым")
+    @NotNull
     private LocalDateTime dateTime;
 
     @Column(name = "description", nullable = false)
-    @NotBlank(message = "[Описание] не должно быть пустым")
-    @Size(min = 2, max = 120, message = "[Описание] размер должен быть между 2 и 120")
+    @NotBlank
+    @Size(min = 2, max = 120)
     private String description;
 
     @Column(name = "calories", nullable = false)
-    @Range(min = 10, max = 5000, message = "[Калории] должны быть в диапазоне от 10 до 5000")
-    @NotNull(message = "[Калории] не должны быть пустыми")
+    @Range(min = 10, max = 5000)
+    @NotNull
     private Integer calories;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -49,14 +49,14 @@ public class User extends AbstractNamedEntity {
     public static final String ALL_SORTED = "User.getAllSorted";
 
     @Column(name = "email", nullable = false, unique = true)
-    @Email(message = "[Почта] должна быть корректным email адресом")
-    @NotBlank(message = "[Почта] не должна быть пустой")
-    @Size(max = 128, message = "Размер [Почта] не более 128 символов")
+    @Email
+    @NotBlank
+    @Size(max = 128)
     private String email;
 
     @Column(name = "password", nullable = false)
-    @NotBlank(message = "[Пароль] не должен быть пустым")
-    @Size(min = 5, max = 128, message = "Размер [Пароль] должен быть между 5 и 128 символами")
+    @NotBlank
+    @Size(min = 5, max = 128)
     // https://stackoverflow.com/a/12505165/548473
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
@@ -82,8 +82,8 @@ public class User extends AbstractNamedEntity {
     private Set<Role> roles;
 
     @Column(name = "calories_per_day", nullable = false, columnDefinition = "int default 2000")
-    @Range(min = 10, max = 10000, message = "[Калории] должны быть в диапазоне от 10 до 10000")
-    @NotNull(message = "[Калории] не должны быть пустыми")
+    @Range(min = 10, max = 10000)
+    @NotNull
     private Integer caloriesPerDay = DEFAULT_CALORIES_PER_DAY;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")//, cascade = CascadeType.REMOVE, orphanRemoval = true)
