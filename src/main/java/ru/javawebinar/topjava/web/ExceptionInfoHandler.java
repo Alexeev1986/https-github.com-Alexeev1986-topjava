@@ -8,11 +8,8 @@ import static ru.javawebinar.topjava.util.exception.ErrorType.VALIDATION_ERROR;
 import java.util.Map;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -21,7 +18,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.transaction.TransactionSystemException;
 import org.springframework.validation.BindException;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -50,7 +46,7 @@ public class ExceptionInfoHandler {
 
     private static final Map<String, String> CONSTRAINS_I18N_MAP = Map.of(
             "users_unique_email_idx", EXCEPTION_DUPLICATE_EMAIL,
-            "meals_unique_user_datetime_idx", EXCEPTION_DUPLICATE_DATETIME);
+            "meal_unique_user_datetime_idx", EXCEPTION_DUPLICATE_DATETIME);
 
 
     //  http://stackoverflow.com/a/22358422/548473
@@ -69,7 +65,7 @@ public class ExceptionInfoHandler {
             for (Map.Entry<String, String> entry : CONSTRAINS_I18N_MAP.entrySet()) {
                 if (lowerCaseMsg.contains(entry.getKey())) {
                     String message = messageSourceAccessor.getMessage(entry.getValue());
-                    return logAndGetErrorInfo(req, new Exception(message), false, VALIDATION_ERROR);
+                    return logAndGetErrorInfo(req, message, false, VALIDATION_ERROR);
                 }
             }
         }
@@ -86,41 +82,15 @@ public class ExceptionInfoHandler {
     @ExceptionHandler(BindException.class)
     public ErrorInfo bindException(HttpServletRequest req, BindException e) {
         String customMessage = e.getBindingResult().getFieldErrors().stream()
-                .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                .map(error -> String.format("[%s]: %s", error.getField(), messageSourceAccessor.getMessage(error)))
                 .collect(Collectors.joining("\n"));
         return logAndGetErrorInfo(req, customMessage, false, VALIDATION_ERROR);
     }
 
-    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ErrorInfo handleMethodArgumentNotValid(HttpServletRequest req, MethodArgumentNotValidException e) {
-        String customMessage = e.getBindingResult().getFieldErrors().stream()
-                .map(DefaultMessageSourceResolvable::getDefaultMessage)
-                .collect(Collectors.joining("\n"));
-        return logAndGetErrorInfo(req, customMessage, false, VALIDATION_ERROR);
-    }
-
-    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(TransactionSystemException.class)
     public ErrorInfo handleTransactionSystemException(HttpServletRequest req, TransactionSystemException e) {
-        Throwable rootCause = ValidationUtil.getRootCause(e);
-
-        if (rootCause instanceof ConstraintViolationException cve) {
-            String customMessage = cve.getConstraintViolations().stream()
-                    .map(ConstraintViolation::getMessage)
-                    .collect(Collectors.joining("\n"));
-            return logAndGetErrorInfo(req, customMessage, false, VALIDATION_ERROR);
-        }
         return logAndGetErrorInfo(req, e, true, APP_ERROR);
-    }
-
-    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
-    @ExceptionHandler(ConstraintViolationException.class)
-    public ErrorInfo handleConstraintViolation(HttpServletRequest req, ConstraintViolationException e) {
-        String customMessage = e.getConstraintViolations().stream()
-                .map(ConstraintViolation::getMessage)
-                .collect(Collectors.joining("\n"));
-        return logAndGetErrorInfo(req, customMessage, false, VALIDATION_ERROR);
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
