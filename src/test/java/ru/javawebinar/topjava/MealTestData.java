@@ -34,6 +34,10 @@ public class MealTestData {
         return new Meal(null, of(2020, Month.FEBRUARY, 1, 18, 0), "Созданный ужин", 300);
     }
 
+    public static Meal getMealWithDuplicateDateTime() {
+        return new Meal(null, meal1.getDateTime(), "Созданный ужин", 300);
+    }
+
     public static Meal getMealWithInvalidCalories() {
         return new Meal(null, of(2020, Month.FEBRUARY, 1, 18, 0), "Созданный ужин", 1);
     }
