@@ -17,7 +17,6 @@ import org.springframework.core.annotation.Order;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.transaction.TransactionSystemException;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -94,12 +93,6 @@ public class ExceptionInfoHandler {
                 .collect(Collectors.toList());
         log.info(customMessage.toString());
         return logAndGetErrorInfo(req, customMessage, false, VALIDATION_ERROR);
-    }
-
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(TransactionSystemException.class)
-    public ErrorInfo handleTransactionSystemException(HttpServletRequest req, TransactionSystemException e) {
-        return logAndGetErrorInfo(req, e, true, APP_ERROR);
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
