@@ -5,6 +5,7 @@ import static ru.javawebinar.topjava.util.exception.ErrorType.DATA_ERROR;
 import static ru.javawebinar.topjava.util.exception.ErrorType.DATA_NOT_FOUND;
 import static ru.javawebinar.topjava.util.exception.ErrorType.VALIDATION_ERROR;
 
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
@@ -65,7 +66,7 @@ public class ExceptionInfoHandler {
             for (Map.Entry<String, String> entry : CONSTRAINS_I18N_MAP.entrySet()) {
                 if (lowerCaseMsg.contains(entry.getKey())) {
                     String message = messageSourceAccessor.getMessage(entry.getValue());
-                    return logAndGetErrorInfo(req, message, false, VALIDATION_ERROR);
+                    return logAndGetErrorInfo(req, List.of(message), false, VALIDATION_ERROR);
                 }
             }
         }
@@ -81,9 +82,9 @@ public class ExceptionInfoHandler {
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     @ExceptionHandler(BindException.class)
     public ErrorInfo bindException(HttpServletRequest req, BindException e) {
-        String customMessage = e.getBindingResult().getFieldErrors().stream()
+        List<String> customMessage = e.getBindingResult().getFieldErrors().stream()
                 .map(error -> String.format("[%s]: %s", error.getField(), messageSourceAccessor.getMessage(error)))
-                .collect(Collectors.joining("\n"));
+                .collect(Collectors.toList());
         return logAndGetErrorInfo(req, customMessage, false, VALIDATION_ERROR);
     }
 
@@ -102,15 +103,15 @@ public class ExceptionInfoHandler {
     //    https://stackoverflow.com/questions/538870/should-private-helper-methods-be-static-if-they-can-be-static
     private static ErrorInfo logAndGetErrorInfo(HttpServletRequest req, Exception e, boolean logException, ErrorType errorType) {
         Throwable rootCause = ValidationUtil.getRootCause(e);
-        return logAndGetErrorInfo(req, rootCause.getMessage(), logException, errorType);
+        return logAndGetErrorInfo(req, List.of(rootCause.getMessage()), logException, errorType);
     }
 
-    private static ErrorInfo logAndGetErrorInfo(HttpServletRequest req, String message, boolean logException, ErrorType errorType) {
+    private static ErrorInfo logAndGetErrorInfo(HttpServletRequest req, List<String> details, boolean logException, ErrorType errorType) {
         if (logException) {
-            log.error(errorType + " at request " + req.getRequestURL(), message);
+            log.error(errorType + " at request " + req.getRequestURL(), details);
         } else {
-            log.warn("{} at request  {}: {}", errorType, req.getRequestURL(), message);
+            log.warn("{} at request  {}: {}", errorType, req.getRequestURL(), details);
         }
-        return new ErrorInfo(req.getRequestURL(), errorType, message);
+        return new ErrorInfo(req.getRequestURL(), errorType, details);
     }
 }
