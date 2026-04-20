@@ -17,7 +17,9 @@ import ru.javawebinar.topjava.web.json.JsonUtil;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.javawebinar.topjava.MealTestData.*;
 import static ru.javawebinar.topjava.TestUtil.userHttpBasic;
 import static ru.javawebinar.topjava.UserTestData.USER_ID;
@@ -120,12 +122,16 @@ class MealRestControllerTest extends AbstractControllerTest {
     @Transactional(propagation = Propagation.NEVER)
     void createWithDuplicateDateTime() throws Exception {
         Meal duplicateMeal = getMealWithDuplicateDateTime();
+        org.springframework.context.i18n.LocaleContextHolder.setLocale(new java.util.Locale("en"));
+        String expectedMessage = messageSourceAccessor.getMessage("meal.duplicate.datetime");
         perform(MockMvcRequestBuilders.post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(user))
                 .content(JsonUtil.writeValue(duplicateMeal)))
                 .andDo(print())
-                .andExpect(status().isConflict());
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.type").value("VALIDATION_ERROR"))
+                .andExpect(jsonPath("$.details[0]").value(expectedMessage));
     }
 
     @Test

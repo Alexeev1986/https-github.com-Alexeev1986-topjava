@@ -3,8 +3,7 @@ package ru.javawebinar.topjava.web.user;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static ru.javawebinar.topjava.TestUtil.userHttpBasic;
 import static ru.javawebinar.topjava.UserTestData.*;
 
@@ -111,6 +110,9 @@ class AdminRestControllerTest extends AbstractControllerTest {
     @Test
     @Transactional(propagation = Propagation.NEVER)
     void updateWithDuplicateEmail() throws Exception {
+        org.springframework.context.i18n.LocaleContextHolder.setLocale(new java.util.Locale("en"));
+        String expectedMessage = messageSourceAccessor.getMessage("user.duplicate.email");
+
         User updated = getUpdated();
         updated.setEmail("admin@gmail.com");
         perform(MockMvcRequestBuilders.put(REST_URL + USER_ID)
@@ -118,7 +120,9 @@ class AdminRestControllerTest extends AbstractControllerTest {
                 .with(userHttpBasic(admin))
                 .content(jsonWithPassword(updated, updated.getPassword())))
                 .andDo(print())
-                .andExpect(status().isConflict());
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.type").value("VALIDATION_ERROR"))
+                .andExpect(jsonPath("$.details[0]").value(expectedMessage));
     }
 
 
@@ -152,13 +156,18 @@ class AdminRestControllerTest extends AbstractControllerTest {
     @Test
     @Transactional(propagation = Propagation.NEVER)
     void createWithDuplicateEmail() throws Exception {
+        org.springframework.context.i18n.LocaleContextHolder.setLocale(new java.util.Locale("en"));
+        String expectedMessage = messageSourceAccessor.getMessage("user.duplicate.email");
+
         User invalid = getUserWithDuplicateEmail();
         perform(MockMvcRequestBuilders.post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(admin))
                 .content(jsonWithPassword(invalid, invalid.getPassword())))
                 .andDo(print())
-                .andExpect(status().isConflict());
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.type").value("VALIDATION_ERROR"))
+                .andExpect(jsonPath("$.details[0]").value(expectedMessage));
     }
 
     @Test
