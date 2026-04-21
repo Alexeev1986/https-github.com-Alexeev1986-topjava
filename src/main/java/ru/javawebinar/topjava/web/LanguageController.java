@@ -1,4 +1,4 @@
-package ru.javawebinar.topjava.web.interceptor;
+package ru.javawebinar.topjava.web;
 
 import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;

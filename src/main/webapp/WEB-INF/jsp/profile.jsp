@@ -21,12 +21,6 @@
 
                     <topjava:inputField labelCode="user.name" name="name"/>
                     <topjava:inputField labelCode="user.email" name="email"/>
-                    <c:if test="${not empty duplicateEmailError}">
-                        <div class="alert alert-danger" style="margin-top: -10px; margin-bottom: 15px;">
-                            <span class="fa fa-exclamation-triangle"></span>
-                            ${duplicateEmailError}
-                        </div>
-                    </c:if>
                     <topjava:inputField labelCode="user.password" name="password" inputType="password"/>
                     <topjava:inputField labelCode="user.caloriesPerDay" name="caloriesPerDay" inputType="number"/>
 

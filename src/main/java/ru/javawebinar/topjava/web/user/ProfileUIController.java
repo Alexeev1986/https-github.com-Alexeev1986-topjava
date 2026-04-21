@@ -1,5 +1,8 @@
 package ru.javawebinar.topjava.web.user;
 
+import java.nio.charset.StandardCharsets;
+import javax.validation.Valid;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -10,26 +13,33 @@ import org.springframework.web.bind.support.SessionStatus;
 import ru.javawebinar.topjava.to.UserTo;
 import ru.javawebinar.topjava.web.SecurityUtil;
 
-import javax.validation.Valid;
-
 @Controller
 @RequestMapping("/profile")
 public class ProfileUIController extends AbstractUserController {
-
     @GetMapping
     public String profile() {
         return "profile";
     }
 
     @PostMapping
-    public String updateProfile(@Valid UserTo userTo, BindingResult result, SessionStatus status) {
+    public String updateProfile(@Valid UserTo userTo, BindingResult result, SessionStatus status, ModelMap model) {
+        fixEncoding(userTo);
         if (result.hasErrors()) {
             return "profile";
-        } else {
+        }
+        try {
             super.update(userTo, SecurityUtil.authUserId());
             SecurityUtil.get().setTo(userTo);
             status.setComplete();
             return "redirect:/meals";
+        } catch (DataIntegrityViolationException e) {
+            Throwable rootCause = e.getRootCause();
+            if (rootCause != null && rootCause.getMessage().toLowerCase().contains("users_unique_email_idx")) {
+                result.rejectValue("email", "user.duplicate.email");
+            } else {
+                throw e;
+            }
+            return "profile";
         }
     }
 
@@ -42,13 +52,38 @@ public class ProfileUIController extends AbstractUserController {
 
     @PostMapping("/register")
     public String saveRegister(@Valid UserTo userTo, BindingResult result, SessionStatus status, ModelMap model) {
+        fixEncoding(userTo);
         if (result.hasErrors()) {
             model.addAttribute("register", true);
             return "profile";
-        } else {
+        }
+        try {
             super.create(userTo);
             status.setComplete();
             return "redirect:/login?message=app.registered&username=" + userTo.getEmail();
+        } catch (DataIntegrityViolationException e) {
+            Throwable rootCause = e.getRootCause();
+            if (rootCause != null && rootCause.getMessage().toLowerCase().contains("users_unique_email_idx")) {
+                result.rejectValue("email", "user.duplicate.email");
+            } else {
+                throw e;
+            }
+            model.addAttribute("register", true);
+            return "profile";
+        }
+    }
+
+    private void fixEncoding(UserTo userTo) {
+        String input = userTo.getName();
+        if (input == null) return;
+        try {
+            byte[] bytes = input.getBytes(StandardCharsets.ISO_8859_1);
+            String fixedName = new String(bytes, StandardCharsets.UTF_8);
+            userTo.setName(fixedName);
+            log.info("Fixed name: {}", fixedName);
+        } catch (Exception e) {
+            log.error("Filed to fix encoding", e);
+            userTo.setName(input);
         }
     }
 }
