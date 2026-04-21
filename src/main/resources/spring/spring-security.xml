@@ -18,6 +18,8 @@
     <beans:bean class="org.springframework.security.crypto.factory.PasswordEncoderFactories" id="passwordEncoder" factory-method="createDelegatingPasswordEncoder"/>
 
     <http>
+
+        <intercept-url pattern="/changeLanguage" access="permitAll()"/>
         <intercept-url pattern="/login" access="permitAll()"/>
         <intercept-url pattern="/profile/register" access="isAnonymous()"/>
 
