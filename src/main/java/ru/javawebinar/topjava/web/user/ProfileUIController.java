@@ -82,7 +82,7 @@ public class ProfileUIController extends AbstractUserController {
             userTo.setName(fixedName);
             log.info("Fixed name: {}", fixedName);
         } catch (Exception e) {
-            log.error("Filed to fix encoding", e);
+            log.error("Failed to fix encoding", e);
             userTo.setName(input);
         }
     }
