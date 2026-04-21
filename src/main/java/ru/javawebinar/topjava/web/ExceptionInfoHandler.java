@@ -82,16 +82,7 @@ public class ExceptionInfoHandler {
     @ExceptionHandler(BindException.class)
     public ErrorInfo bindException(HttpServletRequest req, BindException e) {
         List<String> customMessage = e.getBindingResult().getFieldErrors().stream()
-                .map(error -> {
-                    Object[] arguments = error.getArguments();
-                    if (arguments == null) {
-                        return String.format("[%s]: %s", error.getField(), messageSourceAccessor.getMessage(error));
-                    } else {
-                        return String.format("[%s]: %s", error.getField(), messageSourceAccessor.getMessage(error.getCode(), arguments, error.getDefaultMessage()));
-                    }
-                })
-                .collect(Collectors.toList());
-        log.info(customMessage.toString());
+                .map(messageSourceAccessor::getMessage).collect(Collectors.toList());
         return logAndGetErrorInfo(req, customMessage, false, VALIDATION_ERROR);
     }
 
