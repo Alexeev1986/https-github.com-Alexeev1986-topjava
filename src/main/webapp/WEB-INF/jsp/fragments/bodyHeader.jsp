@@ -26,7 +26,7 @@
                 </button>
             </form:form>
         </sec:authorize>
-        <form id="languageForm" action="changeLanguage" method="get" class="form-inline my-2 ml-auto">
+        <form id="languageForm" method="get" class="form-inline my-2 ml-auto">
             <select name="lang" class="form-control form-control-sm" onchange="this.form.submit()">
                 <option value="en" ${cookie.app_language.value == 'en' ? 'selected' : (cookie.app_language.value == null ? 'selected' : '')}>English</option>
                 <option value="ru" ${cookie.app_language.value == 'ru' ? 'selected' : ''}>Русский</option>

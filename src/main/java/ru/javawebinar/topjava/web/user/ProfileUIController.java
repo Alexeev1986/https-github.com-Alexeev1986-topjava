@@ -1,6 +1,5 @@
 package ru.javawebinar.topjava.web.user;
 
-import java.nio.charset.StandardCharsets;
 import javax.validation.Valid;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
@@ -23,7 +22,6 @@ public class ProfileUIController extends AbstractUserController {
 
     @PostMapping
     public String updateProfile(@Valid UserTo userTo, BindingResult result, SessionStatus status, ModelMap model) {
-        fixEncoding(userTo);
         if (result.hasErrors()) {
             return "profile";
         }
@@ -52,7 +50,6 @@ public class ProfileUIController extends AbstractUserController {
 
     @PostMapping("/register")
     public String saveRegister(@Valid UserTo userTo, BindingResult result, SessionStatus status, ModelMap model) {
-        fixEncoding(userTo);
         if (result.hasErrors()) {
             model.addAttribute("register", true);
             return "profile";
@@ -70,20 +67,6 @@ public class ProfileUIController extends AbstractUserController {
             }
             model.addAttribute("register", true);
             return "profile";
-        }
-    }
-
-    private void fixEncoding(UserTo userTo) {
-        String input = userTo.getName();
-        if (input == null) return;
-        try {
-            byte[] bytes = input.getBytes(StandardCharsets.ISO_8859_1);
-            String fixedName = new String(bytes, StandardCharsets.UTF_8);
-            userTo.setName(fixedName);
-            log.info("Fixed name: {}", fixedName);
-        } catch (Exception e) {
-            log.error("Failed to fix encoding", e);
-            userTo.setName(input);
         }
     }
 }
