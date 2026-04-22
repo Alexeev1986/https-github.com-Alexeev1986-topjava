@@ -31,12 +31,7 @@ public class ProfileUIController extends AbstractUserController {
             status.setComplete();
             return "redirect:/meals";
         } catch (DataIntegrityViolationException e) {
-            Throwable rootCause = e.getRootCause();
-            if (rootCause != null && rootCause.getMessage().toLowerCase().contains("users_unique_email_idx")) {
-                result.rejectValue("email", "user.duplicate.email");
-            } else {
-                throw e;
-            }
+            handleDuplicateEmail(e, result);
             return "profile";
         }
     }
@@ -59,14 +54,18 @@ public class ProfileUIController extends AbstractUserController {
             status.setComplete();
             return "redirect:/login?message=app.registered&username=" + userTo.getEmail();
         } catch (DataIntegrityViolationException e) {
-            Throwable rootCause = e.getRootCause();
-            if (rootCause != null && rootCause.getMessage().toLowerCase().contains("users_unique_email_idx")) {
-                result.rejectValue("email", "user.duplicate.email");
-            } else {
-                throw e;
-            }
+            handleDuplicateEmail(e, result);
             model.addAttribute("register", true);
             return "profile";
+        }
+    }
+
+    private void handleDuplicateEmail(DataIntegrityViolationException e, BindingResult result) {
+        Throwable rootCause = e.getRootCause();
+        if (rootCause != null && rootCause.getMessage().toLowerCase().contains("users_unique_email_idx")) {
+            result.rejectValue("email", "user.duplicate.email");
+        } else {
+            throw e;
         }
     }
 }
