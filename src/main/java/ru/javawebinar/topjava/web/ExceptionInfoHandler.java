@@ -82,7 +82,17 @@ public class ExceptionInfoHandler {
     @ExceptionHandler(BindException.class)
     public ErrorInfo bindException(HttpServletRequest req, BindException e) {
         List<String> customMessage = e.getBindingResult().getFieldErrors().stream()
-                .map(resolvable -> "[" + messageSourceAccessor.getMessage(resolvable.getField()) + "] - " + messageSourceAccessor.getMessage(resolvable))
+                .map(fieldError -> {
+                    String fieldName = fieldError.getField();
+                    String localizedFieleName;
+                    try {
+                        localizedFieleName = messageSourceAccessor.getMessage(fieldName);
+                    } catch (Exception ex) {
+                        localizedFieleName = fieldName;
+                    }
+                    String errorMessage = messageSourceAccessor.getMessage(fieldError);
+                    return "[" + localizedFieleName + "] - " + errorMessage;
+                })
                 .collect(Collectors.toList());
         return logAndGetErrorInfo(req, customMessage, false, VALIDATION_ERROR);
     }

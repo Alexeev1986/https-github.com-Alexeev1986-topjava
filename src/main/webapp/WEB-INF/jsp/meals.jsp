@@ -2,7 +2,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="fn" uri="http://topjava.javawebinar.ru/functions" %>
-<html>
+
+<html lang="${pageContext.response.locale.language}">
 <jsp:include page="fragments/headTag.jsp"/>
 <body>
 <script type="text/javascript" src="resources/js/topjava.common.js" defer></script>
@@ -114,4 +115,13 @@
 <jsp:include page="fragments/i18n.jsp">
     <jsp:param name="page" value="meal"/>
 </jsp:include>
+
+<script>
+    if (typeof $.datetimepicker !== 'undefined' && $.datetimepicker.setLocale) {
+        const currentLang = '${pageContext.response.locale.language}';
+        $.datetimepicker.setLocale(currentLang === 'ru' ? 'ru' : 'en');
+        console.log('DateTimePicker locale set to:', currentLang);
+    }
+</script>
+
 </html>
