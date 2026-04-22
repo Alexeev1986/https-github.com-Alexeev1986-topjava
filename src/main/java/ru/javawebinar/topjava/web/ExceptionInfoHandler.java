@@ -82,7 +82,8 @@ public class ExceptionInfoHandler {
     @ExceptionHandler(BindException.class)
     public ErrorInfo bindException(HttpServletRequest req, BindException e) {
         List<String> customMessage = e.getBindingResult().getFieldErrors().stream()
-                .map(messageSourceAccessor::getMessage).collect(Collectors.toList());
+                .map(resolvable -> "[" + messageSourceAccessor.getMessage(resolvable.getField()) + "] - " + messageSourceAccessor.getMessage(resolvable))
+                .collect(Collectors.toList());
         return logAndGetErrorInfo(req, customMessage, false, VALIDATION_ERROR);
     }
 
